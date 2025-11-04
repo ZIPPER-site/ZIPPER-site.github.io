@@ -1,0 +1,1388 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="SBS拉链2026新品推介 - 为江南布衣户外装备提供专业、可靠的拉链解决方案">
+    <meta name="keywords" content="SBS拉链,江南布衣,户外装备,拉链,2026新品,金属拉链,尼龙拉链,塑钢拉链">
+    <title>SBS拉链2026新品推介 - 江南布衣专属</title>
+    <!-- 引入得意黑字体 -->
+    <link href="https://cdn.jsdelivr.net/npm/smiley-sans@1.0.0/fonts/SmileySans.css" rel="stylesheet">
+    <!-- 预加载关键资源 -->
+    <link rel="preload" href="logo-black-small.png" as="image">
+    <style>
+        /* 基础样式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        /* 应用得意黑字体 */
+        body {
+            font-family: 'Smiley Sans', 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* 头部样式 */
+        header {
+            background: linear-gradient(135deg, #1a2a3a 0%, #2c3e50 100%);
+            color: white;
+            padding: 40px 0;
+            text-align: center;
+        }
+        
+        .header-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .logo-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 40px;
+            margin-bottom: 20px;
+        }
+        
+        .logo {
+            height: 60px;
+        }
+        
+        .header-content h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        .header-content p {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            opacity: 0.9;
+        }
+        
+        /* 导航栏样式 */
+        nav {
+            background-color: #2c3e50;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .nav-container {
+            display: flex;
+            justify-content: center;
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+        
+        .nav-links li {
+            margin: 0;
+        }
+        
+        .nav-links a {
+            display: block;
+            padding: 15px 25px;
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+        }
+        
+        .nav-links a:hover, .nav-links a.active {
+            background-color: #34495e;
+            border-bottom: 3px solid #e67e22;
+        }
+        
+        /* 产品展示区 */
+        .intro-section {
+            padding: 60px 0;
+            text-align: center;
+            background-color: white;
+            margin-bottom: 40px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        
+        .intro-section h2 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+        
+        .intro-section p {
+            max-width: 800px;
+            margin: 0 auto 30px;
+            font-size: 1.1rem;
+            color: #555;
+        }
+        
+        .quality-highlight {
+            background: linear-gradient(120deg, #eaf2f8 0%, #f0f7ff 100%);
+            border-left: 4px solid #3498db;
+            padding: 25px;
+            margin: 30px auto;
+            max-width: 900px;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .quality-highlight h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+        
+        .quality-highlight ul {
+            text-align: left;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .quality-highlight li {
+            margin-bottom: 10px;
+            position: relative;
+            padding-left: 25px;
+        }
+        
+        .quality-highlight li:before {
+            content: "✓";
+            color: #27ae60;
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+        }
+        
+        .category-section {
+            margin-bottom: 60px;
+        }
+        
+        .category-title {
+            font-size: 1.8rem;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e67e22;
+            color: #2c3e50;
+            font-weight: 700;
+        }
+        
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 30px;
+        }
+        
+        .product-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            cursor: pointer;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+        }
+        
+        .product-image-container {
+            position: relative;
+            width: 100%;
+            height: 0;
+            padding-bottom: 56.25%; /* 16:9 比例 */
+            overflow: hidden;
+        }
+        
+        .product-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+        
+        .product-card:hover .product-image {
+            transform: scale(1.05);
+        }
+        
+        .product-info {
+            padding: 20px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .product-name {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+        
+        .product-description {
+            color: #666;
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+            flex-grow: 1;
+        }
+        
+        .product-features {
+            list-style: none;
+            margin-bottom: 15px;
+        }
+        
+        .product-features li {
+            padding: 5px 0;
+            position: relative;
+            padding-left: 20px;
+        }
+        
+        .product-features li:before {
+            content: "•";
+            color: #e67e22;
+            position: absolute;
+            left: 0;
+            font-size: 1.2rem;
+        }
+        
+        /* 全屏图片查看器 */
+        .image-viewer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        
+        .image-viewer.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .image-viewer-content {
+            position: relative;
+            width: 90%;
+            height: 90%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .image-viewer img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            border-radius: 8px;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.5);
+        }
+        
+        .image-viewer .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            color: white;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            background: none;
+            border: none;
+            transition: color 0.3s ease;
+            z-index: 1001;
+        }
+        
+        .image-viewer .close-btn:hover {
+            color: #e67e22;
+        }
+        
+        .image-viewer .nav-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            color: white;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            background: rgba(0, 0, 0, 0.5);
+            border: none;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.3s ease;
+            z-index: 1001;
+        }
+        
+        .image-viewer .nav-btn:hover {
+            background: rgba(230, 126, 34, 0.8);
+        }
+        
+        .image-viewer .prev-btn {
+            left: 30px;
+        }
+        
+        .image-viewer .next-btn {
+            right: 30px;
+        }
+        
+        .image-viewer .image-info {
+            position: absolute;
+            bottom: 20px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            color: white;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        /* 搜索结果显示样式 */
+        .search-results {
+            margin-bottom: 30px;
+            padding: 15px;
+            background: #e8f4fd;
+            border-radius: 8px;
+            border-left: 4px solid #3498db;
+        }
+
+        .search-results.hidden {
+            display: none;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 20px;
+            color: #7f8c8d;
+            font-style: italic;
+        }
+
+        /* 懒加载占位符 */
+        .lazy-loading {
+            background: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .lazy-loading::after {
+            content: "加载中...";
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+        
+        /* 底部样式 */
+        footer {
+            background-color: #2c3e50;
+            color: white;
+            padding: 40px 0;
+            margin-top: 60px;
+        }
+        
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+        
+        .footer-section {
+            flex: 1;
+            min-width: 250px;
+        }
+        
+        .footer-section h3 {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            color: #e67e22;
+        }
+        
+        .footer-section p, .footer-section a {
+            color: #bdc3c7;
+            margin-bottom: 10px;
+            display: block;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .footer-section a:hover {
+            color: #e67e22;
+        }
+        
+        .copyright {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #34495e;
+            color: #95a5a6;
+            font-size: 0.9rem;
+        }
+        
+        /* 搜索功能样式 */
+        .search-container {
+            max-width: 600px;
+            margin: 0 auto 40px;
+            position: relative;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 15px 50px 15px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 30px;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: all 0.3s ease;
+            background-color: white;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+        
+        .search-icon {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #7f8c8d;
+            font-size: 1.2rem;
+        }
+        
+        /* 回到顶部按钮 */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 99;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+        
+        .back-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .back-to-top:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+        }
+        
+        /* 加载动画 */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .header-content h1 {
+                font-size: 2rem;
+            }
+            
+            .logo-container {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .products-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .image-viewer img {
+                max-width: 95%;
+                max-height: 80%;
+            }
+            
+            .image-viewer .nav-btn {
+                width: 50px;
+                height: 50px;
+                font-size: 30px;
+            }
+            
+            .image-viewer .prev-btn {
+                left: 10px;
+            }
+            
+            .image-viewer .next-btn {
+                right: 10px;
+            }
+            
+            .back-to-top {
+                bottom: 20px;
+                right: 20px;
+                width: 45px;
+                height: 45px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 头部区域 -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo-container">
+                    <img src="logo-black-small.png" alt="SBS拉链" class="logo">
+                    <h1>SBS拉链2026新品推介</h1>
+                </div>
+                <p>为江南布衣户外装备提供专业、可靠的拉链解决方案</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- 导航栏（新增拉头配件分类） -->
+    <nav>
+        <div class="container">
+            <div class="nav-container">
+                <ul class="nav-links">
+                    <li><a href="#metal" class="active">金属拉链</a></li>
+                    <li><a href="#nylon">尼龙拉链</a></li>
+                    <li><a href="#plastic">塑钢拉链</a></li>
+                    <li><a href="#slider">拉头配件</a></li>
+                    <li><a href="#contact">联系我们</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 介绍区域 -->
+    <section class="intro-section">
+        <div class="container">
+            <p>2026年新品系列，我们聚焦功能性、耐用性与美学设计的完美融合，按金属、尼龙、塑钢三大材质及拉头配件分类，助力江南布衣品牌在细节中守护每一次探索。</p>
+            
+            <!-- 搜索功能 -->
+            <div class="search-container">
+                <input type="text" class="search-input" placeholder="搜索产品名称、功能或材质..." id="searchInput">
+                <div class="search-icon">🔍</div>
+            </div>
+            
+            <!-- 搜索结果 -->
+            <div class="search-results hidden" id="searchResults">
+                <h3>搜索结果</h3>
+                <div id="searchResultsContent"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 金属拉链分类（5个产品） -->
+    <section id="metal" class="category-section">
+        <div class="container">
+            <h2 class="category-title">金属拉链</h2>
+            <div class="products-grid">   
+                <!-- 金属哑黑古拉链 -->
+                <div class="product-card" data-image="金属哑黑古拉链.PNG.png" data-name="金属哑黑古拉链" data-category="metal">
+                    <div class="product-image-container">
+                        <img src="金属哑黑古拉链.PNG.png" alt="金属哑黑古拉链" class="product-image">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">金属哑黑古拉链</h3>
+                        <p class="product-description">哑黑古工艺处理，复古质感浓郁，金属材质坚固耐用，适配复古风、工装风高端服饰。</p>
+                        <ul class="product-features">
+                            <li>哑黑古复古工艺</li>
+                            <li>金属坚固材质</li>
+                            <li>适配复古工装风格</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- 金属斜坡牙拉链 -->
+                <div class="product-card" data-image="金属斜坡牙拉链.png" data-name="金属斜坡牙拉链" data-category="metal">
+                    <div class="product-image-container">
+                        <img src="金属斜坡牙拉链.png" alt="金属斜坡牙拉链" class="product-image">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">金属斜坡牙拉链</h3>
+                        <p class="product-description">斜坡牙结构设计，拉合更顺畅，减少卡顿，金属材质防锈耐磨，适配高频开合场景。</p>
+                        <ul class="product-features">
+                            <li>斜坡牙顺畅结构</li>
+                            <li>防锈耐磨金属</li>
+                            <li>适配高频开合</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- 金属窄边防起拱 -->
+                <div class="product-card" data-image="金属窄边防起拱.PNG" data-name="金属窄边防起拱拉链" data-category="metal">
+                    <div class="product-image-container">
+                        <img src="金属窄边防起拱.PNG" alt="金属窄边防起拱拉链" class="product-image">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">金属窄边防起拱拉链</h3>
+                        <p class="product-description">窄边金属材质，特殊结构防止使用过程中起拱，保持衣物平整外观，适配高端通勤服饰。</p>
+                        <ul class="product-features">
+                            <li>金属窄边设计</li>
+                            <li>防起拱结构</li>
+                            <li>质感高端耐用</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- 金属锌合金拉链 -->
+                <div class="product-card" data-image="金属锌合金拉链.PNG" data-name="金属锌合金拉链" data-category="metal">
+                    <div class="product-image-container">
+                        <img src="金属锌合金拉链.PNG" alt="金属锌合金拉链" class="product-image">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">金属锌合金拉链</h3>
+                        <p class="product-description">锌合金材质打造，防锈耐腐蚀，质感厚重，适配户外、通勤等多种场景高端服饰。</p>
+                        <ul class="product-features">
+                            <li>锌合金材质</li>
+                            <li>防锈耐腐蚀</li>
+                            <li>质感厚重高端</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- 金属锌合金拉链01 -->
+                <div class="product-card" data-image="金属锌合金拉链01.PNG" data-name="金属锌合金拉链（轻量化款）" data-category="metal">
+                    <div class="product-image-container">
+                        <img src="金属锌合金拉链01.PNG" alt="金属锌合金拉链（轻量化款）" class="product-image">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">金属锌合金拉链（轻量化款）</h3>
+                        <p class="product-description">轻量化设计的锌合金拉链，保留金属质感的同时减轻重量，适配轻薄型服饰。</p>
+                        <ul class="product-features">
+                            <li>轻量化锌合金</li>
+                            <li>质感与轻便兼顾</li>
+                            <li>适配轻薄服饰</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 尼龙拉链分类（13个产品） -->
+    <section id="nylon" class="category-section">
+        <div class="container">
+            <h2 class="category-title">尼龙拉链</h2>
+            <div class="products-grid">
+                <!-- 尼龙&塑钢包边拉链 -->
+                <div class="product-card" data-image="尼龙&塑钢包边拉链.png" data-name="尼龙&塑钢包边拉链" data-category="nylon">
+                    <div class="product-image-container">
+                        <img src="尼龙&塑钢包边拉链.png" alt="尼龙&塑钢包边拉链" class="product-image">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">尼龙&塑钢包边拉链</h3>
+                        <p class="product-description">尼龙与塑钢材质结合包边工艺，兼顾柔韧与坚固，边缘光滑不刮面料，适配多材质服饰。</p>
+                        <ul class="product-features">
+                            <li>尼龙&塑钢复合材质</li>
+                            <li>包边光滑工艺</li>
+                            <li>多面料适配</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- 尼龙0.5mm双面反光条 -->
+                <div class="product-card" data-image="尼龙0.5mm双面反光条.png" data-name="尼龙0.5mm双面反光条拉链" data-category="nylon">
+                    <div class="product-image-container">
+                        <img src="尼龙0.5mm双面反光条.png" alt="尼龙0.5mm双面反光条拉链" class="product-image">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">尼龙0.5mm双面反光条拉链</h3>
+                        <p class="product-description">0.5mm细规格双面反光条设计，夜间反光效果显著，提升户外夜跑等场景安全性。</p>
+                        <ul class="product-features">
+                            <li>0.5mm双面反光</li>
+                            <li>夜间安全防护</li>
+                            <li>尼龙轻便材质</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- 尼龙包边拉链 -->
+                <div class="product-card" data-image="尼龙包边拉链.png" data-name="尼龙包边拉链" data-category="nylon">
+                    <div class="product-image-container">
+                        <img src="尼龙包边拉链.png" alt="尼龙包边拉链" class="product-image">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">尼龙包边拉链</h3>
+                        <p class="product-description">包边工艺处理，边缘光滑不刮衣物，适配柔软面料服饰，提升穿着舒适度。</p>
+                        <ul class="product-features">
+                            <li>包边光滑工艺</li>
+                            <li>不刮衣物面料</li>
+                            <li>适配柔软服饰</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- 尼龙撞色拉链 -->
+                <div class="product-card" data-image="尼龙撞色拉链.PNG" data-name="尼龙撞色拉链" data-category="nylon">
+                    <div class="product-image-container">
+                        <img src="尼龙撞色拉链.PNG" alt="尼龙撞色拉链" class="product-image">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">尼龙撞色拉链</h3>
+                        <p class="product-description">撞色设计增添时尚感，尼龙材质轻便耐用，适配休闲、户外等年轻化服饰。</p>
+                        <ul class="product-features">
+                            <li>时尚撞色设计</li>
+                            <li>尼龙轻便耐用</li>
+                            <li>适配年轻化服饰</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- 尼龙热转印拉链 -->
+                <div class="product-card" data-image="尼龙热转印拉链.PNG" data-name="尼龙热转印拉链" data-category="nylon">
+                    <div class="product-image-container">
+                        <img src="尼龙热转印拉链.PNG" alt="尼龙热转印拉链" class="product-image">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">尼龙热转印拉链</h3>
+                        <p class="product-description">热转印工艺实现丰富图案设计，色彩鲜艳持久不褪色，提升产品辨识度。</p>
+                        <ul class="product-features">
+                            <li>热转印图案设计</li>
+                            <li>色彩鲜艳持久</li>
+                            <li>图案定制灵活</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- 尼龙真防水拉链 -->
+                <div class="product-card" data-image="尼龙真防水拉链.PNG" data-name="尼龙真防水拉链" data-category="nylon">
+                    <div class="product-image-container">
+                        <img src="尼龙真防水拉链.PNG" alt="尼龙真防水拉链" class="product-image">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">尼龙真防水拉链</h3>
+                        <p class="product-description">专业防水工艺，有效阻隔雨水渗透，适配户外冲锋衣、雨衣等防水服饰。</p>
+                        <ul class="product-features">
+                            <li>专业真防水工艺</li>
+                            <li>雨水渗透阻隔</li>
+                            <li>适配户外防水服饰</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- 尼龙窄边防水 -->
+                <div class="product-card" data-image="尼龙窄边防水.PNG" data-name="尼龙窄边防水拉链" data-category="nylon">
+                    <div class="product-image-container">
+                        <img src="尼龙窄边防水.PNG" alt="尼龙窄边防水拉链" class="product-image">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">尼龙窄边防水拉链</h3>
+                        <p class="product-description">窄边设计搭配防水工艺，兼顾隐蔽性与防水功能，适配轻薄型防水服饰。</p>
+                        <ul class="product-features">
+                            <li>窄边隐蔽设计</li>
+                            <li>有效防水功能</li>
+                            <li>适配轻薄防水服饰</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- 尼龙织0.5mm双面反光条 -->
+                <div class="product-card" data-image="尼龙织0.5mm双面反光条.PNG" data-name="尼龙织0.5mm双面反光条拉链" data-category="nylon">
+                    <div class="product-image-container">
+                        <img src="尼龙织0.5mm双面反光条.PNG" alt="尼龙织0.5mm双面反光条拉链" class="product-image">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">尼龙织0.5mm双面反光条拉链</h3>
+                        <p class="product-description">编织工艺结合0.5mm双面反光条，反光效果更均匀，适配户外运动服饰。</p>
+                        <ul class="product-features">
+                            <li>编织工艺反光条</li>
+                            <li>0.5mm双面反光</li>
+                            <li>反光效果均匀</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- 尼龙编织防水拉链 -->
+                <div class="product-card" data-image="尼龙编织防水拉链.PNG" data-name="尼龙编织防水拉链" data-category="nylon">
+                    <div class="product-image-container">
+                        <img src="尼龙编织防水拉链.PNG" alt="尼龙编织防水拉链" class="product-image">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">尼龙编织防水拉链</h3>
+                        <p class="product-description">编织纹理提升质感，搭配专业防水工艺，兼顾美观与实用性，适配高端户外服饰。</p>
+                        <ul class="product-features">
+                            <li>编织纹理质感</li>
+                            <li>专业防水功能</li>
+                            <li>美观实用兼顾</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- 尼龙色织拉链 -->
+                <div class="product-card" data-image="尼龙色织拉链.PNG" data-name="尼龙色织拉链" data-category="nylon">
+                    <div class="product-image-container">
+                        <img src="尼龙色织拉链.PNG" alt="尼龙色织拉链" class="product-image">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">尼龙色织拉链</h3>
+                        <p class="product-description">色织工艺实现面料与拉链色彩一体化，颜色均匀不褪色，适配高端定制服饰。</p>
+                        <ul class="product-features">
+                            <li>色织工艺上色</li>
+                            <li>颜色均匀持久</li>
+                            <li>适配高端定制</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- 尼龙色织拉链01 -->
+                <div class="product-card" data-image="尼龙色织拉链01.PNG" data-name="尼龙色织拉链（多色款）" data-category="nylon">
+                    <div class="product-image-container">
+                        <img src="尼龙色织拉链01.PNG" alt="尼龙色织拉链（多色款）" class="product-image">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">尼龙色织拉链（多色款）</h3>
+                        <p class="product-description">多色可选的尼龙色织拉链，满足不同服饰配色需求，色牢度高不易褪色。</p>
+                        <ul class="product-features">
+                            <li>多色可选配色</li>
+                            <li>高色牢度工艺</li>
+                            <li>适配多样服饰</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- 尼龙超顺滑拉链 -->
+                <div class="product-card" data-image="尼龙超顺滑拉链.PNG" data-name="尼龙超顺滑拉链" data-category="nylon">
+                    <div class="product-image-container">
+                        <img src="尼龙超顺滑拉链.PNG" alt="尼龙超顺滑拉链" class="product-image">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">尼龙超顺滑拉链</h3>
+                        <p class="product-description">特殊涂层工艺处理，实现超顺滑拉合体验，适配频繁开合的服饰场景。</p>
+                        <ul class="product-features">
+                            <li>特殊顺滑涂层</li>
+                            <li>拉合无阻力</li>
+                            <li>适配高频开合</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- 尼龙间色拉链 -->
+                <div class="product-card" data-image="尼龙间色拉链.PNG" data-name="尼龙间色拉链" data-category="nylon">
+                    <div class="product-image-container">
+                        <img src="尼龙间色拉链.PNG" alt="尼龙间色拉链" class="product-image">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">尼龙间色拉链</h3>
+                        <p class="product-description">间色设计富有层次感，尼龙材质轻便柔韧，适配休闲、通勤等多种服饰风格。</p>
+                        <ul class="product-features">
+                            <li>间色层次设计</li>
+                            <li>尼龙轻便柔韧</li>
+                            <li>风格适配广泛</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 塑钢拉链分类（6个产品） -->
+    <section id="plastic" class="category-section">
+        <div class="container">
+            <h2 class="category-title">塑钢拉链</h2>
+            <div class="products-grid">
+                <!-- 内嵌拉头 -->
+                <div class="product-card" data-image="内嵌拉头.PNG" data-name="内嵌拉头塑钢拉链" data-category="plastic">
+                    <div class="product-image-container">
+                        <img src="内嵌拉头.PNG" alt="内嵌拉头塑钢拉链" class="product-image">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">内嵌拉头塑钢拉链</h3>
+                        <p class="product-description">内嵌式拉头设计，美观隐蔽，塑钢材质轻便耐磨，适配需要简洁外观的服饰。</p>
+                        <ul class="product-features">
+                            <li>内嵌式拉头</li>
+                            <li>外观简洁隐蔽</li>
+                            <li>塑钢轻便耐磨</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- 塑钢单边拉链 -->
+                <div class="product-card" data-image="塑钢单边拉链.PNG" data-name="塑钢单边拉链" data-category="plastic">
+                    <div class="product-image-container">
+                        <img src="塑钢单边拉链.PNG" alt="塑钢单边拉链" class="product-image">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">塑钢单边拉链</h3>
+                        <p class="product-description">单边结构设计，适配特殊服饰或装备的安装需求，塑钢材质兼具金属质感与轻便性。</p>
+                        <ul class="product-features">
+                            <li>单边特殊结构</li>
+                            <li>塑钢质感轻便</li>
+                            <li>适配特殊安装场景</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- 塑钢双向双开拉链 -->
+                <div class="product-card" data-image="塑钢双向双开拉链.PNG" data-name="塑钢双向双开拉链" data-category="plastic">
+                    <div class="product-image-container">
+                        <img src="塑钢双向双开拉链.PNG" alt="塑钢双向双开拉链" class="product-image">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">塑钢双向双开拉链</h3>
+                        <p class="product-description">双向双开设计，可从两端同时开启，便于取物和穿脱，适配户外背包、外套等。</p>
+                        <ul class="product-features">
+                            <li>双向双开结构</li>
+                            <li>取物穿脱便捷</li>
+                            <li>塑钢耐用抗造</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- 塑钢双开易插拉链 -->
+                <div class="product-card" data-image="塑钢双开易插拉链.PNG" data-name="塑钢双开易插拉链" data-category="plastic">
+                    <div class="product-image-container">
+                        <img src="塑钢双开易插拉链.PNG" alt="塑钢双开易插拉链" class="product-image">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">塑钢双开易插拉链</h3>
+                        <p class="product-description">双开结构搭配易插拔设计，单手即可完成对接，提升使用便利性，适配户外场景。</p>
+                        <ul class="product-features">
+                            <li>双开易插拔设计</li>
+                            <li>单手操作便捷</li>
+                            <li>户外场景适配</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- 塑钢双开易插拉链01 -->
+                <div class="product-card" data-image="塑钢双开易插拉链01.PNG" data-name="塑钢双开易插拉链（升级款）" data-category="plastic">
+                    <div class="product-image-container">
+                        <img src="塑钢双开易插拉链01.PNG" alt="塑钢双开易插拉链（升级款）" class="product-image">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">塑钢双开易插拉链（升级款）</h3>
+                        <p class="product-description">升级款双开易插拉链，优化插拔结构，适配低温等恶劣环境，稳定性更强。</p>
+                        <ul class="product-features">
+                            <li>升级易插结构</li>
+                            <li>恶劣环境适配</li>
+                            <li>结构稳定耐用</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- 塑钢真防水 -->
+                <div class="product-card" data-image="塑钢真防水.PNG" data-name="塑钢真防水拉链" data-category="plastic">
+                    <div class="product-image-container">
+                        <img src="塑钢真防水.PNG" alt="塑钢真防水拉链" class="product-image">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">塑钢真防水拉链</h3>
+                        <p class="product-description">塑钢材质搭配真防水工艺，兼顾硬度与防水性，适配户外恶劣环境下的服饰装备。</p>
+                        <ul class="product-features">
+                            <li>塑钢坚固材质</li>
+                            <li>真防水密封工艺</li>
+                            <li>户外恶劣环境适配</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 拉头配件分类（2个产品） -->
+    <section id="slider" class="category-section">
+        <div class="container">
+            <h2 class="category-title">拉头配件</h2>
+            <div class="products-grid">
+                <!-- 拉头织带补充 -->
+                <div class="product-card" data-image="拉头织带补充.PNG" data-name="拉头织带补充配件" data-category="slider">
+                    <div class="product-image-container">
+                        <img src="拉头织带补充.PNG" alt="拉头织带补充配件" class="product-image">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">拉头织带补充配件</h3>
+                        <p class="product-description">专用拉头织带补充配件，材质坚韧，适配多种拉头型号，方便更换与搭配。</p>
+                        <ul class="product-features">
+                            <li>材质坚韧耐用</li>
+                            <li>多型号拉头适配</li>
+                            <li>更换搭配便捷</li>
+                        </ul>
+                    </div>
+                </div>
+ <!-- 内嵌拉头 -->
+                <div class="product-card" data-image="内嵌拉头.PNG" data-name="内嵌拉头塑钢拉链" data-category="plastic">
+                    <div class="product-image-container">
+                        <img src="内嵌拉头.PNG" alt="内嵌拉头塑钢拉链" class="product-image">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">内嵌拉头塑钢拉链</h3>
+                        <p class="product-description">内嵌式拉头设计，美观隐蔽，塑钢材质轻便耐磨，适配需要简洁外观的服饰。</p>
+                        <ul class="product-features">
+                            <li>内嵌式拉头</li>
+                            <li>外观简洁隐蔽</li>
+                            <li>塑钢轻便耐磨</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- 选中拉头 -->
+                <div class="product-card" data-image="选中拉头.PNG" data-name="精选拉头配件" data-category="slider">
+                    <div class="product-image-container">
+                        <img src="选中拉头.PNG" alt="精选拉头配件" class="product-image">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">精选拉头配件</h3>
+                        <p class="product-description">精选高品质拉头配件，拉合顺畅，适配多种拉链类型，提升拉链整体使用体验。</p>
+                        <ul class="product-features">
+                            <li>高品质选材</li>
+                            <li>拉合顺畅无卡顿</li>
+                            <li>多拉链类型适配</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 底部区域 -->
+    <footer id="contact">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>关于SBS拉链</h3>
+                    <p>福建浔兴拉链科技股份有限公司创办于1984年，于2006年12月22日正式在深圳证券交易所A股上市（股票名称：浔兴股份；证券代码：002098）。公司总部坐落于风光迤逦的福建省晋江市深沪湾畔，拥有福建、上海、天津、东莞、成都五个生产基地，形成了覆盖全国、辐射全球的生产营销体系。</p>
+                </div>
+                <div class="footer-section">
+                    <h3>联系我们</h3>
+                    <p>电话: 15396377670</p>
+                    <p>邮箱: jfsbs741@sbs-zipper.com</p>
+                    <p>地址: 福建泉州晋江深沪浔兴拉链</p>
+                </div>
+                <div class="footer-section">
+                    <h3>快速链接</h3>
+                    <a href="#metal">金属拉链</a>
+                    <a href="#nylon">尼龙拉链</a>
+                    <a href="#plastic">塑钢拉链</a>
+                    <a href="#slider">拉头配件</a>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2025 SBS拉链. 保留所有权利.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 回到顶部按钮 -->
+    <button class="back-to-top" id="backToTop">↑</button>
+
+    <!-- 全屏图片查看器 -->
+    <div class="image-viewer" id="imageViewer">
+        <button class="close-btn" id="closeViewer">×</button>
+        <button class="nav-btn prev-btn" id="prevBtn">‹</button>
+        <button class="nav-btn next-btn" id="nextBtn">›</button>
+        <div class="image-viewer-content">
+            <img id="viewerImage" src="" alt="">
+            <div class="image-info" id="imageInfo"></div>
+        </div>
+    </div>
+
+    <script>
+        // 搜索功能
+        const searchInput = document.getElementById('searchInput');
+        const searchResults = document.getElementById('searchResults');
+        const searchResultsContent = document.getElementById('searchResultsContent');
+        const productCards = document.querySelectorAll('.product-card');
+
+        // 搜索功能实现
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase().trim();
+            
+            if (searchTerm.length === 0) {
+                searchResults.classList.add('hidden');
+                return;
+            }
+
+            const filteredProducts = Array.from(productCards).filter(card => {
+                const name = card.getAttribute('data-name').toLowerCase();
+                const category = card.getAttribute('data-category');
+                const description = card.querySelector('.product-description').textContent.toLowerCase();
+                const features = Array.from(card.querySelectorAll('.product-features li')).map(li => li.textContent.toLowerCase());
+                
+                return name.includes(searchTerm) ||
+                       description.includes(searchTerm) ||
+                       features.some(feature => feature.includes(searchTerm));
+            });
+
+            displaySearchResults(filteredProducts, searchTerm);
+        });
+
+        function displaySearchResults(products, searchTerm) {
+            if (products.length === 0) {
+                searchResultsContent.innerHTML = '<div class="no-results">没有找到匹配的产品</div>';
+                searchResults.classList.remove('hidden');
+                return;
+            }
+
+            let html = '<div class="products-grid">';
+            products.forEach(product => {
+                const name = product.getAttribute('data-name');
+                const image = product.getAttribute('data-image');
+                const description = product.querySelector('.product-description').textContent;
+                const features = product.querySelector('.product-features').innerHTML;
+                
+                html += `
+                    <div class="product-card" data-image="${image}" data-name="${name}">
+                        <div class="product-image-container">
+                            <img src="${image}" alt="${name}" class="product-image">
+                        </div>
+                        <div class="product-info">
+                            <h3 class="product-name">${name}</h3>
+                            <p class="product-description">${description}</p>
+                            <ul class="product-features">${features}</ul>
+                        </div>
+                    </div>
+                `;
+            });
+            html += '</div>';
+            
+            searchResultsContent.innerHTML = html;
+            searchResults.classList.remove('hidden');
+            
+            // 为搜索结果中的产品卡片添加点击事件
+            const resultCards = searchResultsContent.querySelectorAll('.product-card');
+            resultCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    const image = this.getAttribute('data-image');
+                    const name = this.getAttribute('data-name');
+                    openImageViewer(image, name);
+                });
+            });
+        }
+
+        // 回到顶部功能
+        const backToTop = document.getElementById('backToTop');
+        
+        window.addEventListener('scroll', function() {
+            if (window.pageYOffset > 300) {
+                backToTop.classList.add('visible');
+            } else {
+                backToTop.classList.remove('visible');
+            }
+        });
+
+        backToTop.addEventListener('click', function() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+        // 全屏图片查看器功能
+        const imageViewer = document.getElementById('imageViewer');
+        const viewerImage = document.getElementById('viewerImage');
+        const imageInfo = document.getElementById('imageInfo');
+        const closeViewer = document.getElementById('closeViewer');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+
+        let currentImageIndex = 0;
+        let allProductImages = [];
+
+        // 初始化所有产品图片
+        function initializeProductImages() {
+            allProductImages = Array.from(productCards).map(card => ({
+                image: card.getAttribute('data-image'),
+                name: card.getAttribute('data-name')
+            }));
+        }
+
+        // 打开图片查看器
+        function openImageViewer(imageSrc, imageName) {
+            initializeProductImages();
+            currentImageIndex = allProductImages.findIndex(img => img.image === imageSrc);
+            
+            if (currentImageIndex === -1) return;
+            
+            viewerImage.src = imageSrc;
+            imageInfo.textContent = imageName;
+            imageViewer.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            
+            updateNavigationButtons();
+        }
+
+        // 更新导航按钮状态
+        function updateNavigationButtons() {
+            prevBtn.style.display = currentImageIndex > 0 ? 'flex' : 'none';
+            nextBtn.style.display = currentImageIndex < allProductImages.length - 1 ? 'flex' : 'none';
+        }
+
+        // 导航到上一张图片
+        function showPreviousImage() {
+            if (currentImageIndex > 0) {
+                currentImageIndex--;
+                const imageData = allProductImages[currentImageIndex];
+                viewerImage.src = imageData.image;
+                imageInfo.textContent = imageData.name;
+                updateNavigationButtons();
+            }
+        }
+
+        // 导航到下一张图片
+        function showNextImage() {
+            if (currentImageIndex < allProductImages.length - 1) {
+                currentImageIndex++;
+                const imageData = allProductImages[currentImageIndex];
+                viewerImage.src = imageData.image;
+                imageInfo.textContent = imageData.name;
+                updateNavigationButtons();
+            }
+        }
+
+        // 关闭图片查看器
+        function closeImageViewer() {
+            imageViewer.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        // 事件监听器
+        closeViewer.addEventListener('click', closeImageViewer);
+        prevBtn.addEventListener('click', showPreviousImage);
+        nextBtn.addEventListener('click', showNextImage);
+
+        // 键盘导航
+        document.addEventListener('keydown', function(e) {
+            if (!imageViewer.classList.contains('active')) return;
+            
+            switch(e.key) {
+                case 'Escape':
+                    closeImageViewer();
+                    break;
+                case 'ArrowLeft':
+                    showPreviousImage();
+                    break;
+                case 'ArrowRight':
+                    showNextImage();
+                    break;
+            }
+        });
+
+        // 点击背景关闭查看器
+        imageViewer.addEventListener('click', function(e) {
+            if (e.target === imageViewer) {
+                closeImageViewer();
+            }
+        });
+
+        // 为所有产品卡片添加点击事件
+        productCards.forEach(card => {
+            card.addEventListener('click', function() {
+                const image = this.getAttribute('data-image');
+                const name = this.getAttribute('data-name');
+                openImageViewer(image, name);
+            });
+        });
+
+        // 图片懒加载
+        function lazyLoadImages() {
+            const imageObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const img = entry.target;
+                        img.src = img.getAttribute('data-src');
+                        img.classList.remove('lazy-loading');
+                        observer.unobserve(img);
+                    }
+                });
+            });
+
+            const lazyImages = document.querySelectorAll('img[data-src]');
+            lazyImages.forEach(img => {
+                imageObserver.observe(img);
+            });
+        }
+
+        // 初始化懒加载
+        document.addEventListener('DOMContentLoaded', lazyLoadImages);
+
+        // 平滑滚动导航
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // 导航栏高亮
+        window.addEventListener('scroll', function() {
+            const sections = document.querySelectorAll('section[id]');
+            const navLinks = document.querySelectorAll('.nav-links a');
+            
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (pageYOffset >= sectionTop - 100) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href').substring(1) === current) {
+                    link.classList.add('active');
+                }
+            });
+        });
+
+        console.log('SBS拉链产品展示页面已加载完成');
+    </script>
+</body>
+</html>

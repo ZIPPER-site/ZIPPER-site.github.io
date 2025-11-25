@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>《一条拉链的四十年》分镜头表</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            background: #f8f9fa;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        /* 标题区域 */
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #2c3e50;
+        }
+        
+        .header h1 {
+            font-size: 36px;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .header h2 {
+            font-size: 20px;
+            color: #7f8c8d;
+            font-weight: normal;
+        }
+        
+        .header .subtitle {
+            display: inline-block;
+            background: #3498db;
+            color: white;
+            padding: 8px 25px;
+            border-radius: 25px;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+        
+        /* 时间轴标题 */
+        .timeline-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 10px;
+            margin: 30px 0 20px;
+            font-size: 18px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .timeline-section::before {
+            content: '⏳';
+            font-size: 24px;
+        }
+        
+        /* 表格样式 */
+        .shot-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+        
+        .shot-table th {
+            background: #34495e;
+            color: white;
+            padding: 12px 15px;
+            text-align: left;
+            font-size: 14px;
+            font-weight: 600;
+            border: 1px solid #ddd;
+        }
+        
+        .shot-table td {
+            padding: 15px;
+            border: 1px solid #ddd;
+            font-size: 14px;
+            vertical-align: top;
+        }
+        
+        .shot-table tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+        
+        .shot-table tr:hover {
+            background: #f5f7fa;
+            transform: scale(1.005);
+            transition: transform 0.3s ease;
+        }
+        
+        /* 镜头编号样式 */
+        .shot-number {
+            background: #3498db;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin: 0 auto;
+        }
+        
+        /* 景别标签 */
+        .shot-type {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            color: white;
+        }
+        
+        .type-extreme-wide { background: #9b59b6; }
+        .type-wide { background: #3498db; }
+        .type-medium { background: #2ecc71; }
+        .type-close { background: #f39c12; }
+        .type-extreme-close { background: #e74c3c; }
+        .type-over-shoulder { background: #1abc9c; }
+        
+        /* 时长显示 */
+        .duration {
+            background: #ecf0f1;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-weight: 600;
+            color: #2c3e50;
+            display: inline-block;
+        }
+        
+        /* 画面描述区域 */
+        .description {
+            line-height: 1.8;
+        }
+        
+        .description strong {
+            color: #2c3e50;
+        }
+        
+        /* 机位运动指示 */
+        .camera-movement {
+            display: inline-block;
+            background: #f1c40f;
+            color: #2c3e50;
+            padding: 3px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-right: 5px;
+            margin-bottom: 5px;
+        }
+        
+        /* 音频区域 */
+        .audio-section {
+            background: #e8f4fd;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+        
+        .audio-section h4 {
+            color: #2980b9;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+        
+        .audio-section p {
+            font-style: italic;
+            color: #34495e;
+            font-size: 13px;
+        }
+        
+        /* 备注区域 */
+        .notes {
+            background: #faf6ed;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+        
+        /* 倒计时显示 */
+        .countdown {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #e74c3c;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            font-size: 24px;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            z-index: 1000;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 1200px) {
+            .container {
+                padding: 20px;
+            }
+            
+            .shot-table th,
+            .shot-table td {
+                padding: 10px;
+                font-size: 13px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 28px;
+            }
+            
+            .shot-table {
+                display: block;
+                overflow-x: auto;
+            }
+            
+            .timeline-section {
+                font-size: 16px;
+                padding: 10px 20px;
+            }
+        }
+        
+        /* 动画效果 */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .shot-row {
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        /* 页码导航 */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 40px;
+        }
+        
+        .page-btn {
+            padding: 10px 20px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .page-btn:hover {
+            background: #2980b9;
+        }
+        
+        .page-btn.active {
+            background: #2c3e50;
+        }
+    </style>
+</head>
+<body>
+    <div class="countdown">总时长: 3:00</div>
+    
+    <div class="container">
+        <div class="header">
+            <h1>🎬 《一条拉链的四十年》</h1>
+            <h2>完整分镜头表</h2>
+            <span class="subtitle">导演版 | 可直接用于拍摄</span>
+        </div>
+        
+        <!-- 第一部分：开场 -->
+        <div class="timeline-section">
+            开场：诞生 (0:00–0:10)
+        </div>
+        
+        <table class="shot-table">
+            <thead>
+                <tr>
+                    <th>镜头</th>
+                    <th>时长</th>
+                    <th>景别</th>
+                    <th>画面内容</th>
+                    <th>机位运动</th>
+                    <th>音频</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="shot-row">
+                    <td><div class="shot-number">1</div></td>
+                    <td><span class="duration">4s</span></td>
+                    <td><span class="shot-type type-medium">俯拍中景</span></td>
+                    <td class="description">
+                        <strong>1985年老车间</strong>，昏黄灯光，机器缓慢运作，空气弥漫细小灰尘。
+                        <br><strong>道具/场景：</strong>老式工业灯、旧缝纫机、金属操作台
+                    </td>
+                    <td><span class="camera-movement">轻微下降俯拍</span></td>
+                    <td class="audio-section">
+                        <h4>旁白：</h4>
+                        <p>"1985年的一个清晨，我诞生了。"</p>
+                    </td>
+                </tr>
+                
+                <tr class="shot-row">
+                    <td><div class="shot-number">2</div></td>
+                    <td><span class="duration">3s</span></td>
+                    <td><span class="shot-type type-close">特写</span></td>
+                    <td class="description">
+                        一条刚生产出的拉链静静躺在传送线上，金属牙齿在灯光下泛着柔和光泽。
+                    </td>
+                    <td><span class="camera-movement">推近特写</span></td>
+                    <td class="audio-section">
+                        <h4>旁白：</h4>
+                        <p>"我还什么都不懂，只是一条普通的拉链。"</p>
+                    </td>
+                </tr>
+                
+                <tr class="shot-row">
+                    <td><div class="shot-number">3</div></td>
+                    <td><span class="duration">3s</span></td>
+                    <td><span class="shot-type type-extreme-close">特写（人物手）</span></td>
+                    <td class="description">
+                        年轻师傅粗糙的手从画面上方伸入，指尖即将触碰拉链，手掌轻轻托起。
+                    </td>
+                    <td><span class="camera-movement">固定机位</span></td>
+                    <td class="audio-section">
+                        <h4>同期声（轻声）：</h4>
+                        <p>"做好每一条拉链，就是给未来拉开一条门。"</p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <!-- 第二部分：连接梦想的年代 -->
+        <div class="timeline-section">
+            连接梦想的年代 (0:10–0:35)
+        </div>
+        
+        <table class="shot-table">
+            <thead>
+                <tr>
+                    <th>镜头</th>
+                    <th>时长</th>
+                    <th>景别</th>
+                    <th>画面内容</th>
+                    <th>机位运动</th>
+                    <th>音频</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="shot-row">
+                    <td><div class="shot-number">4</div></td>
+                    <td><span class="duration">5s</span></td>
+                    <td><span class="shot-type type-wide">中景</span></td>
+                    <td class="description">
+                        货物打包上车，一箱箱拉链送往全国，工人忙碌地搬运、装车。
+                        <br><strong>场景：</strong>九十年代工厂仓库
+                    </td>
+                    <td><span class="camera-movement">手持跟拍</span></td>
+                    <td class="audio-section">
+                        <h4>旁白：</h4>
+                        <p>"九十年代，我跟伙伴们被送往全国各地。"</p>
+                    </td>
+                </tr>
+                
+                <tr class="shot-row">
+                    <td><div class="shot-number">5</div></td>
+                    <td><span class="duration">6s</span></td>
+                    <td><span class="shot-type type-medium">中景</span></td>
+                    <td class="description">
+                        孩子穿校服，妈妈拉好拉链；孩子在校园里奔跑，阳光洒在身上。
+                        <br><strong>场景：</strong>校园操场
+                    </td>
+                    <td><span class="camera-movement">慢动作推近</span></td>
+                    <td class="audio-section">
+                        <h4>旁白：</h4>
+                        <p>"有人把我缝在校服上，陪孩子成长。"</p>
+                    </td>
+                </tr>
+                
+                <tr class="shot-row">
+                    <td><div class="shot-number">6</div></td>
+                    <td><span class="duration">6s</span></td>
+                    <td><span class="shot-type type-medium">中景</span></td>
+                    <td class="description">
+                        年轻人拉起旅行包的拉链，踏上旅程，背景是机场/车站。
+                        <br><strong>道具：</strong>行李箱、背包
+                    </td>
+                    <td><span class="camera-movement">跟拍背影</span></td>
+                    <td class="audio-section">
+                        <h4>旁白：</h4>
+                        <p>"有人带着我走过城市与山海。"</p>
+                    </td>
+                </tr>
+                
+                <tr class="shot-row">
+                    <td><div class="shot-number">7</div></td>
+                    <td><span class="duration">6s</span></td>
+                    <td><span class="shot-type type-close">特写</span></td>
+                    <td class="description">
+                        工人穿工装整理拉链，上岗作业，专注的神情。
+                        <br><strong>场景：</strong>工厂车间
+                    </td>
+                    <td><span class="camera-movement">侧拍→特写拉链</span></td>
+                    <td class="audio-section">
+                        <h4>旁白：</h4>
+                        <p>"也有人把我穿在工装上，成为最可靠的伙伴。"</p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <!-- 第三部分：升级与革新的年代 -->
+        <div class="timeline-section">
+            升级与革新的年代 (0:35–1:05)
+        </div>
+        
+        <table class="shot-table">
+            <thead>
+                <tr>
+                    <th>镜头</th>
+                    <th>时长</th>
+                    <th>景别</th>
+                    <th>画面内容</th>
+                    <th>机位运动</th>
+                    <th>音频</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="shot-row">
+                    <td><div class="shot-number">8</div></td>
+                    <td><span class="duration">4s</span></td>
+                    <td><span class="shot-type type-wide">全景</span></td>
+                    <td class="description">
+                        旧设备转场为新设备（溶解效果），展现时代变迁。
+                        <br><strong>转场效果：</strong>淡入淡出
+                    </td>
+                    <td><span class="camera-movement">固定机位</span></td>
+                    <td class="audio-section">
+                        <h4>旁白：</h4>
+                        <p>"世纪之交，世界变快了，我们也开始升级。"</p>
+                    </td>
+                </tr>
+                
+                <tr class="shot-row">
+                    <td><div class="shot-number">9</div></td>
+                    <td><span class="duration">7s</span></td>
+                    <td><span class="shot-type type-wide">全景+特写</span></td>
+                    <td class="description">
+                        新型设备自动生产拉链，机械臂精准运作，效率显著提升。
+                        <br><strong>场景：</strong>现代化生产线
+                    </td>
+                    <td><span class="camera-movement">平移展示产线</span></td>
+                    <td class="audio-section">
+                        <h4>旁白：</h4>
+                        <p>"新机器、新材料、新标准不断出现。"</p>
+                    </td>
+                </tr>
+                
+                <tr class="shot-row">
+                    <td><div class="shot-number">10</div></td>
+                    <td><span class="duration">9s</span></td>
+                    <td><span class="shot-type type-extreme-close">多个特写剪辑</span></td>
+                    <td class="description">
+                        <ul>
+                            <li>耐磨涂层测试：拉链反复拉扯</li>
+                            <li>静音结构实验：分贝仪显示</li>
+                            <li>顺滑度测试：机器自动检测</li>
+                        </ul>
+                        <strong>节奏：</strong>快速剪辑
+                    </td>
+                    <td><span class="camera-movement">快速切换</span></td>
+                    <td class="audio-section">
+                        <h4>旁白：</h4>
+                        <p>"我经历重生，变得更耐用、更顺滑、更安静。"</p>
+                    </td>
+                </tr>
+                
+                <tr class="shot-row">
+                    <td><div class="shot-number">11</div></td>
+                    <td><span class="duration">10s</span></td>
+                    <td><span class="shot-type type-extreme-wide">车间全景+特写</span></td>
+                    <td class="description">
+                        现代化工厂运行，员工忙碌协调，大屏幕显示生产数据。
+                        <br><strong>场景：</strong>智能车间
+                    </td>
+                    <td><span class="camera-movement">航拍→俯冲</span></td>
+                    <td class="audio-section">
+                        <h4>旁白：</h4>
+                        <p>"我见证企业从小作坊，成长为现代工厂。"</p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <!-- 第四部分：与人一起成长 -->
+        <div class="timeline-section">
+            与人一起成长 (1:05–1:40)
+        </div>
+        
+        <table class="shot-table">
+            <thead>
+                <tr>
+                    <th>镜头</th>
+                    <th>时长</th>
+                    <th>景别</th>
+                    <th>画面内容</th>
+                    <th>机位运动</th>
+                    <th>音频</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="shot-row">
+                    <td><div class="shot-number">12</div></td>
+                    <td><span class="duration">8s</span></td>
+                    <td><span class="shot-type type-medium">中景</span></td>
+                    <td class="description">
+                        18岁新人认真学习检针操作，师傅在旁指导，专注的神情。
+                        <br><strong>场景：</strong>质检车间
+                    </td>
+                    <td><span class="camera-movement">侧拍+手部特写</span></td>
+                    <td class="audio-section">
+                        <h4>旁白：</h4>
+                        <p>"这里，见证了无数人的成长——有人从学徒变成主管。"</p>
+                    </td>
+                </tr>
+                
+                <tr class="shot-row">
+                    <td><div class="shot-number">13</div></td>
+                    <td><span class="duration">8s</span></td>
+                    <td><span class="shot-type type-medium">中景</span></td>
+                    <td class="description">
+                        设计师从纸上绘制牙型，到电脑建模，再到团队研发新品，时间压缩。
+                        <br><strong>场景：</strong>研发中心
+                    </td>
+                    <td><span class="camera-movement">推近至屏幕</span></td>
+                    <td class="audio-section">
+                        <h4>旁白：</h4>
+                        <p>"有人从画第一张图纸，到主导整个新品系列。"</p>
+                    </td>
+                </tr>
+                
+                <tr class="shot-row">
+                    <td><div class="shot-number">14</div></td>
+                    <td><span class="duration">10s</span></td>
+                    <td><span class="shot-type type-medium">中景+特写</span></td>
+                    <td class="description">
+                        <ul>
+                            <li>员工婚礼合影（老照片风格）</li>
+                            <li>行李箱拉链特写</li>
+                            <li>婚纱背面拉链特写（新娘转身）</li>
+                        </ul>
+                        <strong>氛围：</strong>温馨浪漫
+                    </td>
+                    <td><span class="camera-movement">柔焦+慢镜头</span></td>
+                    <td class="audio-section">
+                        <h4>旁白：</h4>
+                        <p>"还有人，在这里遇见爱情。我也悄悄藏在他们生活的每一个细节里。"</p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <!-- 第五部分：新的四十年·世界的舞台 -->
+        <div class="timeline-section">
+            新的四十年·世界的舞台 (1:40–2:20)
+        </div>
+        
+        <table class="shot-table">
+            <thead>
+                <tr>
+                    <th>镜头</th>
+                    <th>时长</th>
+                    <th>景别</th>
+                    <th>画面内容</th>
+                    <th>机位运动</th>
+                    <th>音频</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="shot-row">
+                    <td><div class="shot-number">15</div></td>
+                    <td><span class="duration">10s</span></td>
+                    <td><span class="shot-type type-extreme-wide">航拍远景+特写</span></td>
+                    <td class="description">
+                        登山者在雪山前拉上冲锋衣拉链，背景是壮丽雪山。
+                        <br><strong>场景：</strong>高山户外
+                    </td>
+                    <td><span class="camera-movement">航拍远景→特写拉链</span></td>
+                    <td class="audio-section">
+                        <h4>旁白：</h4>
+                        <p>"四十年后，我走进户外世界，替人抵御风雨。"</p>
+                    </td>
+                </tr>
+                
+                <tr class="shot-row">
+                    <td><div class="shot-number">16</div></td>
+                    <td><span class="duration">8s</span></td>
+                    <td><span class="shot-type type-close">特写</span></td>
+                    <td class="description">
+                        妈妈给宝宝拉上小外套的安全拉链，宝宝露出微笑。
+                        <br><strong>场景：</strong>温馨家居
+                    </td>
+                    <td><span class="camera-movement">低角度特写</span></td>
+                    <td class="audio-section">
+                        <h4>旁白：</h4>
+                        <p>"也守护着最柔软、最珍贵的小生命。"</p>
+                    </td>
+                </tr>
+                
+                <tr class="shot-row">
+                    <td><div class="shot-number">17</div></td>
+                    <td><span class="duration">10s</span></td>
+                    <td><span class="shot-type type-close">特写</span></td>
+                    <td class="description">
+                        运动员穿专业装备，剧烈运动，拉链承受高强度考验。
+                        <br><strong>场景：</strong>运动赛场
+                    </td>
+                    <td><span class="camera-movement">高速慢镜头</span></td>
+                    <td class="audio-section">
+                        <h4>旁白：</h4>
+                        <p>"在高端运动装备中，我接受更严苛的考验。"</p>
+                    </td>
+                </tr>
+                
+                <tr class="shot-row">
+                    <td><div class="shot-number">18</div></td>
+                    <td><span class="duration">12s</span></td>
+                    <td><span class="shot-type type-wide">中景+特效</span></td>
+                    <td class="description">
+                        产品从国内发往全球；地图动效扩散至多个国家，货轮、飞机、卡车运输画面。
+                        <br><strong>特效：</strong>数据可视化
+                    </td>
+                    <td><span class="camera-movement">动画效果</span></td>
+                    <td class="audio-section">
+                        <h4>旁白：</h4>
+                        <p>"从中国到世界，我不断链接更多可能。"</p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <!-- 第六部分：未来愿景 -->
+        <div class="timeline-section">
+            未来愿景 (2:20–2:50)
+        </div>
+        
+        <table class="shot-table">
+            <thead>
+                <tr>
+                    <th>镜头</th>
+                    <th>时长</th>
+                    <th>景别</th>
+                    <th>画面内容</th>
+                    <th>机位运动</th>
+                    <th>音频</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="shot-row">
+                    <td><div class="shot-number">19</div></td>
+                    <td><span class="duration">8s</span></td>
+                    <td><span class="shot-type type-medium">中景</span></td>
+                    <td class="description">
+                        研发团队讨论新材料、环保拉链样品展示，白板上写满公式和设计图。
+                        <br><strong>场景：</strong>未来实验室
+                    </td>
+                    <td><span class="camera-movement">平移</span></td>
+                    <td class="audio-section">
+                        <h4>旁白：</h4>
+                        <p>"未来，我希望科技与创意咬合得更紧。"</p>
+                    </td>
+                </tr>
+                
+                <tr class="shot-row">
+                    <td><div class="shot-number">20</div></td>
+                    <td><span class="duration">8s</span></td>
+                    <td><span class="shot-type type-close">特写</span></td>
+                    <td class="description">
+                        循环材料、回收再生原料展示，绿色植物环绕，环保标识清晰。
+                        <br><strong>色调：</strong>绿色主调
+                    </td>
+                    <td><span class="camera-movement">360°环绕</span></td>
+                    <td class="audio-section">
+                        <h4>旁白：</h4>
+                        <p>"让环保材料与循环经济紧密连结。"</p>
+                    </td>
+                </tr>
+                
+                <tr class="shot-row">
+                    <td><div class="shot-number">21</div></td>
+                    <td><span class="duration">6s</span></td>
+                    <td><span class="shot-type type-wide">全景</span></td>
+                    <td class="description">
+                        车间里阳光洒下，工人微笑工作，现代化设备高效运转。
+                        <br><strong>氛围：</strong>明亮、希望
+                    </td>
+                    <td><span class="camera-movement">慢推入</span></td>
+                    <td class="audio-section">
+                        <h4>旁白：</h4>
+                        <p>"让企业与世界的距离越来越短。"</p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <!-- 结尾 -->
+        <div class="timeline-section">
+            结尾 (2:50–3:00)
+        </div>
+        
+        <table class="shot-table">
+            <thead>
+                <tr>
+                    <th>镜头</th>
+                    <th>时长</th>
+                    <th>景别</th>
+                    <th>画面内容</th>
+                    <th>机位运动</th>
+                    <th>音频</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="shot-row">
+                    <td><div class="shot-number">22</div></td>
+                    <td><span class="duration">6s</span></td>
+                    <td><span class="shot-type type-extreme-close">极致特写</span></td>
+                    <td class="description">
+                        一条拉链被轻轻合上，发出顺滑声，金属牙齿完美咬合。
+                        <br><strong>音效重点：</strong>拉链声音特写
+                    </td>
+                    <td><span class="camera-movement">超近距微距</span></td>
+                    <td class="audio-section">
+                        <h4>旁白：</h4>
+                        <p>"四十年，我们用小小的拉链，连接时间与梦想。"</p>
+                    </td>
+                </tr>
+                
+                <tr class="shot-row">
+                    <td><div class="shot-number">23</div></td>
+                    <td><span class="duration">4s</span></td>
+                    <td><span class="shot-type type-wide">全景</span></td>
+                    <td class="description">
+                        企业LOGO+"链接时光，影述未来"主题+"40周年"文字淡入。
+                        <br><strong>背景：</strong>拉链抽象图案
+                    </td>
+                    <td><span class="camera-movement">固定机位</span></td>
+                    <td class="audio-section">
+                        <h4>旁白收尾：</h4>
+                        <p>"未来，我们继续拉开新的篇章。"</p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <!-- 页码导航 -->
+        <div class="pagination">
+            <button class="page-btn active">第1页</button>
+            <button class="page-btn">第2页</button>
+            <button class="page-btn">第3页</button>
+        </div>
+    </div>
+    
+    <script>
+        // 简单的页面切换功能
+        document.querySelectorAll('.page-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.page-btn').forEach(b => {
+                    b.classList.remove('active');
+                });
+                this.classList.add('active');
+                // 这里可以添加实际的页面切换逻辑
+            });
+        });
+        
+        // 滚动动画效果
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+        
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = 1;
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+        
+        document.querySelectorAll('.shot-row').forEach(row => {
+            row.style.opacity = 0;
+            row.style.transform = 'translateY(20px)';
+            row.style.transition = 'opacity 0.5s ease-out, transform 0.5s ease-out';
+            observer.observe(row);
+        });
+    </script>
+</body>
+</html>

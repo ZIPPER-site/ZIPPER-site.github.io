@@ -22,7 +22,7 @@
         }
         
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
         }
         
@@ -46,33 +46,15 @@
             font-size: 1.1rem;
         }
         
-        .process-selector {
+        .process-comparison {
             display: flex;
-            justify-content: center;
-            margin: 30px 0;
-            gap: 20px;
+            gap: 30px;
+            flex-wrap: wrap;
         }
         
-        .process-btn {
-            padding: 12px 30px;
-            background: #3498db;
-            color: white;
-            border: none;
-            border-radius: 50px;
-            cursor: pointer;
-            font-size: 1rem;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08);
-        }
-        
-        .process-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 7px 14px rgba(50, 50, 93, 0.1), 0 3px 6px rgba(0, 0, 0, 0.08);
-        }
-        
-        .process-btn.active {
-            background: #2c3e50;
+        .process-container {
+            flex: 1;
+            min-width: 300px;
         }
         
         .timeline-container {
@@ -83,6 +65,7 @@
             margin-bottom: 30px;
             position: relative;
             overflow: hidden;
+            height: 100%;
         }
         
         .timeline-title {
@@ -108,7 +91,7 @@
         
         .timeline {
             position: relative;
-            max-width: 1000px;
+            max-width: 100%;
             margin: 0 auto;
         }
         
@@ -219,10 +202,6 @@
             font-size: 0.9rem;
         }
         
-        .process-2 {
-            display: none;
-        }
-        
         .timeline-summary {
             background: #f8f9fa;
             border-radius: 10px;
@@ -244,6 +223,37 @@
             color: #2ecc71;
         }
         
+        .category-tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .category-tab {
+            flex: 1;
+            padding: 12px 20px;
+            text-align: center;
+            background: #e0e0e0;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .category-tab.active {
+            background: #3498db;
+            color: white;
+        }
+        
+        .category-content {
+            display: none;
+        }
+        
+        .category-content.active {
+            display: block;
+        }
+        
         footer {
             text-align: center;
             margin-top: 40px;
@@ -252,6 +262,10 @@
         }
         
         @media screen and (max-width: 768px) {
+            .process-comparison {
+                flex-direction: column;
+            }
+            
             .timeline::after {
                 left: 31px;
             }
@@ -273,11 +287,6 @@
             .step.left::after, .step.right::after {
                 left: 19px;
             }
-            
-            .process-btn {
-                padding: 10px 20px;
-                font-size: 0.9rem;
-            }
         }
     </style>
 </head>
@@ -286,133 +295,189 @@
         <header>
             <h1>生产流程可视化</h1>
             <p class="subtitle">清晰展示从打色到发货的完整生产周期</p>
-            
-            <div class="process-selector">
-                <button class="process-btn active" data-process="1">流程一：直接大货</button>
-                <button class="process-btn" data-process="2">流程二：含打样环节</button>
-            </div>
         </header>
         
-        <main>
+        <div class="process-comparison">
             <!-- 流程一 -->
-            <div class="timeline-container process-1">
-                <h2 class="timeline-title">流程一：打色 → 客户确认 → 直接大货</h2>
-                
-                <div class="timeline">
-                    <!-- 步骤1 -->
-                    <div class="step left">
-                        <div class="step-content">
-                            <h3 class="step-title"><i class="fas fa-palette"></i> 打色</h3>
-                            <span class="step-duration">2-3天</span>
-                            <p class="step-desc">根据客户需求进行颜色开发与调配，确保颜色准确性。</p>
-                        </div>
-                    </div>
+            <div class="process-container">
+                <div class="timeline-container">
+                    <h2 class="timeline-title">流程一：标准流程</h2>
                     
-                    <!-- 步骤2 -->
-                    <div class="step right">
-                        <div class="step-content">
-                            <h3 class="step-title"><i class="fas fa-check-circle"></i> 客户确认颜色</h3>
-                            <span class="step-duration">1天快递</span>
-                            <p class="step-desc">将颜色样品快递给客户进行确认，等待客户反馈。</p>
+                    <div class="timeline">
+                        <!-- 步骤1 -->
+                        <div class="step left">
+                            <div class="step-content">
+                                <h3 class="step-title"><i class="fas fa-palette"></i> 打色</h3>
+                                <span class="step-duration">2-3天</span>
+                                <p class="step-desc">根据客户需求进行颜色开发与调配，确保颜色准确性。</p>
+                            </div>
                         </div>
-                    </div>
-                    
-                    <!-- 步骤3 -->
-                    <div class="step left">
-                        <div class="step-content">
-                            <h3 class="step-title"><i class="fas fa-industry"></i> 直接大货生产</h3>
-                            <span class="step-duration">15-20天（常规）</span>
-                            <p class="step-desc">客户确认颜色后，直接进入大货生产阶段。</p>
-                            <div class="special-note">
-                                <strong>特殊产品：</strong> 生产周期约30天左右
+                        
+                        <!-- 步骤2 -->
+                        <div class="step right">
+                            <div class="step-content">
+                                <h3 class="step-title"><i class="fas fa-check-circle"></i> 客户确认颜色</h3>
+                                <span class="step-duration">1天快递</span>
+                                <p class="step-desc">将颜色样品快递给客户进行确认，等待客户反馈。</p>
+                            </div>
+                        </div>
+                        
+                        <!-- 步骤3 -->
+                        <div class="step left">
+                            <div class="step-content">
+                                <h3 class="step-title"><i class="fas fa-industry"></i> 直接大货生产</h3>
+                                <span class="step-duration">15-20天（常规）</span>
+                                <p class="step-desc">客户确认颜色后，直接进入大货生产阶段。</p>
+                                <div class="special-note">
+                                    <strong>特殊产品：</strong> 生产周期约30天左右
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 步骤4 -->
+                        <div class="step right">
+                            <div class="step-content">
+                                <h3 class="step-title"><i class="fas fa-shipping-fast"></i> 发货</h3>
+                                <p class="step-desc">大货生产完成后安排发货，同时寄送产前样给客户。</p>
                             </div>
                         </div>
                     </div>
                     
-                    <!-- 步骤4 -->
-                    <div class="step right">
-                        <div class="step-content">
-                            <h3 class="step-title"><i class="fas fa-shipping-fast"></i> 发货</h3>
-                            <p class="step-desc">大货生产完成后安排发货，同时寄送产前样给客户。</p>
-                        </div>
+                    <div class="timeline-summary">
+                        <h3 class="summary-title"><i class="fas fa-clock"></i> 流程总时长</h3>
+                        <p><strong>常规产品：</strong> 约18-24天（不含运输时间）</p>
+                        <p><strong>特殊产品：</strong> 约33-39天（不含运输时间）</p>
                     </div>
-                </div>
-                
-                <div class="timeline-summary">
-                    <h3 class="summary-title"><i class="fas fa-clock"></i> 流程总时长</h3>
-                    <p><strong>常规产品：</strong> 约18-24天（不含运输时间）</p>
-                    <p><strong>特殊产品：</strong> 约33-39天（不含运输时间）</p>
                 </div>
             </div>
             
             <!-- 流程二 -->
-            <div class="timeline-container process-2">
-                <h2 class="timeline-title">流程二：打色 → 业务确认 → 打样 → 客户确认 → 大货</h2>
-                
-                <div class="timeline">
-                    <!-- 步骤1 -->
-                    <div class="step left">
-                        <div class="step-content">
-                            <h3 class="step-title"><i class="fas fa-palette"></i> 打色</h3>
-                            <span class="step-duration">2-3天</span>
-                            <p class="step-desc">根据客户需求进行颜色开发与调配，确保颜色准确性。</p>
-                        </div>
+            <div class="process-container">
+                <div class="timeline-container">
+                    <h2 class="timeline-title">流程二：分品类流程</h2>
+                    
+                    <div class="category-tabs">
+                        <div class="category-tab active" data-category="nylon">尼龙/隐形拉链</div>
+                        <div class="category-tab" data-category="plastic">塑钢/金属拉链</div>
                     </div>
                     
-                    <!-- 步骤2 -->
-                    <div class="step right">
-                        <div class="step-content">
-                            <h3 class="step-title"><i class="fas fa-user-check"></i> 业务确认颜色</h3>
-                            <p class="step-desc">内部业务团队对颜色进行审核与确认。</p>
-                        </div>
-                    </div>
-                    
-                    <!-- 步骤3 -->
-                    <div class="step left">
-                        <div class="step-content">
-                            <h3 class="step-title"><i class="fas fa-clipboard-check"></i> 打样</h3>
-                            <span class="step-duration">3-4天</span>
-                            <p class="step-desc">根据确认的颜色制作样品，供客户最终确认。</p>
-                        </div>
-                    </div>
-                    
-                    <!-- 步骤4 -->
-                    <div class="step right">
-                        <div class="step-content">
-                            <h3 class="step-title"><i class="fas fa-check-circle"></i> 客户确认颜色</h3>
-                            <span class="step-duration">1天快递</span>
-                            <p class="step-desc">将样品快递给客户进行最终确认，等待客户反馈。</p>
-                        </div>
-                    </div>
-                    
-                    <!-- 步骤5 -->
-                    <div class="step left">
-                        <div class="step-content">
-                            <h3 class="step-title"><i class="fas fa-industry"></i> 大货生产</h3>
-                            <span class="step-duration">15-20天（常规）</span>
-                            <p class="step-desc">客户确认样品后，进入大货生产阶段。</p>
-                            <div class="special-note">
-                                <strong>特殊产品：</strong> 生产周期约30天左右
+                    <!-- 尼龙/隐形拉链流程 -->
+                    <div class="category-content active" id="nylon-content">
+                        <div class="timeline">
+                            <!-- 步骤1 -->
+                            <div class="step left">
+                                <div class="step-content">
+                                    <h3 class="step-title"><i class="fas fa-palette"></i> 打色</h3>
+                                    <span class="step-duration">2-3天</span>
+                                    <p class="step-desc">根据客户需求进行颜色开发与调配，确保颜色准确性。</p>
+                                </div>
+                            </div>
+                            
+                            <!-- 步骤2 -->
+                            <div class="step right">
+                                <div class="step-content">
+                                    <h3 class="step-title"><i class="fas fa-user-check"></i> 业务确认颜色</h3>
+                                    <p class="step-desc">内部业务团队对颜色进行审核与确认。</p>
+                                </div>
+                            </div>
+                            
+                            <!-- 步骤3 -->
+                            <div class="step left">
+                                <div class="step-content">
+                                    <h3 class="step-title"><i class="fas fa-clipboard-check"></i> 打样</h3>
+                                    <span class="step-duration">3-4天</span>
+                                    <p class="step-desc">根据确认的颜色制作样品，供客户最终确认。</p>
+                                </div>
+                            </div>
+                            
+                            <!-- 步骤4 -->
+                            <div class="step right">
+                                <div class="step-content">
+                                    <h3 class="step-title"><i class="fas fa-check-circle"></i> 客户确认颜色</h3>
+                                    <span class="step-duration">1天快递</span>
+                                    <p class="step-desc">将样品快递给客户进行最终确认，等待客户反馈。</p>
+                                </div>
+                            </div>
+                            
+                            <!-- 步骤5 -->
+                            <div class="step left">
+                                <div class="step-content">
+                                    <h3 class="step-title"><i class="fas fa-industry"></i> 大货生产</h3>
+                                    <span class="step-duration">15-20天（常规）</span>
+                                    <p class="step-desc">客户确认样品后，进入大货生产阶段。</p>
+                                    <div class="special-note">
+                                        <strong>特殊产品：</strong> 生产周期约30天左右
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- 步骤6 -->
+                            <div class="step right">
+                                <div class="step-content">
+                                    <h3 class="step-title"><i class="fas fa-shipping-fast"></i> 发货</h3>
+                                    <p class="step-desc">大货生产完成后安排发货，同时寄送产前样给客户。</p>
+                                </div>
                             </div>
                         </div>
+                        
+                        <div class="timeline-summary">
+                            <h3 class="summary-title"><i class="fas fa-clock"></i> 流程总时长</h3>
+                            <p><strong>常规产品：</strong> 约21-28天（不含运输时间）</p>
+                            <p><strong>特殊产品：</strong> 约36-42天（不含运输时间）</p>
+                        </div>
                     </div>
                     
-                    <!-- 步骤6 -->
-                    <div class="step right">
-                        <div class="step-content">
-                            <h3 class="step-title"><i class="fas fa-shipping-fast"></i> 发货</h3>
-                            <p class="step-desc">大货生产完成后安排发货，同时寄送产前样给客户。</p>
+                    <!-- 塑钢/金属拉链流程 -->
+                    <div class="category-content" id="plastic-content">
+                        <div class="timeline">
+                            <!-- 步骤1 -->
+                            <div class="step left">
+                                <div class="step-content">
+                                    <h3 class="step-title"><i class="fas fa-clipboard-check"></i> 成品打样</h3>
+                                    <span class="step-duration">3-4天</span>
+                                    <p class="step-desc">制作完整的成品样品，包括颜色和材质。</p>
+                                </div>
+                            </div>
+                            
+                            <!-- 步骤2 -->
+                            <div class="step right">
+                                <div class="step-content">
+                                    <h3 class="step-title"><i class="fas fa-check-circle"></i> 寄样确认颜色</h3>
+                                    <span class="step-duration">1天快递</span>
+                                    <p class="step-desc">将成品样品快递给客户进行颜色和品质确认。</p>
+                                </div>
+                            </div>
+                            
+                            <!-- 步骤3 -->
+                            <div class="step left">
+                                <div class="step-content">
+                                    <h3 class="step-title"><i class="fas fa-industry"></i> 直接大货生产</h3>
+                                    <span class="step-duration">15-20天（常规）</span>
+                                    <p class="step-desc">客户确认样品后，直接进入大货生产阶段。</p>
+                                    <div class="special-note">
+                                        <strong>特殊产品：</strong> 生产周期约30天左右
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- 步骤4 -->
+                            <div class="step right">
+                                <div class="step-content">
+                                    <h3 class="step-title"><i class="fas fa-shipping-fast"></i> 发货</h3>
+                                    <p class="step-desc">大货生产完成后安排发货，同时寄送产前样给客户。</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="timeline-summary">
+                            <h3 class="summary-title"><i class="fas fa-clock"></i> 流程总时长</h3>
+                            <p><strong>常规产品：</strong> 约19-25天（不含运输时间）</p>
+                            <p><strong>特殊产品：</strong> 约34-40天（不含运输时间）</p>
                         </div>
                     </div>
                 </div>
-                
-                <div class="timeline-summary">
-                    <h3 class="summary-title"><i class="fas fa-clock"></i> 流程总时长</h3>
-                    <p><strong>常规产品：</strong> 约21-28天（不含运输时间）</p>
-                    <p><strong>特殊产品：</strong> 约36-42天（不含运输时间）</p>
-                </div>
             </div>
-        </main>
+        </div>
         
         <footer>
             <p>生产流程可视化 &copy; 2023 - 设计用于清晰展示生产时间线与关键节点</p>
@@ -421,25 +486,23 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const processBtns = document.querySelectorAll('.process-btn');
-            const process1 = document.querySelector('.process-1');
-            const process2 = document.querySelector('.process-2');
+            const categoryTabs = document.querySelectorAll('.category-tab');
+            const categoryContents = document.querySelectorAll('.category-content');
             
-            processBtns.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    // 更新按钮状态
-                    processBtns.forEach(b => b.classList.remove('active'));
+            categoryTabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    // 更新标签状态
+                    categoryTabs.forEach(t => t.classList.remove('active'));
                     this.classList.add('active');
                     
-                    // 显示对应的流程
-                    const process = this.getAttribute('data-process');
-                    if (process === '1') {
-                        process1.style.display = 'block';
-                        process2.style.display = 'none';
-                    } else {
-                        process1.style.display = 'none';
-                        process2.style.display = 'block';
-                    }
+                    // 显示对应的内容
+                    const category = this.getAttribute('data-category');
+                    categoryContents.forEach(content => {
+                        content.classList.remove('active');
+                        if (content.id === `${category}-content`) {
+                            content.classList.add('active');
+                        }
+                    });
                 });
             });
         });

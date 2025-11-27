@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>生产流程可视化</title>
+    <title>生产流程对比与染色问题分析</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -31,7 +31,7 @@
             margin-bottom: 40px;
             padding: 20px;
             background: rgba(255, 255, 255, 0.9);
-            border-radius: 12px;
+            border-radius: 10px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
         
@@ -46,212 +46,253 @@
             font-size: 1.1rem;
         }
         
-        .process-comparison {
+        .comparison-container {
             display: flex;
             gap: 30px;
-            flex-wrap: wrap;
+            margin-bottom: 40px;
         }
         
-        .process-container {
+        @media (max-width: 992px) {
+            .comparison-container {
+                flex-direction: column;
+            }
+        }
+        
+        .flow-column {
             flex: 1;
-            min-width: 300px;
-        }
-        
-        .timeline-container {
             background: white;
-            border-radius: 12px;
-            padding: 30px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            margin-bottom: 30px;
-            position: relative;
-            overflow: hidden;
-            height: 100%;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
         }
         
-        .timeline-title {
+        .flow-column:hover {
+            transform: translateY(-5px);
+        }
+        
+        .flow-a {
+            border-top: 5px solid #3498db;
+        }
+        
+        .flow-b {
+            border-top: 5px solid #e74c3c;
+        }
+        
+        .flow-title {
             text-align: center;
             margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
             color: #2c3e50;
             font-size: 1.5rem;
-            position: relative;
-            padding-bottom: 15px;
-        }
-        
-        .timeline-title:after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 80px;
-            height: 4px;
-            background: #3498db;
-            border-radius: 2px;
         }
         
         .timeline {
             position: relative;
-            max-width: 100%;
-            margin: 0 auto;
+            padding-left: 30px;
         }
         
-        .timeline::after {
+        .timeline::before {
             content: '';
             position: absolute;
-            width: 6px;
-            background-color: #ecf0f1;
+            left: 15px;
             top: 0;
             bottom: 0;
-            left: 50%;
-            margin-left: -3px;
-            border-radius: 3px;
+            width: 3px;
+            background: #ecf0f1;
         }
         
         .step {
-            padding: 15px 30px;
             position: relative;
-            width: 50%;
-            margin-bottom: 40px;
-        }
-        
-        .step.left {
-            left: 0;
-        }
-        
-        .step.right {
-            left: 50%;
-        }
-        
-        .step-content {
+            margin-bottom: 30px;
             padding: 20px;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-            position: relative;
-            transition: transform 0.3s ease;
+            background: #f8f9fa;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
         }
         
-        .step-content:hover {
-            transform: translateY(-5px);
-        }
-        
-        .step.left .step-content {
-            border-left: 5px solid #3498db;
-        }
-        
-        .step.right .step-content {
-            border-right: 5px solid #e74c3c;
-        }
-        
-        .step::after {
+        .step::before {
             content: '';
             position: absolute;
-            width: 24px;
-            height: 24px;
-            background-color: white;
-            border: 4px solid #3498db;
-            border-radius: 50%;
+            left: -33px;
             top: 25px;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: #3498db;
             z-index: 1;
         }
         
-        .step.left::after {
-            right: -12px;
+        .flow-b .step::before {
+            background: #e74c3c;
         }
         
-        .step.right::after {
-            left: -12px;
+        .step-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
         }
         
         .step-title {
+            font-weight: 600;
             font-size: 1.2rem;
-            font-weight: 700;
+            color: #2c3e50;
+        }
+        
+        .step-duration {
+            background: #34495e;
+            color: white;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+        }
+        
+        .step-content {
+            color: #555;
+            margin-bottom: 10px;
+        }
+        
+        .notes {
+            background: #fff9e6;
+            border-left: 4px solid #f1c40f;
+            padding: 10px 15px;
+            margin-top: 10px;
+            font-size: 0.9rem;
+            border-radius: 0 5px 5px 0;
+        }
+        
+        .notes ul {
+            padding-left: 20px;
+        }
+        
+        .notes li {
+            margin-bottom: 5px;
+        }
+        
+        .special-product {
+            background: #e8f4fc;
+            border-left: 4px solid #3498db;
+            padding: 8px 12px;
+            margin-top: 10px;
+            border-radius: 0 5px 5px 0;
+            font-size: 0.9rem;
+        }
+        
+        .key-differences {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+        
+        .key-differences h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 1.6rem;
+        }
+        
+        .differences-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .difference-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #9b59b6;
+        }
+        
+        .difference-title {
+            font-weight: 600;
             margin-bottom: 8px;
             color: #2c3e50;
             display: flex;
             align-items: center;
+            gap: 8px;
         }
         
-        .step-title i {
-            margin-right: 10px;
-            font-size: 1.4rem;
+        .difference-title i {
+            color: #9b59b6;
         }
         
-        .step-duration {
-            display: inline-block;
-            background: #3498db;
-            color: white;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            margin-bottom: 10px;
-            font-weight: 600;
-        }
-        
-        .step-desc {
-            color: #7f8c8d;
-            font-size: 0.95rem;
-        }
-        
-        .special-note {
-            background: #fff9e6;
-            border-left: 4px solid #f1c40f;
-            padding: 15px;
-            margin-top: 15px;
-            border-radius: 4px;
-            font-size: 0.9rem;
-        }
-        
-        .timeline-summary {
-            background: #f8f9fa;
+        .color-problem {
+            background: white;
             border-radius: 10px;
-            padding: 20px;
-            margin-top: 30px;
-            border-left: 5px solid #2ecc71;
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            margin-top: 40px;
         }
         
-        .summary-title {
-            font-weight: 700;
-            margin-bottom: 10px;
+        .color-problem h2 {
             color: #2c3e50;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 1.6rem;
+        }
+        
+        .problem-description {
+            background: #ffeaea;
+            border-left: 4px solid #e74c3c;
+            padding: 15px 20px;
+            margin-bottom: 25px;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .comparison-table th {
+            background: #34495e;
+            color: white;
+            padding: 12px 15px;
+            text-align: left;
+        }
+        
+        .comparison-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .comparison-table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        
+        .comparison-table tr:hover {
+            background: #e8f4fc;
+        }
+        
+        .solution-suggestions {
+            margin-top: 30px;
+            background: #e8f6f3;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #1abc9c;
+        }
+        
+        .solution-suggestions h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
             display: flex;
             align-items: center;
+            gap: 10px;
         }
         
-        .summary-title i {
-            margin-right: 10px;
-            color: #2ecc71;
+        .solution-suggestions ul {
+            padding-left: 20px;
         }
         
-        .category-tabs {
-            display: flex;
-            margin-bottom: 20px;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        
-        .category-tab {
-            flex: 1;
-            padding: 12px 20px;
-            text-align: center;
-            background: #e0e0e0;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-        
-        .category-tab.active {
-            background: #3498db;
-            color: white;
-        }
-        
-        .category-content {
-            display: none;
-        }
-        
-        .category-content.active {
-            display: block;
+        .solution-suggestions li {
+            margin-bottom: 10px;
         }
         
         footer {
@@ -259,251 +300,252 @@
             margin-top: 40px;
             color: #7f8c8d;
             font-size: 0.9rem;
+            padding: 20px;
         }
         
-        @media screen and (max-width: 768px) {
-            .process-comparison {
-                flex-direction: column;
-            }
-            
-            .timeline::after {
-                left: 31px;
-            }
-            
-            .step {
-                width: 100%;
-                padding-left: 70px;
-                padding-right: 25px;
-            }
-            
-            .step.right {
-                left: 0;
-            }
-            
-            .step::after {
-                left: 19px;
-            }
-            
-            .step.left::after, .step.right::after {
-                left: 19px;
-            }
+        .highlight {
+            background-color: #fff9e6;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-weight: 600;
+        }
+        
+        .material-tag {
+            display: inline-block;
+            background: #3498db;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin-right: 5px;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>生产流程可视化</h1>
-            <p class="subtitle">清晰展示从打色到发货的完整生产周期</p>
+            <h1>生产流程对比与染色问题分析</h1>
+            <p class="subtitle">流程A vs 流程B - 可视化对比与黑色码带染色深度问题分析</p>
         </header>
         
-        <div class="process-comparison">
-            <!-- 流程一 -->
-            <div class="process-container">
-                <div class="timeline-container">
-                    <h2 class="timeline-title">流程一：标准流程</h2>
-                    
-                    <div class="timeline">
-                        <!-- 步骤1 -->
-                        <div class="step left">
-                            <div class="step-content">
-                                <h3 class="step-title"><i class="fas fa-palette"></i> 打色</h3>
-                                <span class="step-duration">2-3天</span>
-                                <p class="step-desc">根据客户需求进行颜色开发与调配，确保颜色准确性。</p>
-                            </div>
+        <div class="comparison-container">
+            <!-- 流程A -->
+            <div class="flow-column flow-a">
+                <h2 class="flow-title">流程A</h2>
+                <div class="timeline">
+                    <div class="step">
+                        <div class="step-header">
+                            <div class="step-title">打ABC色</div>
+                            <div class="step-duration">3-4天</div>
                         </div>
-                        
-                        <!-- 步骤2 -->
-                        <div class="step right">
-                            <div class="step-content">
-                                <h3 class="step-title"><i class="fas fa-check-circle"></i> 客户确认颜色</h3>
-                                <span class="step-duration">1天快递</span>
-                                <p class="step-desc">将颜色样品快递给客户进行确认，等待客户反馈。</p>
-                            </div>
-                        </div>
-                        
-                        <!-- 步骤3 -->
-                        <div class="step left">
-                            <div class="step-content">
-                                <h3 class="step-title"><i class="fas fa-industry"></i> 直接大货生产</h3>
-                                <span class="step-duration">15-20天（常规）</span>
-                                <p class="step-desc">客户确认颜色后，直接进入大货生产阶段。</p>
-                                <div class="special-note">
-                                    <strong>特殊产品：</strong> 生产周期约30天左右
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- 步骤4 -->
-                        <div class="step right">
-                            <div class="step-content">
-                                <h3 class="step-title"><i class="fas fa-shipping-fast"></i> 发货</h3>
-                                <p class="step-desc">大货生产完成后安排发货，同时寄送产前样给客户。</p>
-                            </div>
+                        <div class="step-content">
+                            制作ABC三种颜色样品供客户选择
                         </div>
                     </div>
                     
-                    <div class="timeline-summary">
-                        <h3 class="summary-title"><i class="fas fa-clock"></i> 流程总时长</h3>
-                        <p><strong>常规产品：</strong> 约18-24天（不含运输时间）</p>
-                        <p><strong>特殊产品：</strong> 约33-39天（不含运输时间）</p>
+                    <div class="step">
+                        <div class="step-header">
+                            <div class="step-title">客户确认</div>
+                            <div class="step-duration">1天</div>
+                        </div>
+                        <div class="step-content">
+                            客户从ABC色中选择确认最终颜色
+                        </div>
+                    </div>
+                    
+                    <div class="step">
+                        <div class="step-header">
+                            <div class="step-title">做大货</div>
+                            <div class="step-duration">15-30天</div>
+                        </div>
+                        <div class="step-content">
+                            根据客户确认的颜色进行批量生产
+                        </div>
+                        <div class="special-product">
+                            <strong>普通产品:</strong> 15-20天<br>
+                            <strong>特殊产品:</strong> 30天左右
+                        </div>
+                    </div>
+                    
+                    <div class="step">
+                        <div class="step-header">
+                            <div class="step-title">出货</div>
+                            <div class="step-duration">即时</div>
+                        </div>
+                        <div class="step-content">
+                            完成生产后安排发货
+                        </div>
                     </div>
                 </div>
             </div>
             
-            <!-- 流程二 -->
-            <div class="process-container">
-                <div class="timeline-container">
-                    <h2 class="timeline-title">流程二：分品类流程</h2>
-                    
-                    <div class="category-tabs">
-                        <div class="category-tab active" data-category="nylon">尼龙/隐形拉链</div>
-                        <div class="category-tab" data-category="plastic">塑钢/金属拉链</div>
-                    </div>
-                    
-                    <!-- 尼龙/隐形拉链流程 -->
-                    <div class="category-content active" id="nylon-content">
-                        <div class="timeline">
-                            <!-- 步骤1 -->
-                            <div class="step left">
-                                <div class="step-content">
-                                    <h3 class="step-title"><i class="fas fa-palette"></i> 打色</h3>
-                                    <span class="step-duration">2-3天</span>
-                                    <p class="step-desc">根据客户需求进行颜色开发与调配，确保颜色准确性。</p>
-                                </div>
-                            </div>
-                            
-                            <!-- 步骤2 -->
-                            <div class="step right">
-                                <div class="step-content">
-                                    <h3 class="step-title"><i class="fas fa-user-check"></i> 业务确认颜色</h3>
-                                    <p class="step-desc">内部业务团队对颜色进行审核与确认。</p>
-                                </div>
-                            </div>
-                            
-                            <!-- 步骤3 -->
-                            <div class="step left">
-                                <div class="step-content">
-                                    <h3 class="step-title"><i class="fas fa-clipboard-check"></i> 打样</h3>
-                                    <span class="step-duration">3-4天</span>
-                                    <p class="step-desc">根据确认的颜色制作样品，供客户最终确认。</p>
-                                </div>
-                            </div>
-                            
-                            <!-- 步骤4 -->
-                            <div class="step right">
-                                <div class="step-content">
-                                    <h3 class="step-title"><i class="fas fa-check-circle"></i> 客户确认颜色</h3>
-                                    <span class="step-duration">1天快递</span>
-                                    <p class="step-desc">将样品快递给客户进行最终确认，等待客户反馈。</p>
-                                </div>
-                            </div>
-                            
-                            <!-- 步骤5 -->
-                            <div class="step left">
-                                <div class="step-content">
-                                    <h3 class="step-title"><i class="fas fa-industry"></i> 大货生产</h3>
-                                    <span class="step-duration">15-20天（常规）</span>
-                                    <p class="step-desc">客户确认样品后，进入大货生产阶段。</p>
-                                    <div class="special-note">
-                                        <strong>特殊产品：</strong> 生产周期约30天左右
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <!-- 步骤6 -->
-                            <div class="step right">
-                                <div class="step-content">
-                                    <h3 class="step-title"><i class="fas fa-shipping-fast"></i> 发货</h3>
-                                    <p class="step-desc">大货生产完成后安排发货，同时寄送产前样给客户。</p>
-                                </div>
-                            </div>
+            <!-- 流程B -->
+            <div class="flow-column flow-b">
+                <h2 class="flow-title">流程B</h2>
+                <div class="timeline">
+                    <div class="step">
+                        <div class="step-header">
+                            <div class="step-title">打样</div>
+                            <div class="step-duration">4-5天</div>
                         </div>
-                        
-                        <div class="timeline-summary">
-                            <h3 class="summary-title"><i class="fas fa-clock"></i> 流程总时长</h3>
-                            <p><strong>常规产品：</strong> 约21-28天（不含运输时间）</p>
-                            <p><strong>特殊产品：</strong> 约36-42天（不含运输时间）</p>
+                        <div class="step-content">
+                            制作样品供客户确认
+                        </div>
+                        <div class="notes">
+                            <ul>
+                                <li>只能出一个成品拉链</li>
+                                <li>大货生产时仍可能存在缸差</li>
+                                <li>可能存在多次确认情况</li>
+                            </ul>
                         </div>
                     </div>
                     
-                    <!-- 塑钢/金属拉链流程 -->
-                    <div class="category-content" id="plastic-content">
-                        <div class="timeline">
-                            <!-- 步骤1 -->
-                            <div class="step left">
-                                <div class="step-content">
-                                    <h3 class="step-title"><i class="fas fa-clipboard-check"></i> 成品打样</h3>
-                                    <span class="step-duration">3-4天</span>
-                                    <p class="step-desc">制作完整的成品样品，包括颜色和材质。</p>
-                                </div>
-                            </div>
-                            
-                            <!-- 步骤2 -->
-                            <div class="step right">
-                                <div class="step-content">
-                                    <h3 class="step-title"><i class="fas fa-check-circle"></i> 寄样确认颜色</h3>
-                                    <span class="step-duration">1天快递</span>
-                                    <p class="step-desc">将成品样品快递给客户进行颜色和品质确认。</p>
-                                </div>
-                            </div>
-                            
-                            <!-- 步骤3 -->
-                            <div class="step left">
-                                <div class="step-content">
-                                    <h3 class="step-title"><i class="fas fa-industry"></i> 直接大货生产</h3>
-                                    <span class="step-duration">15-20天（常规）</span>
-                                    <p class="step-desc">客户确认样品后，直接进入大货生产阶段。</p>
-                                    <div class="special-note">
-                                        <strong>特殊产品：</strong> 生产周期约30天左右
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <!-- 步骤4 -->
-                            <div class="step right">
-                                <div class="step-content">
-                                    <h3 class="step-title"><i class="fas fa-shipping-fast"></i> 发货</h3>
-                                    <p class="step-desc">大货生产完成后安排发货，同时寄送产前样给客户。</p>
-                                </div>
-                            </div>
+                    <div class="step">
+                        <div class="step-header">
+                            <div class="step-title">客户确认</div>
+                            <div class="step-duration">1天</div>
                         </div>
-                        
-                        <div class="timeline-summary">
-                            <h3 class="summary-title"><i class="fas fa-clock"></i> 流程总时长</h3>
-                            <p><strong>常规产品：</strong> 约19-25天（不含运输时间）</p>
-                            <p><strong>特殊产品：</strong> 约34-40天（不含运输时间）</p>
+                        <div class="step-content">
+                            客户确认样品
+                        </div>
+                    </div>
+                    
+                    <div class="step">
+                        <div class="step-header">
+                            <div class="step-title">做大货</div>
+                            <div class="step-duration">15-30天</div>
+                        </div>
+                        <div class="step-content">
+                            根据确认的样品进行批量生产
+                        </div>
+                        <div class="special-product">
+                            <strong>普通产品:</strong> 15-20天<br>
+                            <strong>特殊产品:</strong> 30天左右
+                        </div>
+                    </div>
+                    
+                    <div class="step">
+                        <div class="step-header">
+                            <div class="step-title">出货</div>
+                            <div class="step-duration">即时</div>
+                        </div>
+                        <div class="step-content">
+                            完成生产后安排发货
                         </div>
                     </div>
                 </div>
             </div>
         </div>
         
+        <div class="key-differences">
+            <h2>关键差异分析</h2>
+            <div class="differences-grid">
+                <div class="difference-item">
+                    <div class="difference-title">
+                        <i class="fas fa-palette"></i>
+                        <span>打样阶段差异</span>
+                    </div>
+                    <p><span class="highlight">流程A</span>提供ABC三种颜色选择，<span class="highlight">流程B</span>只提供一个成品拉链样品。</p>
+                </div>
+                
+                <div class="difference-item">
+                    <div class="difference-title">
+                        <i class="fas fa-clock"></i>
+                        <span>时间差异</span>
+                    </div>
+                    <p><span class="highlight">流程A</span>打样需要3-4天，<span class="highlight">流程B</span>需要4-5天。</p>
+                </div>
+                
+                <div class="difference-item">
+                    <div class="difference-title">
+                        <i class="fas fa-sync-alt"></i>
+                        <span>确认流程差异</span>
+                    </div>
+                    <p><span class="highlight">流程B</span>可能存在多次确认情况，增加沟通成本。</p>
+                </div>
+                
+                <div class="difference-item">
+                    <div class="difference-title">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <span>风险差异</span>
+                    </div>
+                    <p><span class="highlight">流程B</span>大货生产仍可能存在缸差问题，增加了质量风险。</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="color-problem">
+            <h2>黑色码带染色深度问题分析</h2>
+            
+            <div class="problem-description">
+                <h3><i class="fas fa-exclamation-circle"></i> 客户反馈问题</h3>
+                <p>黑色的码带颜色不够深，达不到预期的深邃黑色效果。</p>
+            </div>
+            
+            <h3>面料材质与染色特性对比</h3>
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>特性</th>
+                        <th>服装面料</th>
+                        <th>码带（布带）</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>常见材质</strong></td>
+                        <td><span class="material-tag">棉</span><span class="material-tag">麻</span><span class="material-tag">丝</span><span class="material-tag">毛</span><span class="material-tag">涤纶</span><span class="material-tag">尼龙</span></td>
+                        <td><span class="material-tag">涤纶</span><span class="material-tag">棉质</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>物理结构</strong></td>
+                        <td>多孔、纤维状结构，染料分子易渗透</td>
+                        <td>结构紧密，纤维排列规则，染料渗透性较差</td>
+                    </tr>
+                    <tr>
+                        <td><strong>染色特性</strong></td>
+                        <td>染料分子容易渗透到纤维内部，实现饱满深邃的颜色</td>
+                        <td>涤纶布带是疏水性的，需要高温高压和特定分散染料</td>
+                    </tr>
+                    <tr>
+                        <td><strong>黑色表现</strong></td>
+                        <td>经过多次染色和特殊后整理，可获得非常深的黑色</td>
+                        <td>上色机理和深度与天然纤维完全不同，黑色表现有限</td>
+                    </tr>
+                    <tr>
+                        <td><strong>染色工艺</strong></td>
+                        <td>常规染色工艺，相对简单</td>
+                        <td>需要高温高压和特定分散染料，工艺要求更高</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <div class="solution-suggestions">
+                <h3><i class="fas fa-lightbulb"></i> 解决方案建议</h3>
+                <ul>
+                    <li><strong>优化染色工艺：</strong>针对涤纶码带，采用更高温度、更长时间的染色工艺，提高染料渗透性</li>
+                    <li><strong>使用专用染料：</strong>采用专门针对涤纶纤维的分散染料，提高染色深度</li>
+                    <li><strong>增加染色次数：</strong>考虑进行多次染色，逐步加深颜色</li>
+                    <li><strong>改进后整理工艺：</strong>通过特殊的后整理工艺增强黑色表现</li>
+                    <li><strong>材质调整：</strong>如客户对黑色深度要求极高，可考虑使用棉质码带替代涤纶码带</li>
+                </ul>
+            </div>
+        </div>
+        
         <footer>
-            <p>生产流程可视化 &copy; 2023 - 设计用于清晰展示生产时间线与关键节点</p>
+            <p>生产流程可视化对比与染色问题分析 | 设计用于内部流程优化与问题解决</p>
         </footer>
     </div>
 
     <script>
+        // 添加简单的动画效果
         document.addEventListener('DOMContentLoaded', function() {
-            const categoryTabs = document.querySelectorAll('.category-tab');
-            const categoryContents = document.querySelectorAll('.category-content');
+            const steps = document.querySelectorAll('.step');
             
-            categoryTabs.forEach(tab => {
-                tab.addEventListener('click', function() {
-                    // 更新标签状态
-                    categoryTabs.forEach(t => t.classList.remove('active'));
-                    this.classList.add('active');
-                    
-                    // 显示对应的内容
-                    const category = this.getAttribute('data-category');
-                    categoryContents.forEach(content => {
-                        content.classList.remove('active');
-                        if (content.id === `${category}-content`) {
-                            content.classList.add('active');
-                        }
-                    });
-                });
+            steps.forEach((step, index) => {
+                // 添加延迟使动画依次执行
+                step.style.animationDelay = `${index * 0.2}s`;
+                step.classList.add('fade-in');
             });
         });
     </script>

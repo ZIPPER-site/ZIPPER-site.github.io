@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>生产流程可视化</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 2.2rem;
+        }
+        
+        .subtitle {
+            color: #7f8c8d;
+            font-size: 1.1rem;
+        }
+        
+        .process-selector {
+            display: flex;
+            justify-content: center;
+            margin: 30px 0;
+            gap: 20px;
+        }
+        
+        .process-btn {
+            padding: 12px 30px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08);
+        }
+        
+        .process-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 14px rgba(50, 50, 93, 0.1), 0 3px 6px rgba(0, 0, 0, 0.08);
+        }
+        
+        .process-btn.active {
+            background: #2c3e50;
+        }
+        
+        .timeline-container {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .timeline-title {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #2c3e50;
+            font-size: 1.5rem;
+            position: relative;
+            padding-bottom: 15px;
+        }
+        
+        .timeline-title:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: #3498db;
+            border-radius: 2px;
+        }
+        
+        .timeline {
+            position: relative;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .timeline::after {
+            content: '';
+            position: absolute;
+            width: 6px;
+            background-color: #ecf0f1;
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            margin-left: -3px;
+            border-radius: 3px;
+        }
+        
+        .step {
+            padding: 15px 30px;
+            position: relative;
+            width: 50%;
+            margin-bottom: 40px;
+        }
+        
+        .step.left {
+            left: 0;
+        }
+        
+        .step.right {
+            left: 50%;
+        }
+        
+        .step-content {
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            position: relative;
+            transition: transform 0.3s ease;
+        }
+        
+        .step-content:hover {
+            transform: translateY(-5px);
+        }
+        
+        .step.left .step-content {
+            border-left: 5px solid #3498db;
+        }
+        
+        .step.right .step-content {
+            border-right: 5px solid #e74c3c;
+        }
+        
+        .step::after {
+            content: '';
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            background-color: white;
+            border: 4px solid #3498db;
+            border-radius: 50%;
+            top: 25px;
+            z-index: 1;
+        }
+        
+        .step.left::after {
+            right: -12px;
+        }
+        
+        .step.right::after {
+            left: -12px;
+        }
+        
+        .step-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+        }
+        
+        .step-title i {
+            margin-right: 10px;
+            font-size: 1.4rem;
+        }
+        
+        .step-duration {
+            display: inline-block;
+            background: #3498db;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        
+        .step-desc {
+            color: #7f8c8d;
+            font-size: 0.95rem;
+        }
+        
+        .special-note {
+            background: #fff9e6;
+            border-left: 4px solid #f1c40f;
+            padding: 15px;
+            margin-top: 15px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+        
+        .process-2 {
+            display: none;
+        }
+        
+        .timeline-summary {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 30px;
+            border-left: 5px solid #2ecc71;
+        }
+        
+        .summary-title {
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+        }
+        
+        .summary-title i {
+            margin-right: 10px;
+            color: #2ecc71;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+        
+        @media screen and (max-width: 768px) {
+            .timeline::after {
+                left: 31px;
+            }
+            
+            .step {
+                width: 100%;
+                padding-left: 70px;
+                padding-right: 25px;
+            }
+            
+            .step.right {
+                left: 0;
+            }
+            
+            .step::after {
+                left: 19px;
+            }
+            
+            .step.left::after, .step.right::after {
+                left: 19px;
+            }
+            
+            .process-btn {
+                padding: 10px 20px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>生产流程可视化</h1>
+            <p class="subtitle">清晰展示从打色到发货的完整生产周期</p>
+            
+            <div class="process-selector">
+                <button class="process-btn active" data-process="1">流程一：直接大货</button>
+                <button class="process-btn" data-process="2">流程二：含打样环节</button>
+            </div>
+        </header>
+        
+        <main>
+            <!-- 流程一 -->
+            <div class="timeline-container process-1">
+                <h2 class="timeline-title">流程一：打色 → 客户确认 → 直接大货</h2>
+                
+                <div class="timeline">
+                    <!-- 步骤1 -->
+                    <div class="step left">
+                        <div class="step-content">
+                            <h3 class="step-title"><i class="fas fa-palette"></i> 打色</h3>
+                            <span class="step-duration">2-3天</span>
+                            <p class="step-desc">根据客户需求进行颜色开发与调配，确保颜色准确性。</p>
+                        </div>
+                    </div>
+                    
+                    <!-- 步骤2 -->
+                    <div class="step right">
+                        <div class="step-content">
+                            <h3 class="step-title"><i class="fas fa-check-circle"></i> 客户确认颜色</h3>
+                            <span class="step-duration">1天快递</span>
+                            <p class="step-desc">将颜色样品快递给客户进行确认，等待客户反馈。</p>
+                        </div>
+                    </div>
+                    
+                    <!-- 步骤3 -->
+                    <div class="step left">
+                        <div class="step-content">
+                            <h3 class="step-title"><i class="fas fa-industry"></i> 直接大货生产</h3>
+                            <span class="step-duration">15-20天（常规）</span>
+                            <p class="step-desc">客户确认颜色后，直接进入大货生产阶段。</p>
+                            <div class="special-note">
+                                <strong>特殊产品：</strong> 生产周期约30天左右
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 步骤4 -->
+                    <div class="step right">
+                        <div class="step-content">
+                            <h3 class="step-title"><i class="fas fa-shipping-fast"></i> 发货</h3>
+                            <p class="step-desc">大货生产完成后安排发货，同时寄送产前样给客户。</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="timeline-summary">
+                    <h3 class="summary-title"><i class="fas fa-clock"></i> 流程总时长</h3>
+                    <p><strong>常规产品：</strong> 约18-24天（不含运输时间）</p>
+                    <p><strong>特殊产品：</strong> 约33-39天（不含运输时间）</p>
+                </div>
+            </div>
+            
+            <!-- 流程二 -->
+            <div class="timeline-container process-2">
+                <h2 class="timeline-title">流程二：打色 → 业务确认 → 打样 → 客户确认 → 大货</h2>
+                
+                <div class="timeline">
+                    <!-- 步骤1 -->
+                    <div class="step left">
+                        <div class="step-content">
+                            <h3 class="step-title"><i class="fas fa-palette"></i> 打色</h3>
+                            <span class="step-duration">2-3天</span>
+                            <p class="step-desc">根据客户需求进行颜色开发与调配，确保颜色准确性。</p>
+                        </div>
+                    </div>
+                    
+                    <!-- 步骤2 -->
+                    <div class="step right">
+                        <div class="step-content">
+                            <h3 class="step-title"><i class="fas fa-user-check"></i> 业务确认颜色</h3>
+                            <p class="step-desc">内部业务团队对颜色进行审核与确认。</p>
+                        </div>
+                    </div>
+                    
+                    <!-- 步骤3 -->
+                    <div class="step left">
+                        <div class="step-content">
+                            <h3 class="step-title"><i class="fas fa-clipboard-check"></i> 打样</h3>
+                            <span class="step-duration">3-4天</span>
+                            <p class="step-desc">根据确认的颜色制作样品，供客户最终确认。</p>
+                        </div>
+                    </div>
+                    
+                    <!-- 步骤4 -->
+                    <div class="step right">
+                        <div class="step-content">
+                            <h3 class="step-title"><i class="fas fa-check-circle"></i> 客户确认颜色</h3>
+                            <span class="step-duration">1天快递</span>
+                            <p class="step-desc">将样品快递给客户进行最终确认，等待客户反馈。</p>
+                        </div>
+                    </div>
+                    
+                    <!-- 步骤5 -->
+                    <div class="step left">
+                        <div class="step-content">
+                            <h3 class="step-title"><i class="fas fa-industry"></i> 大货生产</h3>
+                            <span class="step-duration">15-20天（常规）</span>
+                            <p class="step-desc">客户确认样品后，进入大货生产阶段。</p>
+                            <div class="special-note">
+                                <strong>特殊产品：</strong> 生产周期约30天左右
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 步骤6 -->
+                    <div class="step right">
+                        <div class="step-content">
+                            <h3 class="step-title"><i class="fas fa-shipping-fast"></i> 发货</h3>
+                            <p class="step-desc">大货生产完成后安排发货，同时寄送产前样给客户。</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="timeline-summary">
+                    <h3 class="summary-title"><i class="fas fa-clock"></i> 流程总时长</h3>
+                    <p><strong>常规产品：</strong> 约21-28天（不含运输时间）</p>
+                    <p><strong>特殊产品：</strong> 约36-42天（不含运输时间）</p>
+                </div>
+            </div>
+        </main>
+        
+        <footer>
+            <p>生产流程可视化 &copy; 2023 - 设计用于清晰展示生产时间线与关键节点</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const processBtns = document.querySelectorAll('.process-btn');
+            const process1 = document.querySelector('.process-1');
+            const process2 = document.querySelector('.process-2');
+            
+            processBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // 更新按钮状态
+                    processBtns.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // 显示对应的流程
+                    const process = this.getAttribute('data-process');
+                    if (process === '1') {
+                        process1.style.display = 'block';
+                        process2.style.display = 'none';
+                    } else {
+                        process1.style.display = 'none';
+                        process2.style.display = 'block';
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

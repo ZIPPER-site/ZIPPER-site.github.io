@@ -1,0 +1,6737 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SBS拉链价格计算器</title>
+<style>
+:root { --pri: #1a3a5c; --pri2: #2c5f8a; --red: #e74c3c; --bg: #f0f2f5; --card: #fff; --bor: #e8edf2; --txt: #333; --mut: #888; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:"Microsoft YaHei","PingFang SC",sans-serif; background:var(--bg); color:var(--txt); min-height:100vh; }
+.header { background:linear-gradient(135deg,var(--pri),var(--pri2)); color:#fff; padding:14px 0; text-align:center; box-shadow:0 2px 8px rgba(0,0,0,.12); }
+.header h1 { font-size:20px; margin-bottom:2px; }
+.header .sub { font-size:11px; opacity:.85; }
+.header .en { font-size:10px; opacity:.6; }
+.container { max-width:960px; margin:14px auto; padding:0 12px; }
+.card { background:var(--card); border-radius:10px; padding:18px; margin-bottom:10px; box-shadow:0 1px 3px rgba(0,0,0,.05); }
+.card h3 { font-size:14px; color:var(--pri); margin-bottom:10px; padding-bottom:7px; border-bottom:2px solid var(--bor); display:flex; align-items:center; gap:6px; }
+.form-row { display:flex; gap:8px; margin-bottom:8px; flex-wrap:wrap; }
+.form-group { flex:1; min-width:120px; }
+.form-group label { display:block; font-size:11px; color:#666; margin-bottom:3px; font-weight:500; }
+.form-group select,.form-group input { width:100%; padding:7px 9px; border:1px solid #d9d9d9; border-radius:6px; font-size:13px; background:#fff; }
+.form-group select:focus,.form-group input:focus { outline:none; border-color:var(--pri2); box-shadow:0 0 0 2px rgba(44,95,138,.1); }
+.form-group input[type="number"] { font-size:16px; font-weight:600; }
+.srch-wrap { position:relative; }
+.srch-wrap input { padding-left:28px !important; }
+.srch-wrap::before { content:"🔍"; position:absolute; left:7px; top:50%; transform:translateY(-50%); font-size:11px; z-index:1; pointer-events:none; }
+.sel-list { margin-top:3px; height:auto; min-height:28px; }
+.discount-list { display:flex; gap:5px; flex-wrap:wrap; }
+.dbtn { padding:5px 11px; border:2px solid #d9d9d9; border-radius:20px; background:#fff; cursor:pointer; font-size:11px; transition:all .15s; white-space:nowrap; }
+.dbtn:hover { border-color:var(--pri2); }
+.dbtn.on { background:var(--pri2); color:#fff; border-color:var(--pri2); }
+.price-result { background:linear-gradient(135deg,#f6f9fc,#eef3f8); border-radius:10px; padding:20px; text-align:center; position:relative; }
+.price-result .big { font-size:38px; font-weight:700; color:var(--red); }
+.price-result .unit { font-size:12px; color:#999; margin-top:2px; }
+.price-detail { font-size:11px; color:var(--mut); margin-top:6px; line-height:1.6; }
+.price-detail span { color:#555; }
+.copy-btn { position:absolute; top:10px; right:12px; padding:4px 9px; font-size:10px; border:1px solid #d9d9d9; border-radius:4px; background:#fff; cursor:pointer; color:#666; }
+.copy-btn:hover { border-color:var(--pri2); color:var(--pri2); }
+.copy-btn.done { background:#e8f5e9; border-color:#4caf50; color:#2e7d32; }
+.rule-tags { display:flex; gap:6px; flex-wrap:wrap; }
+.rule-tag { padding:3px 7px; background:#fff3cd; border-radius:4px; font-size:10px; color:#856404; border:1px solid #ffc107; }
+.check-row { display:flex; gap:12px; flex-wrap:wrap; align-items:center; margin-top:6px; }
+.check-row label { display:flex; align-items:center; gap:3px; font-size:11px; color:#555; cursor:pointer; }
+.check-row input[type="checkbox"] { accent-color:var(--pri2); }
+.notes { font-size:10px; color:#999; margin-top:3px; }
+table { width:100%; border-collapse:collapse; font-size:11px; }
+thead th { background:#f5f7fa; padding:6px 8px; text-align:left; font-weight:600; color:#555; border-bottom:2px solid var(--bor); white-space:nowrap; }
+tbody td { padding:5px 8px; border-bottom:1px solid #f0f0f0; }
+tbody tr:hover { background:#fafbfc; cursor:pointer; }
+tbody tr.sel { background:#e8f4fd; }
+.hl { color:var(--red); font-weight:600; }
+.tag { display:inline-block; padding:1px 5px; border-radius:3px; font-size:9px; margin-left:3px; }
+.tag-note { background:#fff3e0; color:#e65100; }
+.len-slider { width:100%; margin-top:5px; accent-color:var(--pri2); }
+.len-lbl { display:flex; justify-content:space-between; font-size:9px; color:#999; margin-top:1px; }
+.warn { background:#fff3cd; border:1px solid #ffc107; border-radius:6px; padding:7px 10px; font-size:11px; color:#856404; margin-bottom:8px; }
+.summary-table { margin-top:12px; }
+.rule-box { font-size:10px; color:var(--mut); line-height:1.7; max-height:180px; overflow-y:auto; }
+.footer { text-align:center; padding:10px; font-size:10px; color:#bbb; }
+.hide { display:none !important; }
+.toast { position:fixed; bottom:20px; left:50%; transform:translateX(-50%); background:#333; color:#fff; padding:7px 18px; border-radius:20px; font-size:11px; z-index:999; opacity:0; transition:opacity .3s; pointer-events:none; }
+.toast.show { opacity:1; }
+@media (max-width:640px) { .form-row { flex-direction:column; } .form-group { min-width:100%; } .price-result .big { font-size:30px; } .card { padding:14px; } }
+@media print { body { background:#fff; } .card { box-shadow:none; break-inside:avoid; } .check-row,.rule-tags,.copy-btn { display:none; } }
+
+.guide-section { margin-bottom:16px; }
+.guide-section h4 { font-size:13px; color:var(--pri); margin-bottom:8px; padding-bottom:4px; border-bottom:1px dashed #e0e0e0; }
+.guide-sub { margin-bottom:8px; }
+.guide-sub b { font-size:11px; color:#444; }
+.guide-sub p { font-size:11px; color:#666; margin:4px 0 8px 0; line-height:1.7; }
+.guide-section ol { padding-left:18px; font-size:11px; color:#555; line-height:1.8; }
+.guide-section ol li { margin-bottom:4px; }
+.guide-section ol li b { color:#333; }
+.highlight-section h4 { color:#e65100 !important; }
+#guideBody.hide { display:none; }
+#guideBody { transition: all .2s; }
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>SBS拉链价格计算器</h1>
+  <div class="sub">福建浔兴拉链科技股份有限公司</div>
+  <div class="en">FUJIAN SBS ZIPPER SCIENCE AND TECHNOLOGY CO., LTD. | 2026/03/25</div>
+</div>
+<div class="container">
+  <div class="card">
+    <h3>1 选择产品 <span style="font-weight:400;font-size:10px;color:#999;margin-left:auto;">共 122 个规格</span></h3>
+    <div class="form-row">
+      <div class="form-group" style="flex:1.5; min-width:150px;">
+        <label>产品类别</label><select id="selCat"></select>
+      </div>
+      <div class="form-group" style="flex:2; min-width:170px;">
+        <label>产品型号（可搜索）</label>
+        <div class="srch-wrap"><input type="search" id="srchProd" placeholder="输入关键词筛选..." autocomplete="off"></div>
+        <select id="selProd" size="5" class="sel-list"></select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>链型</label><select id="selType"></select></div>
+      <div class="form-group" id="sldGrp"><label>拉头类型</label><select id="selSlider"></select></div>
+    </div>
+    <div class="notes" id="prodNotes"></div>
+    <div class="summary-table" id="matchTbl" style="display:none;">
+      <h3 style="margin-top:12px;">匹配产品明细（点击选择具体规格）</h3>
+      <div style="overflow-x:auto;"><table><thead><tr><th>型号</th><th>链型</th><th>拉头</th><th>基准长</th><th>基准价</th><th>+-1cm</th><th>备注</th></tr></thead><tbody id="matchBody"></tbody></table></div>
+    </div>
+  </div>
+  <div class="card">
+    <h3>2 长度 & 折扣</h3>
+    <div class="form-row">
+      <div class="form-group" style="flex:1; min-width:100px;">
+        <label>拉链长度 (CM)</label>
+        <input type="number" id="inpLen" value="20" min="1" step="0.5" oninput="onLenInp()">
+        <input type="range" id="lenSld" class="len-slider" min="5" max="200" value="20" step="0.5" oninput="onLenSld(this.value)">
+        <div class="len-lbl"><span>5</span><span>50</span><span>100</span><span>150</span><span>200cm</span></div>
+      </div>
+    </div>
+    <div class="form-group" style="margin-bottom:8px;"><label>折扣选择</label><div class="discount-list" id="discList"></div></div>
+    <div id="specRules" class="rule-tags" style="margin-top:8px;"></div>
+  </div>
+  <div class="card">
+    <h3>3 特殊加价 <span style="font-weight:400;font-size:10px;color:#999;">（尼龙产品适用）</span></h3>
+    <div class="check-row">
+      <label><input type="checkbox" id="chkBP" onchange="calc()"> 背拉产品 (+0.10)</label>
+      <label><input type="checkbox" id="chkDC" onchange="calc()"> 两端闭合 (+0.10)</label>
+      <label><input type="checkbox" id="chkUS" onchange="calc()"> U型上止 (+0.10)</label>
+      <label><input type="checkbox" id="chkXO" onchange="calc()"> X/O型双闭口 (+50%)</label>
+    </div>
+  </div>
+  <div class="card price-result" id="resCard">
+    <button class="copy-btn" onclick="doCopy()">📋 复制</button>
+    <div style="font-size:11px;color:#999;margin-bottom:2px;">最终单价 (含税13%)</div>
+    <div class="big" id="finPrice">¥ --</div>
+    <div class="unit">元/条 (RMB/PC) — 含运费到联运站</div>
+    <div class="price-detail" id="prcDetail"></div>
+    <div id="warnMsg"></div>
+  </div>
+  <div class="card">
+    <h3>备注说明</h3>
+    <div class="rule-box">
+      1. 价格将随原材料价格涨跌而调整；<br>2. 闭口链&lt;10CM按10CM报价，开口链&lt;20CM按20CM报价；<br>3. 含税13%，含运费到联运站；<br>4. 含普通自动头，特殊拉头按差价加价；<br>5. 尼龙背拉+0.1元/条，两端闭合+0.1元/条，U型上止+0.1元/条；<br>6. 长度≥100cm +10%；≥250cm +20%；≥500cm +30%；<br>7. 闭口&lt;3000条或开口&lt;1500条/色，加染费150元/色，喷漆100元/色；<br>8. X/O型双闭口链在闭口价基础上+50%；
+    </div>
+  </div>
+  
+  <div class="card" id="serviceGuide">
+    <h3 style="cursor:pointer;" onclick="document.getElementById('guideBody').classList.toggle('hide'); this.querySelector('.arrow').textContent = document.getElementById('guideBody').classList.contains('hide') ? '▶' : '▼';">
+      <span style="font-size:16px;" class="arrow">▶</span> 拉链销售内部品牌服务指南（实操版）
+      <span style="font-weight:400;font-size:10px;color:#999;margin-left:8px;">（点击展开）</span>
+    </h3>
+    <div id="guideBody" class="hide">
+      <div style="background:#fff8e1; border-left:3px solid #ff9800; padding:8px 12px; font-size:10px; color:#888; margin-bottom:12px; border-radius:0 4px 4px 0;">
+        适用范围：本指南为公司销售团队内部专用，仅用于日常业务执行、工作规范、新人培训，不对外向客户公示。
+      </div>
+      <div style="background:#e8f5e9; border-left:3px solid #4caf50; padding:10px 14px; font-size:11px; color:#2e7d32; margin-bottom:14px; border-radius:0 4px 4px 0;">
+        <b>核心服务准则：</b>事事有回应、件件有时效、异常主动同步、流程标准落地，杜绝模糊答复、拖延跟进、被动等待客户询问。
+      </div>
+
+      <div class="guide-section">
+        <h4>一、售前服务规范（选型 & 颜色确认）</h4>
+        <div class="guide-sub">
+          <b>1.1 拉链型号选型指导</b>
+          <p>对接客户需求时主动确认客户核心参数：拉链型号、齿型、布带宽度、长度、拉头款式、止口要求、特殊工艺需求，避免选型错误导致打样、生产返工。</p>
+        </div>
+        <div class="guide-sub">
+          <b>1.2 颜色确认注意事项</b>
+          <ol>
+            <li>所有订单颜色必须以确认色卡、客户签字/截图确认为准，禁止仅凭客户口头描述定色生产。</li>
+            <li>颜色留存，季度末进行大货颜色整理成品牌色库。</li>
+            <li>深色、亮色、特殊定制色，需提前和客户确认色牢度、水洗适配要求。</li>
+            <li>客户寄色样对色的，需妥善留存原样，生产前二次核对，确认无误后方可下单排产。</li>
+          </ol>
+        </div>
+      </div>
+
+      <div class="guide-section">
+        <h4>二、打样与报价服务规范</h4>
+        <div class="guide-sub">
+          <b>2.1 打样流程</b>
+          <p>样品寄出后，主动提醒客户查收，告知客户收到样品后及时确认，有问题第一时间反馈，避免大货生产偏差。</p>
+        </div>
+        <div class="guide-sub">
+          <b>2.2 报价沟通规范</b>
+          <ol>
+            <li>报价前必须核对完整参数：型号、尺寸、颜色、数量、镀种工艺、止口。</li>
+            <li>报价内容清晰透明，包含单价、总价、起订量、交期、付款方式、拉头图片。</li>
+          </ol>
+        </div>
+      </div>
+
+      <div class="guide-section highlight-section">
+        <h4>三、咨询回复与交期时效硬性规则（核心执行标准）</h4>
+        <div style="background:#fff3e0; padding:10px 14px; border-radius:6px; font-size:11px; color:#e65100; margin-bottom:8px;">
+          本章节为销售全员必守红线，严格执行、无特殊例外。
+        </div>
+        <ol>
+          <li><b>问题回复时效：</b>客户咨询的所有问题，若无法当场给出准确答复、解决方案，必须当场明确告知客户具体落地回复时间（精确到小时/当天/次日），禁止不回复、拖延回复、模糊回复"稍后再说"。</li>
+          <li><b>交期回复时效：</b>所有客户咨询的订单交期、排产周期问题，无法即时确认的，最晚次日必须主动、精准回复客户最终交期，无需客户二次催促。</li>
+          <li><b>排单规则：</b>新订单对接首日，统一完成登记、核对、排单录入，确保订单及时进入生产排期，杜绝漏单、拖单。</li>
+        </ol>
+      </div>
+
+      <div class="guide-section">
+        <h4>四、订单履约全程管控规范</h4>
+        <div class="guide-sub">
+          <b>4.1 订单信息核对</b>
+          <p>订单确认下单前，逐项二次核对：产品规格、颜色、数量、工艺要求、交期、收货地址、付款方式、特殊要求。</p>
+        </div>
+        <div class="guide-sub">
+          <b>4.2 实时订单跟踪</b>
+          <p>订单进入排产、生产、质检、备货、发货全流程，需常态化实时跟进进度，主动掌握生产状态，不被动等待客户询问。针对客户重点订单、急单、定制单，加大跟进频次，每日同步进度。</p>
+        </div>
+        <div class="guide-sub">
+          <b>4.3 异常处理机制</b>
+          <p>生产延迟、物料短缺、工艺异常、质检不合格、物流延误等任何问题，同步制定解决方案、补救方案，并主动第一时间同步开发员及客户，说明异常原因、处理进度、最新交付时间，杜绝拖延、不报异常。</p>
+        </div>
+      </div>
+
+      <div class="guide-section">
+        <h4>六、售后客诉处理全流程规范</h4>
+        <p style="font-size:10px;color:#888;margin-bottom:8px;">针对拉链行业常见问题：色差、链牙卡顿、拉头故障、布带瑕疵、缩水、防爆不良等客诉问题，统一执行标准化处理流程。</p>
+        <div class="guide-sub">
+          <b>6.1 取证要求</b>
+          <p>接到客户售后反馈后，第一时间引导客户取证：清晰实物照片、视频、批次号、订单编号、收货时间、问题点位细节；大批量问题需统计不良数量、不良比例，留存完整证据，禁止无证据判定责任、随意承诺赔付。</p>
+        </div>
+        <div class="guide-sub">
+          <b>6.2 客诉完整处理流程</b>
+          <ol>
+            <li><b>接诉：</b>耐心倾听客户问题，记录完整诉求，安抚客户情绪，不争执；</li>
+            <li><b>取证：</b>按标准收集完整问题证据；</li>
+            <li><b>核实：</b>对接生产、质检部门复核问题原因，判定责任归属；</li>
+            <li><b>方案：</b>12小时内给出明确处理方案（补货、返工、退换、补偿、技术整改建议）；</li>
+            <li><b>落地：</b>跟进方案执行落地，全程跟进闭环；</li>
+            <li><b>复盘：</b>问题解决后登记备案，复盘问题原因，规避同类问题重复发生。</li>
+          </ol>
+        </div>
+      </div>
+
+      <div class="guide-section">
+        <h4>七、销售通用沟通规范（内部执行准则）</h4>
+        <ol>
+          <li><b>时效沟通：</b>所有客户咨询必有应答，无法即时答复必给明确回复时限，交期次日必反馈，做到事事有回音。</li>
+          <li><b>严谨沟通：</b>禁止随意口头承诺交期、色牢度、性能参数、检测标准、售后政策，所有特殊承诺必须内部确认、留痕记录。</li>
+          <li><b>主动沟通：</b>订单进度、生产异常、交期变动、物流问题，全部主动同步客户，不等客户追问。</li>
+          <li><b>专业沟通：</b>熟悉各类拉链产品参数、工艺、行业标准，精准解答客户疑问，主动提供选型、适配、生产优化建议。</li>
+          <li><b>闭环沟通：</b>所有咨询、问题、售后、订单事项，必须跟进至完全闭环，杜绝有始无终、搁置遗漏。</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+<div class="footer">SBS Zipper Price Calculator &copy; 2026</div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+var D = [
+  {
+    "category": "尼龙产品 Coil zipper",
+    "subcategory": "3#尼龙拉链",
+    "type": "勿尾",
+    "slider": "自动头",
+    "baseLength": 10,
+    "basePrice": 0.46,
+    "increment": 0.008,
+    "notes": "",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 0.414,
+        "increment": 0.0072
+      },
+      {
+        "name": "8.8折",
+        "base": 0.4048,
+        "increment": 0.00704
+      },
+      {
+        "name": "8.5折",
+        "base": 0.391,
+        "increment": 0.0068
+      },
+      {
+        "name": "8.2折",
+        "base": 0.3772,
+        "increment": 0.00656
+      },
+      {
+        "name": "8折",
+        "base": 0.368,
+        "increment": 0.0064
+      },
+      {
+        "name": "7.8折",
+        "base": 0.3588,
+        "increment": 0.00624
+      },
+      {
+        "name": "7.5折",
+        "base": 0.345,
+        "increment": 0.006
+      },
+      {
+        "name": "7.2折",
+        "base": 0.3312,
+        "increment": 0.00576
+      }
+    ]
+  },
+  {
+    "category": "尼龙产品 Coil zipper",
+    "subcategory": "3#尼龙拉链",
+    "type": "勿尾",
+    "slider": "自动头",
+    "baseLength": 10,
+    "basePrice": 0.86,
+    "increment": 0.008,
+    "notes": "注塑",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 0.774,
+        "increment": 0.0072
+      },
+      {
+        "name": "8.8折",
+        "base": 0.7568,
+        "increment": 0.00704
+      },
+      {
+        "name": "8.5折",
+        "base": 0.731,
+        "increment": 0.0068
+      },
+      {
+        "name": "8.2折",
+        "base": 0.7052,
+        "increment": 0.00656
+      },
+      {
+        "name": "8折",
+        "base": 0.688,
+        "increment": 0.0064
+      },
+      {
+        "name": "7.8折",
+        "base": 0.6708,
+        "increment": 0.00624
+      },
+      {
+        "name": "7.5折",
+        "base": 0.645,
+        "increment": 0.006
+      },
+      {
+        "name": "7.2折",
+        "base": 0.6192,
+        "increment": 0.00576
+      }
+    ]
+  },
+  {
+    "category": "尼龙产品 Coil zipper",
+    "subcategory": "3#尼龙拉链",
+    "type": "开尾",
+    "slider": "自动头",
+    "baseLength": 20,
+    "basePrice": 1.281,
+    "increment": 0.008,
+    "notes": "注塑",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 1.1529,
+        "increment": 0.0072
+      },
+      {
+        "name": "8.8折",
+        "base": 1.12728,
+        "increment": 0.00704
+      },
+      {
+        "name": "8.5折",
+        "base": 1.08885,
+        "increment": 0.0068
+      },
+      {
+        "name": "8.2折",
+        "base": 1.05042,
+        "increment": 0.00656
+      },
+      {
+        "name": "8折",
+        "base": 1.0248,
+        "increment": 0.0064
+      },
+      {
+        "name": "7.8折",
+        "base": 0.99918,
+        "increment": 0.00624
+      },
+      {
+        "name": "7.5折",
+        "base": 0.96075,
+        "increment": 0.006
+      },
+      {
+        "name": "7.2折",
+        "base": 0.92232,
+        "increment": 0.00576
+      }
+    ]
+  },
+  {
+    "category": "尼龙产品 Coil zipper",
+    "subcategory": "3#尼龙拉链",
+    "type": "双开尾",
+    "slider": "双自动头",
+    "baseLength": 20,
+    "basePrice": 1.614,
+    "increment": 0.008,
+    "notes": "注塑",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 1.4526,
+        "increment": 0.0072
+      },
+      {
+        "name": "8.8折",
+        "base": 1.42032,
+        "increment": 0.00704
+      },
+      {
+        "name": "8.5折",
+        "base": 1.3719,
+        "increment": 0.0068
+      },
+      {
+        "name": "8.2折",
+        "base": 1.32348,
+        "increment": 0.00656
+      },
+      {
+        "name": "8折",
+        "base": 1.2912,
+        "increment": 0.0064
+      },
+      {
+        "name": "7.8折",
+        "base": 1.25892,
+        "increment": 0.00624
+      },
+      {
+        "name": "7.5折",
+        "base": 1.2105,
+        "increment": 0.006
+      },
+      {
+        "name": "7.2折",
+        "base": 1.16208,
+        "increment": 0.00576
+      }
+    ]
+  },
+  {
+    "category": "尼龙产品 Coil zipper",
+    "subcategory": "4#尼龙拉链",
+    "type": "勿尾",
+    "slider": "自动头",
+    "baseLength": 10,
+    "basePrice": 0.83,
+    "increment": 0.01,
+    "notes": "",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 0.747,
+        "increment": 0.009
+      },
+      {
+        "name": "8.8折",
+        "base": 0.7304,
+        "increment": 0.0088
+      },
+      {
+        "name": "8.5折",
+        "base": 0.7055,
+        "increment": 0.0085
+      },
+      {
+        "name": "8.2折",
+        "base": 0.6806,
+        "increment": 0.0082
+      },
+      {
+        "name": "8折",
+        "base": 0.664,
+        "increment": 0.008
+      },
+      {
+        "name": "7.8折",
+        "base": 0.6474,
+        "increment": 0.0078
+      },
+      {
+        "name": "7.5折",
+        "base": 0.6225,
+        "increment": 0.0075
+      },
+      {
+        "name": "7.2折",
+        "base": 0.5976,
+        "increment": 0.0072
+      }
+    ]
+  },
+  {
+    "category": "尼龙产品 Coil zipper",
+    "subcategory": "4#尼龙拉链",
+    "type": "开尾",
+    "slider": "自动头",
+    "baseLength": 20,
+    "basePrice": 1.19,
+    "increment": 0.01,
+    "notes": "",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 1.071,
+        "increment": 0.009
+      },
+      {
+        "name": "8.8折",
+        "base": 1.0472,
+        "increment": 0.0088
+      },
+      {
+        "name": "8.5折",
+        "base": 1.0115,
+        "increment": 0.0085
+      },
+      {
+        "name": "8.2折",
+        "base": 0.9758,
+        "increment": 0.0082
+      },
+      {
+        "name": "8折",
+        "base": 0.952,
+        "increment": 0.008
+      },
+      {
+        "name": "7.8折",
+        "base": 0.9282,
+        "increment": 0.0078
+      },
+      {
+        "name": "7.5折",
+        "base": 0.8925,
+        "increment": 0.0075
+      },
+      {
+        "name": "7.2折",
+        "base": 0.8568,
+        "increment": 0.0072
+      }
+    ]
+  },
+  {
+    "category": "尼龙产品 Coil zipper",
+    "subcategory": "4#尼龙拉链",
+    "type": "勿尾",
+    "slider": "自动头",
+    "baseLength": 10,
+    "basePrice": 1.09,
+    "increment": 0.01,
+    "notes": "注塑",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 0.981,
+        "increment": 0.009
+      },
+      {
+        "name": "8.8折",
+        "base": 0.9592,
+        "increment": 0.0088
+      },
+      {
+        "name": "8.5折",
+        "base": 0.9265,
+        "increment": 0.0085
+      },
+      {
+        "name": "8.2折",
+        "base": 0.8938,
+        "increment": 0.0082
+      },
+      {
+        "name": "8折",
+        "base": 0.872,
+        "increment": 0.008
+      },
+      {
+        "name": "7.8折",
+        "base": 0.8502,
+        "increment": 0.0078
+      },
+      {
+        "name": "7.5折",
+        "base": 0.8175,
+        "increment": 0.0075
+      },
+      {
+        "name": "7.2折",
+        "base": 0.7848,
+        "increment": 0.0072
+      }
+    ]
+  },
+  {
+    "category": "尼龙产品 Coil zipper",
+    "subcategory": "4#尼龙拉链",
+    "type": "开尾",
+    "slider": "自动头",
+    "baseLength": 20,
+    "basePrice": 1.364,
+    "increment": 0.01,
+    "notes": "注塑",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 1.2276,
+        "increment": 0.009
+      },
+      {
+        "name": "8.8折",
+        "base": 1.20032,
+        "increment": 0.0088
+      },
+      {
+        "name": "8.5折",
+        "base": 1.1594,
+        "increment": 0.0085
+      },
+      {
+        "name": "8.2折",
+        "base": 1.11848,
+        "increment": 0.0082
+      },
+      {
+        "name": "8折",
+        "base": 1.0912,
+        "increment": 0.008
+      },
+      {
+        "name": "7.8折",
+        "base": 1.06392,
+        "increment": 0.0078
+      },
+      {
+        "name": "7.5折",
+        "base": 1.023,
+        "increment": 0.0075
+      },
+      {
+        "name": "7.2折",
+        "base": 0.98208,
+        "increment": 0.0072
+      }
+    ]
+  },
+  {
+    "category": "尼龙产品 Coil zipper",
+    "subcategory": "5#尼龙拉链",
+    "type": "勿尾",
+    "slider": "自动头",
+    "baseLength": 10,
+    "basePrice": 0.91,
+    "increment": 0.012,
+    "notes": "",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 0.819,
+        "increment": 0.0108
+      },
+      {
+        "name": "8.8折",
+        "base": 0.8008,
+        "increment": 0.01056
+      },
+      {
+        "name": "8.5折",
+        "base": 0.7735,
+        "increment": 0.0102
+      },
+      {
+        "name": "8.2折",
+        "base": 0.7462,
+        "increment": 0.00984
+      },
+      {
+        "name": "8折",
+        "base": 0.728,
+        "increment": 0.0096
+      },
+      {
+        "name": "7.8折",
+        "base": 0.7098,
+        "increment": 0.00936
+      },
+      {
+        "name": "7.5折",
+        "base": 0.6825,
+        "increment": 0.009
+      },
+      {
+        "name": "7.2折",
+        "base": 0.6552,
+        "increment": 0.00864
+      }
+    ]
+  },
+  {
+    "category": "尼龙产品 Coil zipper",
+    "subcategory": "5#尼龙拉链",
+    "type": "开尾",
+    "slider": "自动头",
+    "baseLength": 20,
+    "basePrice": 1.52,
+    "increment": 0.012,
+    "notes": "",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 1.368,
+        "increment": 0.0108
+      },
+      {
+        "name": "8.8折",
+        "base": 1.3376,
+        "increment": 0.01056
+      },
+      {
+        "name": "8.5折",
+        "base": 1.292,
+        "increment": 0.0102
+      },
+      {
+        "name": "8.2折",
+        "base": 1.2464,
+        "increment": 0.00984
+      },
+      {
+        "name": "8折",
+        "base": 1.216,
+        "increment": 0.0096
+      },
+      {
+        "name": "7.8折",
+        "base": 1.1856,
+        "increment": 0.00936
+      },
+      {
+        "name": "7.5折",
+        "base": 1.14,
+        "increment": 0.009
+      },
+      {
+        "name": "7.2折",
+        "base": 1.0944,
+        "increment": 0.00864
+      }
+    ]
+  },
+  {
+    "category": "尼龙产品 Coil zipper",
+    "subcategory": "5#尼龙拉链",
+    "type": "双开尾",
+    "slider": "双自动头",
+    "baseLength": 20,
+    "basePrice": 2.14,
+    "increment": 0.012,
+    "notes": "",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 1.926,
+        "increment": 0.0108
+      },
+      {
+        "name": "8.8折",
+        "base": 1.8832,
+        "increment": 0.01056
+      },
+      {
+        "name": "8.5折",
+        "base": 1.819,
+        "increment": 0.0102
+      },
+      {
+        "name": "8.2折",
+        "base": 1.7548,
+        "increment": 0.00984
+      },
+      {
+        "name": "8折",
+        "base": 1.712,
+        "increment": 0.0096
+      },
+      {
+        "name": "7.8折",
+        "base": 1.6692,
+        "increment": 0.00936
+      },
+      {
+        "name": "7.5折",
+        "base": 1.605,
+        "increment": 0.009
+      },
+      {
+        "name": "7.2折",
+        "base": 1.5408,
+        "increment": 0.00864
+      }
+    ]
+  },
+  {
+    "category": "尼龙产品 Coil zipper",
+    "subcategory": "5#尼龙拉链",
+    "type": "勿尾",
+    "slider": "自动头",
+    "baseLength": 10,
+    "basePrice": 1.061,
+    "increment": 0.012,
+    "notes": "注塑",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 0.9549,
+        "increment": 0.0108
+      },
+      {
+        "name": "8.8折",
+        "base": 0.93368,
+        "increment": 0.01056
+      },
+      {
+        "name": "8.5折",
+        "base": 0.90185,
+        "increment": 0.0102
+      },
+      {
+        "name": "8.2折",
+        "base": 0.87002,
+        "increment": 0.00984
+      },
+      {
+        "name": "8折",
+        "base": 0.8488,
+        "increment": 0.0096
+      },
+      {
+        "name": "7.8折",
+        "base": 0.82758,
+        "increment": 0.00936
+      },
+      {
+        "name": "7.5折",
+        "base": 0.79575,
+        "increment": 0.009
+      },
+      {
+        "name": "7.2折",
+        "base": 0.76392,
+        "increment": 0.00864
+      }
+    ]
+  },
+  {
+    "category": "尼龙产品 Coil zipper",
+    "subcategory": "5#尼龙拉链",
+    "type": "开尾",
+    "slider": "自动头",
+    "baseLength": 20,
+    "basePrice": 1.525,
+    "increment": 0.012,
+    "notes": "注塑",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 1.3725,
+        "increment": 0.0108
+      },
+      {
+        "name": "8.8折",
+        "base": 1.342,
+        "increment": 0.01056
+      },
+      {
+        "name": "8.5折",
+        "base": 1.29625,
+        "increment": 0.0102
+      },
+      {
+        "name": "8.2折",
+        "base": 1.2505,
+        "increment": 0.00984
+      },
+      {
+        "name": "8折",
+        "base": 1.22,
+        "increment": 0.0096
+      },
+      {
+        "name": "7.8折",
+        "base": 1.1895,
+        "increment": 0.00936
+      },
+      {
+        "name": "7.5折",
+        "base": 1.14375,
+        "increment": 0.009
+      },
+      {
+        "name": "7.2折",
+        "base": 1.098,
+        "increment": 0.00864
+      }
+    ]
+  },
+  {
+    "category": "尼龙产品 Coil zipper",
+    "subcategory": "5#尼龙拉链",
+    "type": "双开尾",
+    "slider": "双自动头",
+    "baseLength": 20,
+    "basePrice": 2.106,
+    "increment": 0.012,
+    "notes": "注塑",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 1.8954,
+        "increment": 0.0108
+      },
+      {
+        "name": "8.8折",
+        "base": 1.85328,
+        "increment": 0.01056
+      },
+      {
+        "name": "8.5折",
+        "base": 1.7901,
+        "increment": 0.0102
+      },
+      {
+        "name": "8.2折",
+        "base": 1.72692,
+        "increment": 0.00984
+      },
+      {
+        "name": "8折",
+        "base": 1.6848,
+        "increment": 0.0096
+      },
+      {
+        "name": "7.8折",
+        "base": 1.64268,
+        "increment": 0.00936
+      },
+      {
+        "name": "7.5折",
+        "base": 1.5795,
+        "increment": 0.009
+      },
+      {
+        "name": "7.2折",
+        "base": 1.51632,
+        "increment": 0.00864
+      }
+    ]
+  },
+  {
+    "category": "尼龙产品 Coil zipper",
+    "subcategory": "3#隐形拉链",
+    "type": "勿尾",
+    "slider": "自动头",
+    "baseLength": 10,
+    "basePrice": 0.67,
+    "increment": 0.008,
+    "notes": "布纹",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 0.603,
+        "increment": 0.0072
+      },
+      {
+        "name": "8.8折",
+        "base": 0.5896,
+        "increment": 0.00704
+      },
+      {
+        "name": "8.5折",
+        "base": 0.5695,
+        "increment": 0.0068
+      },
+      {
+        "name": "8.2折",
+        "base": 0.5494,
+        "increment": 0.00656
+      },
+      {
+        "name": "8折",
+        "base": 0.536,
+        "increment": 0.0064
+      },
+      {
+        "name": "7.8折",
+        "base": 0.5226,
+        "increment": 0.00624
+      },
+      {
+        "name": "7.5折",
+        "base": 0.5025,
+        "increment": 0.006
+      },
+      {
+        "name": "7.2折",
+        "base": 0.4824,
+        "increment": 0.00576
+      }
+    ]
+  },
+  {
+    "category": "尼龙产品 Coil zipper",
+    "subcategory": "3#隐形拉链",
+    "type": "勿尾",
+    "slider": "自动头",
+    "baseLength": 10,
+    "basePrice": 0.712,
+    "increment": 0.008,
+    "notes": "网纹",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 0.6408,
+        "increment": 0.0072
+      },
+      {
+        "name": "8.8折",
+        "base": 0.62656,
+        "increment": 0.00704
+      },
+      {
+        "name": "8.5折",
+        "base": 0.6052,
+        "increment": 0.0068
+      },
+      {
+        "name": "8.2折",
+        "base": 0.58384,
+        "increment": 0.00656
+      },
+      {
+        "name": "8折",
+        "base": 0.5696,
+        "increment": 0.0064
+      },
+      {
+        "name": "7.8折",
+        "base": 0.55536,
+        "increment": 0.00624
+      },
+      {
+        "name": "7.5折",
+        "base": 0.534,
+        "increment": 0.006
+      },
+      {
+        "name": "7.2折",
+        "base": 0.51264,
+        "increment": 0.00576
+      }
+    ]
+  },
+  {
+    "category": "尼龙产品 Coil zipper",
+    "subcategory": "3#尼龙防水链 （皮感YKT10)",
+    "type": "勿尾",
+    "slider": "反穿自动头",
+    "baseLength": 10,
+    "basePrice": 1.4,
+    "increment": 0.07,
+    "notes": "皮感",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 1.26,
+        "increment": 0.063
+      },
+      {
+        "name": "8.8折",
+        "base": 1.232,
+        "increment": 0.0616
+      },
+      {
+        "name": "8.5折",
+        "base": 1.19,
+        "increment": 0.0595
+      },
+      {
+        "name": "8.2折",
+        "base": 1.148,
+        "increment": 0.0574
+      },
+      {
+        "name": "8折",
+        "base": 1.12,
+        "increment": 0.056
+      },
+      {
+        "name": "7.8折",
+        "base": 1.092,
+        "increment": 0.0546
+      },
+      {
+        "name": "7.5折",
+        "base": 1.05,
+        "increment": 0.0525
+      },
+      {
+        "name": "7.2折",
+        "base": 1.008,
+        "increment": 0.0504
+      }
+    ]
+  },
+  {
+    "category": "尼龙产品 Coil zipper",
+    "subcategory": "3#尼龙防水链 （皮感YKT10)",
+    "type": "开尾",
+    "slider": "反穿自动头",
+    "baseLength": 20,
+    "basePrice": 3.44,
+    "increment": 0.07,
+    "notes": "皮感",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 3.096,
+        "increment": 0.063
+      },
+      {
+        "name": "8.8折",
+        "base": 3.0272,
+        "increment": 0.0616
+      },
+      {
+        "name": "8.5折",
+        "base": 2.924,
+        "increment": 0.0595
+      },
+      {
+        "name": "8.2折",
+        "base": 2.8208,
+        "increment": 0.0574
+      },
+      {
+        "name": "8折",
+        "base": 2.752,
+        "increment": 0.056
+      },
+      {
+        "name": "7.8折",
+        "base": 2.6832,
+        "increment": 0.0546
+      },
+      {
+        "name": "7.5折",
+        "base": 2.58,
+        "increment": 0.0525
+      },
+      {
+        "name": "7.2折",
+        "base": 2.4768,
+        "increment": 0.0504
+      }
+    ]
+  },
+  {
+    "category": "尼龙产品 Coil zipper",
+    "subcategory": "5#尼龙皮感防水 （皮感YKT10)",
+    "type": "勿尾",
+    "slider": "反穿自动头",
+    "baseLength": 10,
+    "basePrice": 1.65,
+    "increment": 0.08,
+    "notes": "皮感",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 1.485,
+        "increment": 0.072
+      },
+      {
+        "name": "8.8折",
+        "base": 1.452,
+        "increment": 0.0704
+      },
+      {
+        "name": "8.5折",
+        "base": 1.4025,
+        "increment": 0.068
+      },
+      {
+        "name": "8.2折",
+        "base": 1.353,
+        "increment": 0.0656
+      },
+      {
+        "name": "8折",
+        "base": 1.32,
+        "increment": 0.064
+      },
+      {
+        "name": "7.8折",
+        "base": 1.287,
+        "increment": 0.0624
+      },
+      {
+        "name": "7.5折",
+        "base": 1.2375,
+        "increment": 0.06
+      },
+      {
+        "name": "7.2折",
+        "base": 1.188,
+        "increment": 0.0576
+      }
+    ]
+  },
+  {
+    "category": "尼龙产品 Coil zipper",
+    "subcategory": "5#尼龙皮感防水 （皮感YKT10)",
+    "type": "开尾",
+    "slider": "反穿自动头",
+    "baseLength": 20,
+    "basePrice": 3.31,
+    "increment": 0.08,
+    "notes": "皮感",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 2.979,
+        "increment": 0.072
+      },
+      {
+        "name": "8.8折",
+        "base": 2.9128,
+        "increment": 0.0704
+      },
+      {
+        "name": "8.5折",
+        "base": 2.8135,
+        "increment": 0.068
+      },
+      {
+        "name": "8.2折",
+        "base": 2.7142,
+        "increment": 0.0656
+      },
+      {
+        "name": "8折",
+        "base": 2.648,
+        "increment": 0.064
+      },
+      {
+        "name": "7.8折",
+        "base": 2.5818,
+        "increment": 0.0624
+      },
+      {
+        "name": "7.5折",
+        "base": 2.4825,
+        "increment": 0.06
+      },
+      {
+        "name": "7.2折",
+        "base": 2.3832,
+        "increment": 0.0576
+      }
+    ]
+  },
+  {
+    "category": "尼龙产品 Coil zipper",
+    "subcategory": "5#尼龙皮感防水 （皮感YKT10)",
+    "type": "双开尾",
+    "slider": "反穿双自动头",
+    "baseLength": 20,
+    "basePrice": 3.96,
+    "increment": 0.08,
+    "notes": "皮感",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 3.564,
+        "increment": 0.072
+      },
+      {
+        "name": "8.8折",
+        "base": 3.4848,
+        "increment": 0.0704
+      },
+      {
+        "name": "8.5折",
+        "base": 3.366,
+        "increment": 0.068
+      },
+      {
+        "name": "8.2折",
+        "base": 3.2472,
+        "increment": 0.0656
+      },
+      {
+        "name": "8折",
+        "base": 3.168,
+        "increment": 0.064
+      },
+      {
+        "name": "7.8折",
+        "base": 3.0888,
+        "increment": 0.0624
+      },
+      {
+        "name": "7.5折",
+        "base": 2.97,
+        "increment": 0.06
+      },
+      {
+        "name": "7.2折",
+        "base": 2.8512,
+        "increment": 0.0576
+      }
+    ]
+  },
+  {
+    "category": "尼龙产品 Coil zipper",
+    "subcategory": "3#尼龙防水链 （皮感YTG01)",
+    "type": "勿尾",
+    "slider": "反穿自动头",
+    "baseLength": 10,
+    "basePrice": 1.38,
+    "increment": 0.06,
+    "notes": "雾面",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 1.242,
+        "increment": 0.054
+      },
+      {
+        "name": "8.8折",
+        "base": 1.2144,
+        "increment": 0.0528
+      },
+      {
+        "name": "8.5折",
+        "base": 1.173,
+        "increment": 0.051
+      },
+      {
+        "name": "8.2折",
+        "base": 1.1316,
+        "increment": 0.0492
+      },
+      {
+        "name": "8折",
+        "base": 1.104,
+        "increment": 0.048
+      },
+      {
+        "name": "7.8折",
+        "base": 1.0764,
+        "increment": 0.0468
+      },
+      {
+        "name": "7.5折",
+        "base": 1.035,
+        "increment": 0.045
+      },
+      {
+        "name": "7.2折",
+        "base": 0.9936,
+        "increment": 0.0432
+      }
+    ]
+  },
+  {
+    "category": "尼龙产品 Coil zipper",
+    "subcategory": "3#尼龙防水链 （皮感YTG01)",
+    "type": "开尾",
+    "slider": "反穿自动头",
+    "baseLength": 20,
+    "basePrice": 3.13,
+    "increment": 0.06,
+    "notes": "雾面",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 2.817,
+        "increment": 0.054
+      },
+      {
+        "name": "8.8折",
+        "base": 2.7544,
+        "increment": 0.0528
+      },
+      {
+        "name": "8.5折",
+        "base": 2.6605,
+        "increment": 0.051
+      },
+      {
+        "name": "8.2折",
+        "base": 2.5666,
+        "increment": 0.0492
+      },
+      {
+        "name": "8折",
+        "base": 2.504,
+        "increment": 0.048
+      },
+      {
+        "name": "7.8折",
+        "base": 2.4414,
+        "increment": 0.0468
+      },
+      {
+        "name": "7.5折",
+        "base": 2.3475,
+        "increment": 0.045
+      },
+      {
+        "name": "7.2折",
+        "base": 2.2536,
+        "increment": 0.0432
+      }
+    ]
+  },
+  {
+    "category": "尼龙产品 Coil zipper",
+    "subcategory": "5#尼龙皮感防水 （皮感YTG01)",
+    "type": "勿尾",
+    "slider": "反穿自动头",
+    "baseLength": 10,
+    "basePrice": 1.5,
+    "increment": 0.07,
+    "notes": "",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 1.35,
+        "increment": 0.063
+      },
+      {
+        "name": "8.8折",
+        "base": 1.32,
+        "increment": 0.0616
+      },
+      {
+        "name": "8.5折",
+        "base": 1.275,
+        "increment": 0.0595
+      },
+      {
+        "name": "8.2折",
+        "base": 1.23,
+        "increment": 0.0574
+      },
+      {
+        "name": "8折",
+        "base": 1.2,
+        "increment": 0.056
+      },
+      {
+        "name": "7.8折",
+        "base": 1.17,
+        "increment": 0.0546
+      },
+      {
+        "name": "7.5折",
+        "base": 1.125,
+        "increment": 0.0525
+      },
+      {
+        "name": "7.2折",
+        "base": 1.08,
+        "increment": 0.0504
+      }
+    ]
+  },
+  {
+    "category": "尼龙产品 Coil zipper",
+    "subcategory": "5#尼龙皮感防水 （皮感YTG01)",
+    "type": "开尾",
+    "slider": "反穿自动头",
+    "baseLength": 20,
+    "basePrice": 3.01,
+    "increment": 0.07,
+    "notes": "",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 2.709,
+        "increment": 0.063
+      },
+      {
+        "name": "8.8折",
+        "base": 2.6488,
+        "increment": 0.0616
+      },
+      {
+        "name": "8.5折",
+        "base": 2.5585,
+        "increment": 0.0595
+      },
+      {
+        "name": "8.2折",
+        "base": 2.4682,
+        "increment": 0.0574
+      },
+      {
+        "name": "8折",
+        "base": 2.408,
+        "increment": 0.056
+      },
+      {
+        "name": "7.8折",
+        "base": 2.3478,
+        "increment": 0.0546
+      },
+      {
+        "name": "7.5折",
+        "base": 2.2575,
+        "increment": 0.0525
+      },
+      {
+        "name": "7.2折",
+        "base": 2.1672,
+        "increment": 0.0504
+      }
+    ]
+  },
+  {
+    "category": "尼龙产品 Coil zipper",
+    "subcategory": "5#尼龙皮感防水 （皮感YTG01)",
+    "type": "双开尾",
+    "slider": "反穿双自动头",
+    "baseLength": 20,
+    "basePrice": 3.61,
+    "increment": 0.07,
+    "notes": "",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 3.249,
+        "increment": 0.063
+      },
+      {
+        "name": "8.8折",
+        "base": 3.1768,
+        "increment": 0.0616
+      },
+      {
+        "name": "8.5折",
+        "base": 3.0685,
+        "increment": 0.0595
+      },
+      {
+        "name": "8.2折",
+        "base": 2.9602,
+        "increment": 0.0574
+      },
+      {
+        "name": "8折",
+        "base": 2.888,
+        "increment": 0.056
+      },
+      {
+        "name": "7.8折",
+        "base": 2.8158,
+        "increment": 0.0546
+      },
+      {
+        "name": "7.5折",
+        "base": 2.7075,
+        "increment": 0.0525
+      },
+      {
+        "name": "7.2折",
+        "base": 2.5992,
+        "increment": 0.0504
+      }
+    ]
+  },
+  {
+    "category": "塑钢产品Vislon Zipper",
+    "subcategory": "3#胶牙",
+    "type": "勿尾",
+    "slider": "自动头",
+    "baseLength": 10,
+    "basePrice": 1.007,
+    "increment": 0.015,
+    "notes": "顺布带色普通牙",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 0.9063,
+        "increment": 0.0135
+      },
+      {
+        "name": "8.8折",
+        "base": 0.88616,
+        "increment": 0.0132
+      },
+      {
+        "name": "8.5折",
+        "base": 0.85595,
+        "increment": 0.01275
+      },
+      {
+        "name": "8.2折",
+        "base": 0.82574,
+        "increment": 0.0123
+      },
+      {
+        "name": "8折",
+        "base": 0.8056,
+        "increment": 0.012
+      },
+      {
+        "name": "7.8折",
+        "base": 0.78546,
+        "increment": 0.0117
+      },
+      {
+        "name": "7.5折",
+        "base": 0.75525,
+        "increment": 0.01125
+      },
+      {
+        "name": "7.2折",
+        "base": 0.72504,
+        "increment": 0.0108
+      }
+    ]
+  },
+  {
+    "category": "塑钢产品Vislon Zipper",
+    "subcategory": "3#胶牙",
+    "type": "开尾",
+    "slider": "自动头",
+    "baseLength": 20,
+    "basePrice": 1.314,
+    "increment": 0.015,
+    "notes": "顺布带色普通牙",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 1.1826,
+        "increment": 0.0135
+      },
+      {
+        "name": "8.8折",
+        "base": 1.15632,
+        "increment": 0.0132
+      },
+      {
+        "name": "8.5折",
+        "base": 1.1169,
+        "increment": 0.01275
+      },
+      {
+        "name": "8.2折",
+        "base": 1.07748,
+        "increment": 0.0123
+      },
+      {
+        "name": "8折",
+        "base": 1.0512,
+        "increment": 0.012
+      },
+      {
+        "name": "7.8折",
+        "base": 1.02492,
+        "increment": 0.0117
+      },
+      {
+        "name": "7.5折",
+        "base": 0.9855,
+        "increment": 0.01125
+      },
+      {
+        "name": "7.2折",
+        "base": 0.94608,
+        "increment": 0.0108
+      }
+    ]
+  },
+  {
+    "category": "塑钢产品Vislon Zipper",
+    "subcategory": "3#胶牙",
+    "type": "双开尾",
+    "slider": "双自动头",
+    "baseLength": 20,
+    "basePrice": 1.817,
+    "increment": 0.015,
+    "notes": "顺布带色普通牙",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 1.6353,
+        "increment": 0.0135
+      },
+      {
+        "name": "8.8折",
+        "base": 1.59896,
+        "increment": 0.0132
+      },
+      {
+        "name": "8.5折",
+        "base": 1.54445,
+        "increment": 0.01275
+      },
+      {
+        "name": "8.2折",
+        "base": 1.48994,
+        "increment": 0.0123
+      },
+      {
+        "name": "8折",
+        "base": 1.4536,
+        "increment": 0.012
+      },
+      {
+        "name": "7.8折",
+        "base": 1.41726,
+        "increment": 0.0117
+      },
+      {
+        "name": "7.5折",
+        "base": 1.36275,
+        "increment": 0.01125
+      },
+      {
+        "name": "7.2折",
+        "base": 1.30824,
+        "increment": 0.0108
+      }
+    ]
+  },
+  {
+    "category": "塑钢产品Vislon Zipper",
+    "subcategory": "5#胶牙",
+    "type": "勿尾",
+    "slider": "自动头",
+    "baseLength": 10,
+    "basePrice": 1.238,
+    "increment": 0.019,
+    "notes": "顺布带色普通牙",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 1.1142,
+        "increment": 0.0171
+      },
+      {
+        "name": "8.8折",
+        "base": 1.08944,
+        "increment": 0.01672
+      },
+      {
+        "name": "8.5折",
+        "base": 1.0523,
+        "increment": 0.01615
+      },
+      {
+        "name": "8.2折",
+        "base": 1.01516,
+        "increment": 0.01558
+      },
+      {
+        "name": "8折",
+        "base": 0.9904,
+        "increment": 0.0152
+      },
+      {
+        "name": "7.8折",
+        "base": 0.96564,
+        "increment": 0.01482
+      },
+      {
+        "name": "7.5折",
+        "base": 0.9285,
+        "increment": 0.01425
+      },
+      {
+        "name": "7.2折",
+        "base": 0.89136,
+        "increment": 0.01368
+      }
+    ]
+  },
+  {
+    "category": "塑钢产品Vislon Zipper",
+    "subcategory": "5#胶牙",
+    "type": "开尾",
+    "slider": "自动头",
+    "baseLength": 20,
+    "basePrice": 1.693,
+    "increment": 0.019,
+    "notes": "顺布带色普通牙",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 1.5237,
+        "increment": 0.0171
+      },
+      {
+        "name": "8.8折",
+        "base": 1.48984,
+        "increment": 0.01672
+      },
+      {
+        "name": "8.5折",
+        "base": 1.43905,
+        "increment": 0.01615
+      },
+      {
+        "name": "8.2折",
+        "base": 1.38826,
+        "increment": 0.01558
+      },
+      {
+        "name": "8折",
+        "base": 1.3544,
+        "increment": 0.0152
+      },
+      {
+        "name": "7.8折",
+        "base": 1.32054,
+        "increment": 0.01482
+      },
+      {
+        "name": "7.5折",
+        "base": 1.26975,
+        "increment": 0.01425
+      },
+      {
+        "name": "7.2折",
+        "base": 1.21896,
+        "increment": 0.01368
+      }
+    ]
+  },
+  {
+    "category": "塑钢产品Vislon Zipper",
+    "subcategory": "5#胶牙",
+    "type": "双开尾",
+    "slider": "双自动头",
+    "baseLength": 20,
+    "basePrice": 2.223,
+    "increment": 0.019,
+    "notes": "顺布带色普通牙",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 2.0007,
+        "increment": 0.0171
+      },
+      {
+        "name": "8.8折",
+        "base": 1.95624,
+        "increment": 0.01672
+      },
+      {
+        "name": "8.5折",
+        "base": 1.88955,
+        "increment": 0.01615
+      },
+      {
+        "name": "8.2折",
+        "base": 1.82286,
+        "increment": 0.01558
+      },
+      {
+        "name": "8折",
+        "base": 1.7784,
+        "increment": 0.0152
+      },
+      {
+        "name": "7.8折",
+        "base": 1.73394,
+        "increment": 0.01482
+      },
+      {
+        "name": "7.5折",
+        "base": 1.66725,
+        "increment": 0.01425
+      },
+      {
+        "name": "7.2折",
+        "base": 1.60056,
+        "increment": 0.01368
+      }
+    ]
+  },
+  {
+    "category": "塑钢产品Vislon Zipper",
+    "subcategory": "8#胶牙",
+    "type": "勿尾",
+    "slider": "自动头",
+    "baseLength": 10,
+    "basePrice": 2.324,
+    "increment": 0.03,
+    "notes": "顺布带色普通牙",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 2.0916,
+        "increment": 0.027
+      },
+      {
+        "name": "8.8折",
+        "base": 2.04512,
+        "increment": 0.0264
+      },
+      {
+        "name": "8.5折",
+        "base": 1.9754,
+        "increment": 0.0255
+      },
+      {
+        "name": "8.2折",
+        "base": 1.90568,
+        "increment": 0.0246
+      },
+      {
+        "name": "8折",
+        "base": 1.8592,
+        "increment": 0.024
+      },
+      {
+        "name": "7.8折",
+        "base": 1.81272,
+        "increment": 0.0234
+      },
+      {
+        "name": "7.5折",
+        "base": 1.743,
+        "increment": 0.0225
+      },
+      {
+        "name": "7.2折",
+        "base": 1.67328,
+        "increment": 0.0216
+      }
+    ]
+  },
+  {
+    "category": "塑钢产品Vislon Zipper",
+    "subcategory": "8#胶牙",
+    "type": "开尾",
+    "slider": "自动头",
+    "baseLength": 20,
+    "basePrice": 2.678,
+    "increment": 0.03,
+    "notes": "顺布带色普通牙",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 2.4102,
+        "increment": 0.027
+      },
+      {
+        "name": "8.8折",
+        "base": 2.35664,
+        "increment": 0.0264
+      },
+      {
+        "name": "8.5折",
+        "base": 2.2763,
+        "increment": 0.0255
+      },
+      {
+        "name": "8.2折",
+        "base": 2.19596,
+        "increment": 0.0246
+      },
+      {
+        "name": "8折",
+        "base": 2.1424,
+        "increment": 0.024
+      },
+      {
+        "name": "7.8折",
+        "base": 2.08884,
+        "increment": 0.0234
+      },
+      {
+        "name": "7.5折",
+        "base": 2.0085,
+        "increment": 0.0225
+      },
+      {
+        "name": "7.2折",
+        "base": 1.92816,
+        "increment": 0.0216
+      }
+    ]
+  },
+  {
+    "category": "塑钢产品Vislon Zipper",
+    "subcategory": "8#胶牙",
+    "type": "双开尾",
+    "slider": "双自动头",
+    "baseLength": 20,
+    "basePrice": 3.739,
+    "increment": 0.03,
+    "notes": "顺布带色普通牙",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 3.3651,
+        "increment": 0.027
+      },
+      {
+        "name": "8.8折",
+        "base": 3.29032,
+        "increment": 0.0264
+      },
+      {
+        "name": "8.5折",
+        "base": 3.17815,
+        "increment": 0.0255
+      },
+      {
+        "name": "8.2折",
+        "base": 3.06598,
+        "increment": 0.0246
+      },
+      {
+        "name": "8折",
+        "base": 2.9912,
+        "increment": 0.024
+      },
+      {
+        "name": "7.8折",
+        "base": 2.91642,
+        "increment": 0.0234
+      },
+      {
+        "name": "7.5折",
+        "base": 2.80425,
+        "increment": 0.0225
+      },
+      {
+        "name": "7.2折",
+        "base": 2.69208,
+        "increment": 0.0216
+      }
+    ]
+  },
+  {
+    "category": "塑钢产品Vislon Zipper",
+    "subcategory": "D3#DQ 仿金属M-H牙",
+    "type": "勿尾",
+    "slider": "自动头",
+    "baseLength": 10,
+    "basePrice": 1.12,
+    "increment": 0.02,
+    "notes": "",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 1.008,
+        "increment": 0.018
+      },
+      {
+        "name": "8.8折",
+        "base": 0.9856,
+        "increment": 0.0176
+      },
+      {
+        "name": "8.5折",
+        "base": 0.952,
+        "increment": 0.017
+      },
+      {
+        "name": "8.2折",
+        "base": 0.9184,
+        "increment": 0.0164
+      },
+      {
+        "name": "8折",
+        "base": 0.896,
+        "increment": 0.016
+      },
+      {
+        "name": "7.8折",
+        "base": 0.8736,
+        "increment": 0.0156
+      },
+      {
+        "name": "7.5折",
+        "base": 0.84,
+        "increment": 0.015
+      },
+      {
+        "name": "7.2折",
+        "base": 0.8064,
+        "increment": 0.0144
+      }
+    ]
+  },
+  {
+    "category": "塑钢产品Vislon Zipper",
+    "subcategory": "D3#DQ 仿金属M-H牙",
+    "type": "开尾",
+    "slider": "自动头",
+    "baseLength": 20,
+    "basePrice": 1.6,
+    "increment": 0.02,
+    "notes": "",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 1.44,
+        "increment": 0.018
+      },
+      {
+        "name": "8.8折",
+        "base": 1.408,
+        "increment": 0.0176
+      },
+      {
+        "name": "8.5折",
+        "base": 1.36,
+        "increment": 0.017
+      },
+      {
+        "name": "8.2折",
+        "base": 1.312,
+        "increment": 0.0164
+      },
+      {
+        "name": "8折",
+        "base": 1.28,
+        "increment": 0.016
+      },
+      {
+        "name": "7.8折",
+        "base": 1.248,
+        "increment": 0.0156
+      },
+      {
+        "name": "7.5折",
+        "base": 1.2,
+        "increment": 0.015
+      },
+      {
+        "name": "7.2折",
+        "base": 1.152,
+        "increment": 0.0144
+      }
+    ]
+  },
+  {
+    "category": "塑钢产品Vislon Zipper",
+    "subcategory": "D3#DQ 仿金属M-H牙",
+    "type": "双开尾",
+    "slider": "双自动头",
+    "baseLength": 20,
+    "basePrice": 2.05,
+    "increment": 0.02,
+    "notes": "",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 1.845,
+        "increment": 0.018
+      },
+      {
+        "name": "8.8折",
+        "base": 1.804,
+        "increment": 0.0176
+      },
+      {
+        "name": "8.5折",
+        "base": 1.7425,
+        "increment": 0.017
+      },
+      {
+        "name": "8.2折",
+        "base": 1.681,
+        "increment": 0.0164
+      },
+      {
+        "name": "8折",
+        "base": 1.64,
+        "increment": 0.016
+      },
+      {
+        "name": "7.8折",
+        "base": 1.599,
+        "increment": 0.0156
+      },
+      {
+        "name": "7.5折",
+        "base": 1.5375,
+        "increment": 0.015
+      },
+      {
+        "name": "7.2折",
+        "base": 1.476,
+        "increment": 0.0144
+      }
+    ]
+  },
+  {
+    "category": "塑钢产品Vislon Zipper",
+    "subcategory": "5号开口仿金属",
+    "type": "勿尾",
+    "slider": "自动头",
+    "baseLength": 10,
+    "basePrice": 1.4,
+    "increment": 0.02,
+    "notes": "A、M、M-H、箭型牙",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 1.26,
+        "increment": 0.018
+      },
+      {
+        "name": "8.8折",
+        "base": 1.232,
+        "increment": 0.0176
+      },
+      {
+        "name": "8.5折",
+        "base": 1.19,
+        "increment": 0.017
+      },
+      {
+        "name": "8.2折",
+        "base": 1.148,
+        "increment": 0.0164
+      },
+      {
+        "name": "8折",
+        "base": 1.12,
+        "increment": 0.016
+      },
+      {
+        "name": "7.8折",
+        "base": 1.092,
+        "increment": 0.0156
+      },
+      {
+        "name": "7.5折",
+        "base": 1.05,
+        "increment": 0.015
+      },
+      {
+        "name": "7.2折",
+        "base": 1.008,
+        "increment": 0.0144
+      }
+    ]
+  },
+  {
+    "category": "塑钢产品Vislon Zipper",
+    "subcategory": "5号开口仿金属",
+    "type": "开尾",
+    "slider": "自动头",
+    "baseLength": 20,
+    "basePrice": 1.9,
+    "increment": 0.02,
+    "notes": "A、M、M-H、箭型牙",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 1.71,
+        "increment": 0.018
+      },
+      {
+        "name": "8.8折",
+        "base": 1.672,
+        "increment": 0.0176
+      },
+      {
+        "name": "8.5折",
+        "base": 1.615,
+        "increment": 0.017
+      },
+      {
+        "name": "8.2折",
+        "base": 1.558,
+        "increment": 0.0164
+      },
+      {
+        "name": "8折",
+        "base": 1.52,
+        "increment": 0.016
+      },
+      {
+        "name": "7.8折",
+        "base": 1.482,
+        "increment": 0.0156
+      },
+      {
+        "name": "7.5折",
+        "base": 1.425,
+        "increment": 0.015
+      },
+      {
+        "name": "7.2折",
+        "base": 1.368,
+        "increment": 0.0144
+      }
+    ]
+  },
+  {
+    "category": "塑钢产品Vislon Zipper",
+    "subcategory": "5号开口仿金属",
+    "type": "双开尾",
+    "slider": "双自动头",
+    "baseLength": 20,
+    "basePrice": 2.68,
+    "increment": 0.02,
+    "notes": "A、M、M-H、箭型牙",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 2.412,
+        "increment": 0.018
+      },
+      {
+        "name": "8.8折",
+        "base": 2.3584,
+        "increment": 0.0176
+      },
+      {
+        "name": "8.5折",
+        "base": 2.278,
+        "increment": 0.017
+      },
+      {
+        "name": "8.2折",
+        "base": 2.1976,
+        "increment": 0.0164
+      },
+      {
+        "name": "8折",
+        "base": 2.144,
+        "increment": 0.016
+      },
+      {
+        "name": "7.8折",
+        "base": 2.0904,
+        "increment": 0.0156
+      },
+      {
+        "name": "7.5折",
+        "base": 2.01,
+        "increment": 0.015
+      },
+      {
+        "name": "7.2折",
+        "base": 1.9296,
+        "increment": 0.0144
+      }
+    ]
+  },
+  {
+    "category": "塑钢产品Vislon Zipper",
+    "subcategory": "8号开口仿金属",
+    "type": "勿尾",
+    "slider": "自动头",
+    "baseLength": 10,
+    "basePrice": 2.44,
+    "increment": 0.03,
+    "notes": "A、M、M-H、箭型牙",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 2.196,
+        "increment": 0.027
+      },
+      {
+        "name": "8.8折",
+        "base": 2.1472,
+        "increment": 0.0264
+      },
+      {
+        "name": "8.5折",
+        "base": 2.074,
+        "increment": 0.0255
+      },
+      {
+        "name": "8.2折",
+        "base": 2.0008,
+        "increment": 0.0246
+      },
+      {
+        "name": "8折",
+        "base": 1.952,
+        "increment": 0.024
+      },
+      {
+        "name": "7.8折",
+        "base": 1.9032,
+        "increment": 0.0234
+      },
+      {
+        "name": "7.5折",
+        "base": 1.83,
+        "increment": 0.0225
+      },
+      {
+        "name": "7.2折",
+        "base": 1.7568,
+        "increment": 0.0216
+      }
+    ]
+  },
+  {
+    "category": "塑钢产品Vislon Zipper",
+    "subcategory": "8号开口仿金属",
+    "type": "开尾",
+    "slider": "自动头",
+    "baseLength": 20,
+    "basePrice": 3.07,
+    "increment": 0.03,
+    "notes": "A、M、M-H、箭型牙",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 2.763,
+        "increment": 0.027
+      },
+      {
+        "name": "8.8折",
+        "base": 2.7016,
+        "increment": 0.0264
+      },
+      {
+        "name": "8.5折",
+        "base": 2.6095,
+        "increment": 0.0255
+      },
+      {
+        "name": "8.2折",
+        "base": 2.5174,
+        "increment": 0.0246
+      },
+      {
+        "name": "8折",
+        "base": 2.456,
+        "increment": 0.024
+      },
+      {
+        "name": "7.8折",
+        "base": 2.3946,
+        "increment": 0.0234
+      },
+      {
+        "name": "7.5折",
+        "base": 2.3025,
+        "increment": 0.0225
+      },
+      {
+        "name": "7.2折",
+        "base": 2.2104,
+        "increment": 0.0216
+      }
+    ]
+  },
+  {
+    "category": "塑钢产品Vislon Zipper",
+    "subcategory": "8号开口仿金属",
+    "type": "双开尾",
+    "slider": "双自动头",
+    "baseLength": 20,
+    "basePrice": 4.24,
+    "increment": 0.03,
+    "notes": "A、M、M-H、箭型牙",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 3.816,
+        "increment": 0.027
+      },
+      {
+        "name": "8.8折",
+        "base": 3.7312,
+        "increment": 0.0264
+      },
+      {
+        "name": "8.5折",
+        "base": 3.604,
+        "increment": 0.0255
+      },
+      {
+        "name": "8.2折",
+        "base": 3.4768,
+        "increment": 0.0246
+      },
+      {
+        "name": "8折",
+        "base": 3.392,
+        "increment": 0.024
+      },
+      {
+        "name": "7.8折",
+        "base": 3.3072,
+        "increment": 0.0234
+      },
+      {
+        "name": "7.5折",
+        "base": 3.18,
+        "increment": 0.0225
+      },
+      {
+        "name": "7.2折",
+        "base": 3.0528,
+        "increment": 0.0216
+      }
+    ]
+  },
+  {
+    "category": "塑钢产品Vislon Zipper",
+    "subcategory": "3#树脂防水（DYT10）",
+    "type": "勿尾",
+    "slider": "自动头",
+    "baseLength": 10,
+    "basePrice": 2.68,
+    "increment": 0.11,
+    "notes": "皮感",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 2.412,
+        "increment": 0.099
+      },
+      {
+        "name": "8.8折",
+        "base": 2.3584,
+        "increment": 0.0968
+      },
+      {
+        "name": "8.5折",
+        "base": 2.278,
+        "increment": 0.0935
+      },
+      {
+        "name": "8.2折",
+        "base": 2.1976,
+        "increment": 0.0902
+      },
+      {
+        "name": "8折",
+        "base": 2.144,
+        "increment": 0.088
+      },
+      {
+        "name": "7.8折",
+        "base": 2.0904,
+        "increment": 0.0858
+      },
+      {
+        "name": "7.5折",
+        "base": 2.01,
+        "increment": 0.0825
+      },
+      {
+        "name": "7.2折",
+        "base": 1.9296,
+        "increment": 0.0792
+      }
+    ]
+  },
+  {
+    "category": "塑钢产品Vislon Zipper",
+    "subcategory": "3#树脂防水（DYT10）",
+    "type": "开尾",
+    "slider": "自动头",
+    "baseLength": 20,
+    "basePrice": 3.89,
+    "increment": 0.11,
+    "notes": "皮感",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 3.501,
+        "increment": 0.099
+      },
+      {
+        "name": "8.8折",
+        "base": 3.4232,
+        "increment": 0.0968
+      },
+      {
+        "name": "8.5折",
+        "base": 3.3065,
+        "increment": 0.0935
+      },
+      {
+        "name": "8.2折",
+        "base": 3.1898,
+        "increment": 0.0902
+      },
+      {
+        "name": "8折",
+        "base": 3.112,
+        "increment": 0.088
+      },
+      {
+        "name": "7.8折",
+        "base": 3.0342,
+        "increment": 0.0858
+      },
+      {
+        "name": "7.5折",
+        "base": 2.9175,
+        "increment": 0.0825
+      },
+      {
+        "name": "7.2折",
+        "base": 2.8008,
+        "increment": 0.0792
+      }
+    ]
+  },
+  {
+    "category": "塑钢产品Vislon Zipper",
+    "subcategory": "5#树脂防水（DYT10）",
+    "type": "勿尾",
+    "slider": "自动头",
+    "baseLength": 10,
+    "basePrice": 2.85,
+    "increment": 0.12,
+    "notes": "皮感",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 2.565,
+        "increment": 0.108
+      },
+      {
+        "name": "8.8折",
+        "base": 2.508,
+        "increment": 0.1056
+      },
+      {
+        "name": "8.5折",
+        "base": 2.4225,
+        "increment": 0.102
+      },
+      {
+        "name": "8.2折",
+        "base": 2.337,
+        "increment": 0.0984
+      },
+      {
+        "name": "8折",
+        "base": 2.28,
+        "increment": 0.096
+      },
+      {
+        "name": "7.8折",
+        "base": 2.223,
+        "increment": 0.0936
+      },
+      {
+        "name": "7.5折",
+        "base": 2.1375,
+        "increment": 0.09
+      },
+      {
+        "name": "7.2折",
+        "base": 2.052,
+        "increment": 0.0864
+      }
+    ]
+  },
+  {
+    "category": "塑钢产品Vislon Zipper",
+    "subcategory": "5#树脂防水（DYT10）",
+    "type": "开尾",
+    "slider": "自动头",
+    "baseLength": 20,
+    "basePrice": 4.18,
+    "increment": 0.12,
+    "notes": "皮感",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 3.762,
+        "increment": 0.108
+      },
+      {
+        "name": "8.8折",
+        "base": 3.6784,
+        "increment": 0.1056
+      },
+      {
+        "name": "8.5折",
+        "base": 3.553,
+        "increment": 0.102
+      },
+      {
+        "name": "8.2折",
+        "base": 3.4276,
+        "increment": 0.0984
+      },
+      {
+        "name": "8折",
+        "base": 3.344,
+        "increment": 0.096
+      },
+      {
+        "name": "7.8折",
+        "base": 3.2604,
+        "increment": 0.0936
+      },
+      {
+        "name": "7.5折",
+        "base": 3.135,
+        "increment": 0.09
+      },
+      {
+        "name": "7.2折",
+        "base": 3.0096,
+        "increment": 0.0864
+      }
+    ]
+  },
+  {
+    "category": "塑钢产品Vislon Zipper",
+    "subcategory": "5#树脂防水（DYT10）",
+    "type": "双开尾",
+    "slider": "双自动头",
+    "baseLength": 20,
+    "basePrice": 5.01,
+    "increment": 0.12,
+    "notes": "皮感",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 4.509,
+        "increment": 0.108
+      },
+      {
+        "name": "8.8折",
+        "base": 4.4088,
+        "increment": 0.1056
+      },
+      {
+        "name": "8.5折",
+        "base": 4.2585,
+        "increment": 0.102
+      },
+      {
+        "name": "8.2折",
+        "base": 4.1082,
+        "increment": 0.0984
+      },
+      {
+        "name": "8折",
+        "base": 4.008,
+        "increment": 0.096
+      },
+      {
+        "name": "7.8折",
+        "base": 3.9078,
+        "increment": 0.0936
+      },
+      {
+        "name": "7.5折",
+        "base": 3.7575,
+        "increment": 0.09
+      },
+      {
+        "name": "7.2折",
+        "base": 3.6072,
+        "increment": 0.0864
+      }
+    ]
+  },
+  {
+    "category": "塑钢产品Vislon Zipper",
+    "subcategory": "8#树脂防水（DYT10）",
+    "type": "勿尾",
+    "slider": "自动头",
+    "baseLength": 10,
+    "basePrice": 3.19,
+    "increment": 0.14,
+    "notes": "皮感",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 2.871,
+        "increment": 0.126
+      },
+      {
+        "name": "8.8折",
+        "base": 2.8072,
+        "increment": 0.1232
+      },
+      {
+        "name": "8.5折",
+        "base": 2.7115,
+        "increment": 0.119
+      },
+      {
+        "name": "8.2折",
+        "base": 2.6158,
+        "increment": 0.1148
+      },
+      {
+        "name": "8折",
+        "base": 2.552,
+        "increment": 0.112
+      },
+      {
+        "name": "7.8折",
+        "base": 2.4882,
+        "increment": 0.1092
+      },
+      {
+        "name": "7.5折",
+        "base": 2.3925,
+        "increment": 0.105
+      },
+      {
+        "name": "7.2折",
+        "base": 2.2968,
+        "increment": 0.1008
+      }
+    ]
+  },
+  {
+    "category": "塑钢产品Vislon Zipper",
+    "subcategory": "8#树脂防水（DYT10）",
+    "type": "开尾",
+    "slider": "自动头",
+    "baseLength": 20,
+    "basePrice": 4.76,
+    "increment": 0.14,
+    "notes": "皮感",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 4.284,
+        "increment": 0.126
+      },
+      {
+        "name": "8.8折",
+        "base": 4.1888,
+        "increment": 0.1232
+      },
+      {
+        "name": "8.5折",
+        "base": 4.046,
+        "increment": 0.119
+      },
+      {
+        "name": "8.2折",
+        "base": 3.9032,
+        "increment": 0.1148
+      },
+      {
+        "name": "8折",
+        "base": 3.808,
+        "increment": 0.112
+      },
+      {
+        "name": "7.8折",
+        "base": 3.7128,
+        "increment": 0.1092
+      },
+      {
+        "name": "7.5折",
+        "base": 3.57,
+        "increment": 0.105
+      },
+      {
+        "name": "7.2折",
+        "base": 3.4272,
+        "increment": 0.1008
+      }
+    ]
+  },
+  {
+    "category": "塑钢产品Vislon Zipper",
+    "subcategory": "8#树脂防水（DYT10）",
+    "type": "双开尾",
+    "slider": "双自动头",
+    "baseLength": 20,
+    "basePrice": 5.71,
+    "increment": 0.14,
+    "notes": "皮感",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 5.139,
+        "increment": 0.126
+      },
+      {
+        "name": "8.8折",
+        "base": 5.0248,
+        "increment": 0.1232
+      },
+      {
+        "name": "8.5折",
+        "base": 4.8535,
+        "increment": 0.119
+      },
+      {
+        "name": "8.2折",
+        "base": 4.6822,
+        "increment": 0.1148
+      },
+      {
+        "name": "8折",
+        "base": 4.568,
+        "increment": 0.112
+      },
+      {
+        "name": "7.8折",
+        "base": 4.4538,
+        "increment": 0.1092
+      },
+      {
+        "name": "7.5折",
+        "base": 4.2825,
+        "increment": 0.105
+      },
+      {
+        "name": "7.2折",
+        "base": 4.1112,
+        "increment": 0.1008
+      }
+    ]
+  },
+  {
+    "category": "塑钢产品Vislon Zipper",
+    "subcategory": "3#树脂防水（DYT01）",
+    "type": "勿尾",
+    "slider": "自动头",
+    "baseLength": 10,
+    "basePrice": 2.33,
+    "increment": 0.09,
+    "notes": "雾面",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 2.097,
+        "increment": 0.081
+      },
+      {
+        "name": "8.8折",
+        "base": 2.0504,
+        "increment": 0.0792
+      },
+      {
+        "name": "8.5折",
+        "base": 1.9805,
+        "increment": 0.0765
+      },
+      {
+        "name": "8.2折",
+        "base": 1.9106,
+        "increment": 0.0738
+      },
+      {
+        "name": "8折",
+        "base": 1.864,
+        "increment": 0.072
+      },
+      {
+        "name": "7.8折",
+        "base": 1.8174,
+        "increment": 0.0702
+      },
+      {
+        "name": "7.5折",
+        "base": 1.7475,
+        "increment": 0.0675
+      },
+      {
+        "name": "7.2折",
+        "base": 1.6776,
+        "increment": 0.0648
+      }
+    ]
+  },
+  {
+    "category": "塑钢产品Vislon Zipper",
+    "subcategory": "3#树脂防水（DYT01）",
+    "type": "开尾",
+    "slider": "自动头",
+    "baseLength": 20,
+    "basePrice": 3.38,
+    "increment": 0.09,
+    "notes": "雾面",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 3.042,
+        "increment": 0.081
+      },
+      {
+        "name": "8.8折",
+        "base": 2.9744,
+        "increment": 0.0792
+      },
+      {
+        "name": "8.5折",
+        "base": 2.873,
+        "increment": 0.0765
+      },
+      {
+        "name": "8.2折",
+        "base": 2.7716,
+        "increment": 0.0738
+      },
+      {
+        "name": "8折",
+        "base": 2.704,
+        "increment": 0.072
+      },
+      {
+        "name": "7.8折",
+        "base": 2.6364,
+        "increment": 0.0702
+      },
+      {
+        "name": "7.5折",
+        "base": 2.535,
+        "increment": 0.0675
+      },
+      {
+        "name": "7.2折",
+        "base": 2.4336,
+        "increment": 0.0648
+      }
+    ]
+  },
+  {
+    "category": "塑钢产品Vislon Zipper",
+    "subcategory": "5#树脂防水（DYT01）",
+    "type": "勿尾",
+    "slider": "自动头",
+    "baseLength": 10,
+    "basePrice": 2.48,
+    "increment": 0.11,
+    "notes": "雾面",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 2.232,
+        "increment": 0.099
+      },
+      {
+        "name": "8.8折",
+        "base": 2.1824,
+        "increment": 0.0968
+      },
+      {
+        "name": "8.5折",
+        "base": 2.108,
+        "increment": 0.0935
+      },
+      {
+        "name": "8.2折",
+        "base": 2.0336,
+        "increment": 0.0902
+      },
+      {
+        "name": "8折",
+        "base": 1.984,
+        "increment": 0.088
+      },
+      {
+        "name": "7.8折",
+        "base": 1.9344,
+        "increment": 0.0858
+      },
+      {
+        "name": "7.5折",
+        "base": 1.86,
+        "increment": 0.0825
+      },
+      {
+        "name": "7.2折",
+        "base": 1.7856,
+        "increment": 0.0792
+      }
+    ]
+  },
+  {
+    "category": "塑钢产品Vislon Zipper",
+    "subcategory": "5#树脂防水（DYT01）",
+    "type": "开尾",
+    "slider": "自动头",
+    "baseLength": 20,
+    "basePrice": 3.63,
+    "increment": 0.11,
+    "notes": "雾面",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 3.267,
+        "increment": 0.099
+      },
+      {
+        "name": "8.8折",
+        "base": 3.1944,
+        "increment": 0.0968
+      },
+      {
+        "name": "8.5折",
+        "base": 3.0855,
+        "increment": 0.0935
+      },
+      {
+        "name": "8.2折",
+        "base": 2.9766,
+        "increment": 0.0902
+      },
+      {
+        "name": "8折",
+        "base": 2.904,
+        "increment": 0.088
+      },
+      {
+        "name": "7.8折",
+        "base": 2.8314,
+        "increment": 0.0858
+      },
+      {
+        "name": "7.5折",
+        "base": 2.7225,
+        "increment": 0.0825
+      },
+      {
+        "name": "7.2折",
+        "base": 2.6136,
+        "increment": 0.0792
+      }
+    ]
+  },
+  {
+    "category": "塑钢产品Vislon Zipper",
+    "subcategory": "5#树脂防水（DYT01）",
+    "type": "双开尾",
+    "slider": "双自动头",
+    "baseLength": 20,
+    "basePrice": 4.36,
+    "increment": 0.11,
+    "notes": "雾面",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 3.924,
+        "increment": 0.099
+      },
+      {
+        "name": "8.8折",
+        "base": 3.8368,
+        "increment": 0.0968
+      },
+      {
+        "name": "8.5折",
+        "base": 3.706,
+        "increment": 0.0935
+      },
+      {
+        "name": "8.2折",
+        "base": 3.5752,
+        "increment": 0.0902
+      },
+      {
+        "name": "8折",
+        "base": 3.488,
+        "increment": 0.088
+      },
+      {
+        "name": "7.8折",
+        "base": 3.4008,
+        "increment": 0.0858
+      },
+      {
+        "name": "7.5折",
+        "base": 3.27,
+        "increment": 0.0825
+      },
+      {
+        "name": "7.2折",
+        "base": 3.1392,
+        "increment": 0.0792
+      }
+    ]
+  },
+  {
+    "category": "塑钢产品Vislon Zipper",
+    "subcategory": "8#树脂防水（DYT01）",
+    "type": "勿尾",
+    "slider": "自动头",
+    "baseLength": 10,
+    "basePrice": 2.77,
+    "increment": 0.13,
+    "notes": "雾面",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 2.493,
+        "increment": 0.117
+      },
+      {
+        "name": "8.8折",
+        "base": 2.4376,
+        "increment": 0.1144
+      },
+      {
+        "name": "8.5折",
+        "base": 2.3545,
+        "increment": 0.1105
+      },
+      {
+        "name": "8.2折",
+        "base": 2.2714,
+        "increment": 0.1066
+      },
+      {
+        "name": "8折",
+        "base": 2.216,
+        "increment": 0.104
+      },
+      {
+        "name": "7.8折",
+        "base": 2.1606,
+        "increment": 0.1014
+      },
+      {
+        "name": "7.5折",
+        "base": 2.0775,
+        "increment": 0.0975
+      },
+      {
+        "name": "7.2折",
+        "base": 1.9944,
+        "increment": 0.0936
+      }
+    ]
+  },
+  {
+    "category": "塑钢产品Vislon Zipper",
+    "subcategory": "8#树脂防水（DYT01）",
+    "type": "开尾",
+    "slider": "自动头",
+    "baseLength": 20,
+    "basePrice": 4.14,
+    "increment": 0.13,
+    "notes": "雾面",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 3.726,
+        "increment": 0.117
+      },
+      {
+        "name": "8.8折",
+        "base": 3.6432,
+        "increment": 0.1144
+      },
+      {
+        "name": "8.5折",
+        "base": 3.519,
+        "increment": 0.1105
+      },
+      {
+        "name": "8.2折",
+        "base": 3.3948,
+        "increment": 0.1066
+      },
+      {
+        "name": "8折",
+        "base": 3.312,
+        "increment": 0.104
+      },
+      {
+        "name": "7.8折",
+        "base": 3.2292,
+        "increment": 0.1014
+      },
+      {
+        "name": "7.5折",
+        "base": 3.105,
+        "increment": 0.0975
+      },
+      {
+        "name": "7.2折",
+        "base": 2.9808,
+        "increment": 0.0936
+      }
+    ]
+  },
+  {
+    "category": "塑钢产品Vislon Zipper",
+    "subcategory": "8#树脂防水（DYT01）",
+    "type": "双开尾",
+    "slider": "双自动头",
+    "baseLength": 20,
+    "basePrice": 4.96,
+    "increment": 0.13,
+    "notes": "雾面",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 4.464,
+        "increment": 0.117
+      },
+      {
+        "name": "8.8折",
+        "base": 4.3648,
+        "increment": 0.1144
+      },
+      {
+        "name": "8.5折",
+        "base": 4.216,
+        "increment": 0.1105
+      },
+      {
+        "name": "8.2折",
+        "base": 4.0672,
+        "increment": 0.1066
+      },
+      {
+        "name": "8折",
+        "base": 3.968,
+        "increment": 0.104
+      },
+      {
+        "name": "7.8折",
+        "base": 3.8688,
+        "increment": 0.1014
+      },
+      {
+        "name": "7.5折",
+        "base": 3.72,
+        "increment": 0.0975
+      },
+      {
+        "name": "7.2折",
+        "base": 3.5712,
+        "increment": 0.0936
+      }
+    ]
+  },
+  {
+    "category": "金属产品Metal Zipper",
+    "subcategory": "3#金属方牙",
+    "type": "勿尾",
+    "slider": "自动头",
+    "baseLength": 10,
+    "basePrice": 1.113,
+    "increment": 0.046,
+    "notes": "黄铜",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 1.0017,
+        "increment": 0.0414
+      },
+      {
+        "name": "8.8折",
+        "base": 0.97944,
+        "increment": 0.04048
+      },
+      {
+        "name": "8.5折",
+        "base": 0.94605,
+        "increment": 0.0391
+      },
+      {
+        "name": "8.2折",
+        "base": 0.91266,
+        "increment": 0.03772
+      },
+      {
+        "name": "8折",
+        "base": 0.8904,
+        "increment": 0.0368
+      },
+      {
+        "name": "7.8折",
+        "base": 0.86814,
+        "increment": 0.03588
+      },
+      {
+        "name": "7.5折",
+        "base": 0.83475,
+        "increment": 0.0345
+      },
+      {
+        "name": "7.2折",
+        "base": 0.80136,
+        "increment": 0.03312
+      }
+    ]
+  },
+  {
+    "category": "金属产品Metal Zipper",
+    "subcategory": "3#金属方牙",
+    "type": "开尾",
+    "slider": "自动头",
+    "baseLength": 20,
+    "basePrice": 2.412,
+    "increment": 0.053,
+    "notes": "黄铜",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 2.1708,
+        "increment": 0.0477
+      },
+      {
+        "name": "8.8折",
+        "base": 2.12256,
+        "increment": 0.04664
+      },
+      {
+        "name": "8.5折",
+        "base": 2.0502,
+        "increment": 0.04505
+      },
+      {
+        "name": "8.2折",
+        "base": 1.97784,
+        "increment": 0.04346
+      },
+      {
+        "name": "8折",
+        "base": 1.9296,
+        "increment": 0.0424
+      },
+      {
+        "name": "7.8折",
+        "base": 1.88136,
+        "increment": 0.04134
+      },
+      {
+        "name": "7.5折",
+        "base": 1.809,
+        "increment": 0.03975
+      },
+      {
+        "name": "7.2折",
+        "base": 1.73664,
+        "increment": 0.03816
+      }
+    ]
+  },
+  {
+    "category": "金属产品Metal Zipper",
+    "subcategory": "3#金属方牙",
+    "type": "双开尾",
+    "slider": "双自动头",
+    "baseLength": 20,
+    "basePrice": 3.264,
+    "increment": 0.042,
+    "notes": "黄铜",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 2.9376,
+        "increment": 0.0378
+      },
+      {
+        "name": "8.8折",
+        "base": 2.87232,
+        "increment": 0.03696
+      },
+      {
+        "name": "8.5折",
+        "base": 2.7744,
+        "increment": 0.0357
+      },
+      {
+        "name": "8.2折",
+        "base": 2.67648,
+        "increment": 0.03444
+      },
+      {
+        "name": "8折",
+        "base": 2.6112,
+        "increment": 0.0336
+      },
+      {
+        "name": "7.8折",
+        "base": 2.54592,
+        "increment": 0.03276
+      },
+      {
+        "name": "7.5折",
+        "base": 2.448,
+        "increment": 0.0315
+      },
+      {
+        "name": "7.2折",
+        "base": 2.35008,
+        "increment": 0.03024
+      }
+    ]
+  },
+  {
+    "category": "金属产品Metal Zipper",
+    "subcategory": "5#金属方牙",
+    "type": "勿尾",
+    "slider": "自动头",
+    "baseLength": 10,
+    "basePrice": 1.728,
+    "increment": 0.064,
+    "notes": "黄铜",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 1.5552,
+        "increment": 0.0576
+      },
+      {
+        "name": "8.8折",
+        "base": 1.52064,
+        "increment": 0.05632
+      },
+      {
+        "name": "8.5折",
+        "base": 1.4688,
+        "increment": 0.0544
+      },
+      {
+        "name": "8.2折",
+        "base": 1.41696,
+        "increment": 0.05248
+      },
+      {
+        "name": "8折",
+        "base": 1.3824,
+        "increment": 0.0512
+      },
+      {
+        "name": "7.8折",
+        "base": 1.34784,
+        "increment": 0.04992
+      },
+      {
+        "name": "7.5折",
+        "base": 1.296,
+        "increment": 0.048
+      },
+      {
+        "name": "7.2折",
+        "base": 1.24416,
+        "increment": 0.04608
+      }
+    ]
+  },
+  {
+    "category": "金属产品Metal Zipper",
+    "subcategory": "5#金属方牙",
+    "type": "开尾",
+    "slider": "自动头",
+    "baseLength": 20,
+    "basePrice": 2.93,
+    "increment": 0.072,
+    "notes": "黄铜",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 2.637,
+        "increment": 0.0648
+      },
+      {
+        "name": "8.8折",
+        "base": 2.5784,
+        "increment": 0.06336
+      },
+      {
+        "name": "8.5折",
+        "base": 2.4905,
+        "increment": 0.0612
+      },
+      {
+        "name": "8.2折",
+        "base": 2.4026,
+        "increment": 0.05904
+      },
+      {
+        "name": "8折",
+        "base": 2.344,
+        "increment": 0.0576
+      },
+      {
+        "name": "7.8折",
+        "base": 2.2854,
+        "increment": 0.05616
+      },
+      {
+        "name": "7.5折",
+        "base": 2.1975,
+        "increment": 0.054
+      },
+      {
+        "name": "7.2折",
+        "base": 2.1096,
+        "increment": 0.05184
+      }
+    ]
+  },
+  {
+    "category": "金属产品Metal Zipper",
+    "subcategory": "5#金属方牙",
+    "type": "双开尾",
+    "slider": "双自动头",
+    "baseLength": 20,
+    "basePrice": 3.765,
+    "increment": 0.068,
+    "notes": "黄铜",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 3.3885,
+        "increment": 0.0612
+      },
+      {
+        "name": "8.8折",
+        "base": 3.3132,
+        "increment": 0.05984
+      },
+      {
+        "name": "8.5折",
+        "base": 3.20025,
+        "increment": 0.0578
+      },
+      {
+        "name": "8.2折",
+        "base": 3.0873,
+        "increment": 0.05576
+      },
+      {
+        "name": "8折",
+        "base": 3.012,
+        "increment": 0.0544
+      },
+      {
+        "name": "7.8折",
+        "base": 2.9367,
+        "increment": 0.05304
+      },
+      {
+        "name": "7.5折",
+        "base": 2.82375,
+        "increment": 0.051
+      },
+      {
+        "name": "7.2折",
+        "base": 2.7108,
+        "increment": 0.04896
+      }
+    ]
+  },
+  {
+    "category": "金属产品Metal Zipper",
+    "subcategory": "8#金属方牙",
+    "type": "勿尾",
+    "slider": "自动头",
+    "baseLength": 10,
+    "basePrice": 2.699,
+    "increment": 0.084,
+    "notes": "黄铜",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 2.4291,
+        "increment": 0.0756
+      },
+      {
+        "name": "8.8折",
+        "base": 2.37512,
+        "increment": 0.07392
+      },
+      {
+        "name": "8.5折",
+        "base": 2.29415,
+        "increment": 0.0714
+      },
+      {
+        "name": "8.2折",
+        "base": 2.21318,
+        "increment": 0.06888
+      },
+      {
+        "name": "8折",
+        "base": 2.1592,
+        "increment": 0.0672
+      },
+      {
+        "name": "7.8折",
+        "base": 2.10522,
+        "increment": 0.06552
+      },
+      {
+        "name": "7.5折",
+        "base": 2.02425,
+        "increment": 0.063
+      },
+      {
+        "name": "7.2折",
+        "base": 1.94328,
+        "increment": 0.06048
+      }
+    ]
+  },
+  {
+    "category": "金属产品Metal Zipper",
+    "subcategory": "8#金属方牙",
+    "type": "开尾",
+    "slider": "自动头",
+    "baseLength": 20,
+    "basePrice": 4.694,
+    "increment": 0.101,
+    "notes": "黄铜",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 4.2246,
+        "increment": 0.0909
+      },
+      {
+        "name": "8.8折",
+        "base": 4.13072,
+        "increment": 0.08888
+      },
+      {
+        "name": "8.5折",
+        "base": 3.9899,
+        "increment": 0.08585
+      },
+      {
+        "name": "8.2折",
+        "base": 3.84908,
+        "increment": 0.08282
+      },
+      {
+        "name": "8折",
+        "base": 3.7552,
+        "increment": 0.0808
+      },
+      {
+        "name": "7.8折",
+        "base": 3.66132,
+        "increment": 0.07878
+      },
+      {
+        "name": "7.5折",
+        "base": 3.5205,
+        "increment": 0.07575
+      },
+      {
+        "name": "7.2折",
+        "base": 3.37968,
+        "increment": 0.07272
+      }
+    ]
+  },
+  {
+    "category": "金属产品Metal Zipper",
+    "subcategory": "8#金属方牙",
+    "type": "双开尾",
+    "slider": "双自动头",
+    "baseLength": 20,
+    "basePrice": 5.834,
+    "increment": 0.099,
+    "notes": "黄铜",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 5.2506,
+        "increment": 0.0891
+      },
+      {
+        "name": "8.8折",
+        "base": 5.13392,
+        "increment": 0.08712
+      },
+      {
+        "name": "8.5折",
+        "base": 4.9589,
+        "increment": 0.08415
+      },
+      {
+        "name": "8.2折",
+        "base": 4.78388,
+        "increment": 0.08118
+      },
+      {
+        "name": "8折",
+        "base": 4.6672,
+        "increment": 0.0792
+      },
+      {
+        "name": "7.8折",
+        "base": 4.55052,
+        "increment": 0.07722
+      },
+      {
+        "name": "7.5折",
+        "base": 4.3755,
+        "increment": 0.07425
+      },
+      {
+        "name": "7.2折",
+        "base": 4.20048,
+        "increment": 0.07128
+      }
+    ]
+  },
+  {
+    "category": "金属产品Metal Zipper",
+    "subcategory": "3#金属方牙",
+    "type": "勿尾",
+    "slider": "自动头",
+    "baseLength": 10,
+    "basePrice": 1.268,
+    "increment": 0.054,
+    "notes": "金铜、青古铜、白铜，白枪、哑白铜",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 1.1412,
+        "increment": 0.0486
+      },
+      {
+        "name": "8.8折",
+        "base": 1.11584,
+        "increment": 0.04752
+      },
+      {
+        "name": "8.5折",
+        "base": 1.0778,
+        "increment": 0.0459
+      },
+      {
+        "name": "8.2折",
+        "base": 1.03976,
+        "increment": 0.04428
+      },
+      {
+        "name": "8折",
+        "base": 1.0144,
+        "increment": 0.0432
+      },
+      {
+        "name": "7.8折",
+        "base": 0.98904,
+        "increment": 0.04212
+      },
+      {
+        "name": "7.5折",
+        "base": 0.951,
+        "increment": 0.0405
+      },
+      {
+        "name": "7.2折",
+        "base": 0.91296,
+        "increment": 0.03888
+      }
+    ]
+  },
+  {
+    "category": "金属产品Metal Zipper",
+    "subcategory": "3#金属方牙",
+    "type": "开尾",
+    "slider": "自动头",
+    "baseLength": 20,
+    "basePrice": 2.523,
+    "increment": 0.054,
+    "notes": "金铜、青古铜、白铜，白枪、哑白铜",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 2.2707,
+        "increment": 0.0486
+      },
+      {
+        "name": "8.8折",
+        "base": 2.22024,
+        "increment": 0.04752
+      },
+      {
+        "name": "8.5折",
+        "base": 2.14455,
+        "increment": 0.0459
+      },
+      {
+        "name": "8.2折",
+        "base": 2.06886,
+        "increment": 0.04428
+      },
+      {
+        "name": "8折",
+        "base": 2.0184,
+        "increment": 0.0432
+      },
+      {
+        "name": "7.8折",
+        "base": 1.96794,
+        "increment": 0.04212
+      },
+      {
+        "name": "7.5折",
+        "base": 1.89225,
+        "increment": 0.0405
+      },
+      {
+        "name": "7.2折",
+        "base": 1.81656,
+        "increment": 0.03888
+      }
+    ]
+  },
+  {
+    "category": "金属产品Metal Zipper",
+    "subcategory": "3#金属方牙",
+    "type": "双开尾",
+    "slider": "双自动头",
+    "baseLength": 20,
+    "basePrice": 3.392,
+    "increment": 0.046,
+    "notes": "金铜、青古铜、白铜，白枪、哑白铜",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 3.0528,
+        "increment": 0.0414
+      },
+      {
+        "name": "8.8折",
+        "base": 2.98496,
+        "increment": 0.04048
+      },
+      {
+        "name": "8.5折",
+        "base": 2.8832,
+        "increment": 0.0391
+      },
+      {
+        "name": "8.2折",
+        "base": 2.78144,
+        "increment": 0.03772
+      },
+      {
+        "name": "8折",
+        "base": 2.7136,
+        "increment": 0.0368
+      },
+      {
+        "name": "7.8折",
+        "base": 2.64576,
+        "increment": 0.03588
+      },
+      {
+        "name": "7.5折",
+        "base": 2.544,
+        "increment": 0.0345
+      },
+      {
+        "name": "7.2折",
+        "base": 2.44224,
+        "increment": 0.03312
+      }
+    ]
+  },
+  {
+    "category": "金属产品Metal Zipper",
+    "subcategory": "5#金属方牙",
+    "type": "勿尾",
+    "slider": "自动头",
+    "baseLength": 10,
+    "basePrice": 1.738,
+    "increment": 0.07,
+    "notes": "金铜、青古铜、白铜，白枪、哑白铜",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 1.5642,
+        "increment": 0.063
+      },
+      {
+        "name": "8.8折",
+        "base": 1.52944,
+        "increment": 0.0616
+      },
+      {
+        "name": "8.5折",
+        "base": 1.4773,
+        "increment": 0.0595
+      },
+      {
+        "name": "8.2折",
+        "base": 1.42516,
+        "increment": 0.0574
+      },
+      {
+        "name": "8折",
+        "base": 1.3904,
+        "increment": 0.056
+      },
+      {
+        "name": "7.8折",
+        "base": 1.35564,
+        "increment": 0.0546
+      },
+      {
+        "name": "7.5折",
+        "base": 1.3035,
+        "increment": 0.0525
+      },
+      {
+        "name": "7.2折",
+        "base": 1.25136,
+        "increment": 0.0504
+      }
+    ]
+  },
+  {
+    "category": "金属产品Metal Zipper",
+    "subcategory": "5#金属方牙",
+    "type": "开尾",
+    "slider": "自动头",
+    "baseLength": 20,
+    "basePrice": 3.015,
+    "increment": 0.077,
+    "notes": "金铜、青古铜、白铜，白枪、哑白铜",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 2.7135,
+        "increment": 0.0693
+      },
+      {
+        "name": "8.8折",
+        "base": 2.6532,
+        "increment": 0.06776
+      },
+      {
+        "name": "8.5折",
+        "base": 2.56275,
+        "increment": 0.06545
+      },
+      {
+        "name": "8.2折",
+        "base": 2.4723,
+        "increment": 0.06314
+      },
+      {
+        "name": "8折",
+        "base": 2.412,
+        "increment": 0.0616
+      },
+      {
+        "name": "7.8折",
+        "base": 2.3517,
+        "increment": 0.06006
+      },
+      {
+        "name": "7.5折",
+        "base": 2.26125,
+        "increment": 0.05775
+      },
+      {
+        "name": "7.2折",
+        "base": 2.1708,
+        "increment": 0.05544
+      }
+    ]
+  },
+  {
+    "category": "金属产品Metal Zipper",
+    "subcategory": "5#金属方牙",
+    "type": "双开尾",
+    "slider": "双自动头",
+    "baseLength": 20,
+    "basePrice": 3.92,
+    "increment": 0.074,
+    "notes": "金铜、青古铜、白铜，白枪、哑白铜",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 3.528,
+        "increment": 0.0666
+      },
+      {
+        "name": "8.8折",
+        "base": 3.4496,
+        "increment": 0.06512
+      },
+      {
+        "name": "8.5折",
+        "base": 3.332,
+        "increment": 0.0629
+      },
+      {
+        "name": "8.2折",
+        "base": 3.2144,
+        "increment": 0.06068
+      },
+      {
+        "name": "8折",
+        "base": 3.136,
+        "increment": 0.0592
+      },
+      {
+        "name": "7.8折",
+        "base": 3.0576,
+        "increment": 0.05772
+      },
+      {
+        "name": "7.5折",
+        "base": 2.94,
+        "increment": 0.0555
+      },
+      {
+        "name": "7.2折",
+        "base": 2.8224,
+        "increment": 0.05328
+      }
+    ]
+  },
+  {
+    "category": "金属产品Metal Zipper",
+    "subcategory": "8#金属方牙",
+    "type": "勿尾",
+    "slider": "自动头",
+    "baseLength": 10,
+    "basePrice": 2.644,
+    "increment": 0.09,
+    "notes": "青古铜、白铜、白枪、哑白铜",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 2.3796,
+        "increment": 0.081
+      },
+      {
+        "name": "8.8折",
+        "base": 2.32672,
+        "increment": 0.0792
+      },
+      {
+        "name": "8.5折",
+        "base": 2.2474,
+        "increment": 0.0765
+      },
+      {
+        "name": "8.2折",
+        "base": 2.16808,
+        "increment": 0.0738
+      },
+      {
+        "name": "8折",
+        "base": 2.1152,
+        "increment": 0.072
+      },
+      {
+        "name": "7.8折",
+        "base": 2.06232,
+        "increment": 0.0702
+      },
+      {
+        "name": "7.5折",
+        "base": 1.983,
+        "increment": 0.0675
+      },
+      {
+        "name": "7.2折",
+        "base": 1.90368,
+        "increment": 0.0648
+      }
+    ]
+  },
+  {
+    "category": "金属产品Metal Zipper",
+    "subcategory": "8#金属方牙",
+    "type": "开尾",
+    "slider": "自动头",
+    "baseLength": 20,
+    "basePrice": 4.643,
+    "increment": 0.108,
+    "notes": "青古铜、白铜、白枪、哑白铜",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 4.1787,
+        "increment": 0.0972
+      },
+      {
+        "name": "8.8折",
+        "base": 4.08584,
+        "increment": 0.09504
+      },
+      {
+        "name": "8.5折",
+        "base": 3.94655,
+        "increment": 0.0918
+      },
+      {
+        "name": "8.2折",
+        "base": 3.80726,
+        "increment": 0.08856
+      },
+      {
+        "name": "8折",
+        "base": 3.7144,
+        "increment": 0.0864
+      },
+      {
+        "name": "7.8折",
+        "base": 3.62154,
+        "increment": 0.08424
+      },
+      {
+        "name": "7.5折",
+        "base": 3.48225,
+        "increment": 0.081
+      },
+      {
+        "name": "7.2折",
+        "base": 3.34296,
+        "increment": 0.07776
+      }
+    ]
+  },
+  {
+    "category": "金属产品Metal Zipper",
+    "subcategory": "8#金属方牙",
+    "type": "双开尾",
+    "slider": "双自动头",
+    "baseLength": 20,
+    "basePrice": 5.475,
+    "increment": 0.106,
+    "notes": "青古铜、白铜、白枪、哑白铜",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 4.9275,
+        "increment": 0.0954
+      },
+      {
+        "name": "8.8折",
+        "base": 4.818,
+        "increment": 0.09328
+      },
+      {
+        "name": "8.5折",
+        "base": 4.65375,
+        "increment": 0.0901
+      },
+      {
+        "name": "8.2折",
+        "base": 4.4895,
+        "increment": 0.08692
+      },
+      {
+        "name": "8折",
+        "base": 4.38,
+        "increment": 0.0848
+      },
+      {
+        "name": "7.8折",
+        "base": 4.2705,
+        "increment": 0.08268
+      },
+      {
+        "name": "7.5折",
+        "base": 4.10625,
+        "increment": 0.0795
+      },
+      {
+        "name": "7.2折",
+        "base": 3.942,
+        "increment": 0.07632
+      }
+    ]
+  },
+  {
+    "category": "金属产品Metal Zipper",
+    "subcategory": "3#金属方牙",
+    "type": "勿尾",
+    "slider": "自动头",
+    "baseLength": 10,
+    "basePrice": 1.219,
+    "increment": 0.055,
+    "notes": "黑镍、哑黑镍、红古铜",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 1.0971,
+        "increment": 0.0495
+      },
+      {
+        "name": "8.8折",
+        "base": 1.07272,
+        "increment": 0.0484
+      },
+      {
+        "name": "8.5折",
+        "base": 1.03615,
+        "increment": 0.04675
+      },
+      {
+        "name": "8.2折",
+        "base": 0.99958,
+        "increment": 0.0451
+      },
+      {
+        "name": "8折",
+        "base": 0.9752,
+        "increment": 0.044
+      },
+      {
+        "name": "7.8折",
+        "base": 0.95082,
+        "increment": 0.0429
+      },
+      {
+        "name": "7.5折",
+        "base": 0.91425,
+        "increment": 0.04125
+      },
+      {
+        "name": "7.2折",
+        "base": 0.87768,
+        "increment": 0.0396
+      }
+    ]
+  },
+  {
+    "category": "金属产品Metal Zipper",
+    "subcategory": "3#金属方牙",
+    "type": "开尾",
+    "slider": "自动头",
+    "baseLength": 20,
+    "basePrice": 2.574,
+    "increment": 0.062,
+    "notes": "黑镍、哑黑镍、红古铜",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 2.3166,
+        "increment": 0.0558
+      },
+      {
+        "name": "8.8折",
+        "base": 2.26512,
+        "increment": 0.05456
+      },
+      {
+        "name": "8.5折",
+        "base": 2.1879,
+        "increment": 0.0527
+      },
+      {
+        "name": "8.2折",
+        "base": 2.11068,
+        "increment": 0.05084
+      },
+      {
+        "name": "8折",
+        "base": 2.0592,
+        "increment": 0.0496
+      },
+      {
+        "name": "7.8折",
+        "base": 2.00772,
+        "increment": 0.04836
+      },
+      {
+        "name": "7.5折",
+        "base": 1.9305,
+        "increment": 0.0465
+      },
+      {
+        "name": "7.2折",
+        "base": 1.85328,
+        "increment": 0.04464
+      }
+    ]
+  },
+  {
+    "category": "金属产品Metal Zipper",
+    "subcategory": "3#金属方牙",
+    "type": "双开尾",
+    "slider": "双自动头",
+    "baseLength": 20,
+    "basePrice": 3.606,
+    "increment": 0.053,
+    "notes": "黑镍、哑黑镍、红古铜",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 3.2454,
+        "increment": 0.0477
+      },
+      {
+        "name": "8.8折",
+        "base": 3.17328,
+        "increment": 0.04664
+      },
+      {
+        "name": "8.5折",
+        "base": 3.0651,
+        "increment": 0.04505
+      },
+      {
+        "name": "8.2折",
+        "base": 2.95692,
+        "increment": 0.04346
+      },
+      {
+        "name": "8折",
+        "base": 2.8848,
+        "increment": 0.0424
+      },
+      {
+        "name": "7.8折",
+        "base": 2.81268,
+        "increment": 0.04134
+      },
+      {
+        "name": "7.5折",
+        "base": 2.7045,
+        "increment": 0.03975
+      },
+      {
+        "name": "7.2折",
+        "base": 2.59632,
+        "increment": 0.03816
+      }
+    ]
+  },
+  {
+    "category": "金属产品Metal Zipper",
+    "subcategory": "5#金属方牙",
+    "type": "勿尾",
+    "slider": "自动头",
+    "baseLength": 10,
+    "basePrice": 1.773,
+    "increment": 0.074,
+    "notes": "黑镍、哑黑镍、红古铜",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 1.5957,
+        "increment": 0.0666
+      },
+      {
+        "name": "8.8折",
+        "base": 1.56024,
+        "increment": 0.06512
+      },
+      {
+        "name": "8.5折",
+        "base": 1.50705,
+        "increment": 0.0629
+      },
+      {
+        "name": "8.2折",
+        "base": 1.45386,
+        "increment": 0.06068
+      },
+      {
+        "name": "8折",
+        "base": 1.4184,
+        "increment": 0.0592
+      },
+      {
+        "name": "7.8折",
+        "base": 1.38294,
+        "increment": 0.05772
+      },
+      {
+        "name": "7.5折",
+        "base": 1.32975,
+        "increment": 0.0555
+      },
+      {
+        "name": "7.2折",
+        "base": 1.27656,
+        "increment": 0.05328
+      }
+    ]
+  },
+  {
+    "category": "金属产品Metal Zipper",
+    "subcategory": "5#金属方牙",
+    "type": "开尾",
+    "slider": "自动头",
+    "baseLength": 20,
+    "basePrice": 3.158,
+    "increment": 0.081,
+    "notes": "黑镍、哑黑镍、红古铜",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 2.8422,
+        "increment": 0.0729
+      },
+      {
+        "name": "8.8折",
+        "base": 2.77904,
+        "increment": 0.07128
+      },
+      {
+        "name": "8.5折",
+        "base": 2.6843,
+        "increment": 0.06885
+      },
+      {
+        "name": "8.2折",
+        "base": 2.58956,
+        "increment": 0.06642
+      },
+      {
+        "name": "8折",
+        "base": 2.5264,
+        "increment": 0.0648
+      },
+      {
+        "name": "7.8折",
+        "base": 2.46324,
+        "increment": 0.06318
+      },
+      {
+        "name": "7.5折",
+        "base": 2.3685,
+        "increment": 0.06075
+      },
+      {
+        "name": "7.2折",
+        "base": 2.27376,
+        "increment": 0.05832
+      }
+    ]
+  },
+  {
+    "category": "金属产品Metal Zipper",
+    "subcategory": "5#金属方牙",
+    "type": "双开尾",
+    "slider": "双自动头",
+    "baseLength": 20,
+    "basePrice": 3.72,
+    "increment": 0.077,
+    "notes": "黑镍、哑黑镍、红古铜",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 3.348,
+        "increment": 0.0693
+      },
+      {
+        "name": "8.8折",
+        "base": 3.2736,
+        "increment": 0.06776
+      },
+      {
+        "name": "8.5折",
+        "base": 3.162,
+        "increment": 0.06545
+      },
+      {
+        "name": "8.2折",
+        "base": 3.0504,
+        "increment": 0.06314
+      },
+      {
+        "name": "8折",
+        "base": 2.976,
+        "increment": 0.0616
+      },
+      {
+        "name": "7.8折",
+        "base": 2.9016,
+        "increment": 0.06006
+      },
+      {
+        "name": "7.5折",
+        "base": 2.79,
+        "increment": 0.05775
+      },
+      {
+        "name": "7.2折",
+        "base": 2.6784,
+        "increment": 0.05544
+      }
+    ]
+  },
+  {
+    "category": "金属产品Metal Zipper",
+    "subcategory": "8#金属方牙",
+    "type": "勿尾",
+    "slider": "自动头",
+    "baseLength": 10,
+    "basePrice": 2.677,
+    "increment": 0.093,
+    "notes": "黑镍、哑黑镍、红古铜",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 2.4093,
+        "increment": 0.0837
+      },
+      {
+        "name": "8.8折",
+        "base": 2.35576,
+        "increment": 0.08184
+      },
+      {
+        "name": "8.5折",
+        "base": 2.27545,
+        "increment": 0.07905
+      },
+      {
+        "name": "8.2折",
+        "base": 2.19514,
+        "increment": 0.07626
+      },
+      {
+        "name": "8折",
+        "base": 2.1416,
+        "increment": 0.0744
+      },
+      {
+        "name": "7.8折",
+        "base": 2.08806,
+        "increment": 0.07254
+      },
+      {
+        "name": "7.5折",
+        "base": 2.00775,
+        "increment": 0.06975
+      },
+      {
+        "name": "7.2折",
+        "base": 1.92744,
+        "increment": 0.06696
+      }
+    ]
+  },
+  {
+    "category": "金属产品Metal Zipper",
+    "subcategory": "8#金属方牙",
+    "type": "开尾",
+    "slider": "自动头",
+    "baseLength": 20,
+    "basePrice": 4.666,
+    "increment": 0.108,
+    "notes": "黑镍、哑黑镍、红古铜",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 4.1994,
+        "increment": 0.0972
+      },
+      {
+        "name": "8.8折",
+        "base": 4.10608,
+        "increment": 0.09504
+      },
+      {
+        "name": "8.5折",
+        "base": 3.9661,
+        "increment": 0.0918
+      },
+      {
+        "name": "8.2折",
+        "base": 3.82612,
+        "increment": 0.08856
+      },
+      {
+        "name": "8折",
+        "base": 3.7328,
+        "increment": 0.0864
+      },
+      {
+        "name": "7.8折",
+        "base": 3.63948,
+        "increment": 0.08424
+      },
+      {
+        "name": "7.5折",
+        "base": 3.4995,
+        "increment": 0.081
+      },
+      {
+        "name": "7.2折",
+        "base": 3.35952,
+        "increment": 0.07776
+      }
+    ]
+  },
+  {
+    "category": "金属产品Metal Zipper",
+    "subcategory": "8#金属方牙",
+    "type": "双开尾",
+    "slider": "双自动头",
+    "baseLength": 20,
+    "basePrice": 5.554,
+    "increment": 0.109,
+    "notes": "黑镍、哑黑镍、红古铜",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 4.9986,
+        "increment": 0.0981
+      },
+      {
+        "name": "8.8折",
+        "base": 4.88752,
+        "increment": 0.09592
+      },
+      {
+        "name": "8.5折",
+        "base": 4.7209,
+        "increment": 0.09265
+      },
+      {
+        "name": "8.2折",
+        "base": 4.55428,
+        "increment": 0.08938
+      },
+      {
+        "name": "8折",
+        "base": 4.4432,
+        "increment": 0.0872
+      },
+      {
+        "name": "7.8折",
+        "base": 4.33212,
+        "increment": 0.08502
+      },
+      {
+        "name": "7.5折",
+        "base": 4.1655,
+        "increment": 0.08175
+      },
+      {
+        "name": "7.2折",
+        "base": 3.99888,
+        "increment": 0.07848
+      }
+    ]
+  },
+  {
+    "category": "金属产品Metal Zipper",
+    "subcategory": "3#金属方牙",
+    "type": "勿尾",
+    "slider": "自动头",
+    "baseLength": 10,
+    "basePrice": 2.026,
+    "increment": 0.071,
+    "notes": "黑古铜、哑黑古、亮黑古、雾枪、烟枪",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 1.8234,
+        "increment": 0.0639
+      },
+      {
+        "name": "8.8折",
+        "base": 1.78288,
+        "increment": 0.06248
+      },
+      {
+        "name": "8.5折",
+        "base": 1.7221,
+        "increment": 0.06035
+      },
+      {
+        "name": "8.2折",
+        "base": 1.66132,
+        "increment": 0.05822
+      },
+      {
+        "name": "8折",
+        "base": 1.6208,
+        "increment": 0.0568
+      },
+      {
+        "name": "7.8折",
+        "base": 1.58028,
+        "increment": 0.05538
+      },
+      {
+        "name": "7.5折",
+        "base": 1.5195,
+        "increment": 0.05325
+      },
+      {
+        "name": "7.2折",
+        "base": 1.45872,
+        "increment": 0.05112
+      }
+    ]
+  },
+  {
+    "category": "金属产品Metal Zipper",
+    "subcategory": "3#金属方牙",
+    "type": "开尾",
+    "slider": "自动头",
+    "baseLength": 20,
+    "basePrice": 3.615,
+    "increment": 0.079,
+    "notes": "黑古铜、哑黑古、亮黑古、雾枪、烟枪",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 3.2535,
+        "increment": 0.0711
+      },
+      {
+        "name": "8.8折",
+        "base": 3.1812,
+        "increment": 0.06952
+      },
+      {
+        "name": "8.5折",
+        "base": 3.07275,
+        "increment": 0.06715
+      },
+      {
+        "name": "8.2折",
+        "base": 2.9643,
+        "increment": 0.06478
+      },
+      {
+        "name": "8折",
+        "base": 2.892,
+        "increment": 0.0632
+      },
+      {
+        "name": "7.8折",
+        "base": 2.8197,
+        "increment": 0.06162
+      },
+      {
+        "name": "7.5折",
+        "base": 2.71125,
+        "increment": 0.05925
+      },
+      {
+        "name": "7.2折",
+        "base": 2.6028,
+        "increment": 0.05688
+      }
+    ]
+  },
+  {
+    "category": "金属产品Metal Zipper",
+    "subcategory": "3#金属方牙",
+    "type": "双开尾",
+    "slider": "双自动头",
+    "baseLength": 20,
+    "basePrice": 4.41,
+    "increment": 0.073,
+    "notes": "黑古铜、哑黑古、亮黑古、雾枪、烟枪",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 3.969,
+        "increment": 0.0657
+      },
+      {
+        "name": "8.8折",
+        "base": 3.8808,
+        "increment": 0.06424
+      },
+      {
+        "name": "8.5折",
+        "base": 3.7485,
+        "increment": 0.06205
+      },
+      {
+        "name": "8.2折",
+        "base": 3.6162,
+        "increment": 0.05986
+      },
+      {
+        "name": "8折",
+        "base": 3.528,
+        "increment": 0.0584
+      },
+      {
+        "name": "7.8折",
+        "base": 3.4398,
+        "increment": 0.05694
+      },
+      {
+        "name": "7.5折",
+        "base": 3.3075,
+        "increment": 0.05475
+      },
+      {
+        "name": "7.2折",
+        "base": 3.1752,
+        "increment": 0.05256
+      }
+    ]
+  },
+  {
+    "category": "金属产品Metal Zipper",
+    "subcategory": "5#金属方牙",
+    "type": "勿尾",
+    "slider": "自动头",
+    "baseLength": 10,
+    "basePrice": 2.824,
+    "increment": 0.091,
+    "notes": "黑古铜、哑黑古、亮黑古、雾枪、烟枪",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 2.5416,
+        "increment": 0.0819
+      },
+      {
+        "name": "8.8折",
+        "base": 2.48512,
+        "increment": 0.08008
+      },
+      {
+        "name": "8.5折",
+        "base": 2.4004,
+        "increment": 0.07735
+      },
+      {
+        "name": "8.2折",
+        "base": 2.31568,
+        "increment": 0.07462
+      },
+      {
+        "name": "8折",
+        "base": 2.2592,
+        "increment": 0.0728
+      },
+      {
+        "name": "7.8折",
+        "base": 2.20272,
+        "increment": 0.07098
+      },
+      {
+        "name": "7.5折",
+        "base": 2.118,
+        "increment": 0.06825
+      },
+      {
+        "name": "7.2折",
+        "base": 2.03328,
+        "increment": 0.06552
+      }
+    ]
+  },
+  {
+    "category": "金属产品Metal Zipper",
+    "subcategory": "5#金属方牙",
+    "type": "开尾",
+    "slider": "自动头",
+    "baseLength": 20,
+    "basePrice": 4.195,
+    "increment": 0.097,
+    "notes": "黑古铜、哑黑古、亮黑古、雾枪、烟枪",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 3.7755,
+        "increment": 0.0873
+      },
+      {
+        "name": "8.8折",
+        "base": 3.6916,
+        "increment": 0.08536
+      },
+      {
+        "name": "8.5折",
+        "base": 3.56575,
+        "increment": 0.08245
+      },
+      {
+        "name": "8.2折",
+        "base": 3.4399,
+        "increment": 0.07954
+      },
+      {
+        "name": "8折",
+        "base": 3.356,
+        "increment": 0.0776
+      },
+      {
+        "name": "7.8折",
+        "base": 3.2721,
+        "increment": 0.07566
+      },
+      {
+        "name": "7.5折",
+        "base": 3.14625,
+        "increment": 0.07275
+      },
+      {
+        "name": "7.2折",
+        "base": 3.0204,
+        "increment": 0.06984
+      }
+    ]
+  },
+  {
+    "category": "金属产品Metal Zipper",
+    "subcategory": "5#金属方牙",
+    "type": "双开尾",
+    "slider": "双自动头",
+    "baseLength": 20,
+    "basePrice": 5.751,
+    "increment": 0.093,
+    "notes": "黑古铜、哑黑古、亮黑古、雾枪、烟枪",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 5.1759,
+        "increment": 0.0837
+      },
+      {
+        "name": "8.8折",
+        "base": 5.06088,
+        "increment": 0.08184
+      },
+      {
+        "name": "8.5折",
+        "base": 4.88835,
+        "increment": 0.07905
+      },
+      {
+        "name": "8.2折",
+        "base": 4.71582,
+        "increment": 0.07626
+      },
+      {
+        "name": "8折",
+        "base": 4.6008,
+        "increment": 0.0744
+      },
+      {
+        "name": "7.8折",
+        "base": 4.48578,
+        "increment": 0.07254
+      },
+      {
+        "name": "7.5折",
+        "base": 4.31325,
+        "increment": 0.06975
+      },
+      {
+        "name": "7.2折",
+        "base": 4.14072,
+        "increment": 0.06696
+      }
+    ]
+  },
+  {
+    "category": "金属产品Metal Zipper",
+    "subcategory": "8#金属方牙",
+    "type": "勿尾",
+    "slider": "自动头",
+    "baseLength": 10,
+    "basePrice": 3.78,
+    "increment": 0.11,
+    "notes": "黑古铜、哑黑古、亮黑古、雾枪、烟枪",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 3.402,
+        "increment": 0.099
+      },
+      {
+        "name": "8.8折",
+        "base": 3.3264,
+        "increment": 0.0968
+      },
+      {
+        "name": "8.5折",
+        "base": 3.213,
+        "increment": 0.0935
+      },
+      {
+        "name": "8.2折",
+        "base": 3.0996,
+        "increment": 0.0902
+      },
+      {
+        "name": "8折",
+        "base": 3.024,
+        "increment": 0.088
+      },
+      {
+        "name": "7.8折",
+        "base": 2.9484,
+        "increment": 0.0858
+      },
+      {
+        "name": "7.5折",
+        "base": 2.835,
+        "increment": 0.0825
+      },
+      {
+        "name": "7.2折",
+        "base": 2.7216,
+        "increment": 0.0792
+      }
+    ]
+  },
+  {
+    "category": "金属产品Metal Zipper",
+    "subcategory": "8#金属方牙",
+    "type": "开尾",
+    "slider": "自动头",
+    "baseLength": 20,
+    "basePrice": 5.954,
+    "increment": 0.129,
+    "notes": "黑古铜、哑黑古、亮黑古、雾枪、烟枪",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 5.3586,
+        "increment": 0.1161
+      },
+      {
+        "name": "8.8折",
+        "base": 5.23952,
+        "increment": 0.11352
+      },
+      {
+        "name": "8.5折",
+        "base": 5.0609,
+        "increment": 0.10965
+      },
+      {
+        "name": "8.2折",
+        "base": 4.88228,
+        "increment": 0.10578
+      },
+      {
+        "name": "8折",
+        "base": 4.7632,
+        "increment": 0.1032
+      },
+      {
+        "name": "7.8折",
+        "base": 4.64412,
+        "increment": 0.10062
+      },
+      {
+        "name": "7.5折",
+        "base": 4.4655,
+        "increment": 0.09675
+      },
+      {
+        "name": "7.2折",
+        "base": 4.28688,
+        "increment": 0.09288
+      }
+    ]
+  },
+  {
+    "category": "金属产品Metal Zipper",
+    "subcategory": "8#金属方牙",
+    "type": "双开尾",
+    "slider": "双自动头",
+    "baseLength": 20,
+    "basePrice": 7.789,
+    "increment": 0.127,
+    "notes": "黑古铜、哑黑古、亮黑古、雾枪、烟枪",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 7.0101,
+        "increment": 0.1143
+      },
+      {
+        "name": "8.8折",
+        "base": 6.85432,
+        "increment": 0.11176
+      },
+      {
+        "name": "8.5折",
+        "base": 6.62065,
+        "increment": 0.10795
+      },
+      {
+        "name": "8.2折",
+        "base": 6.38698,
+        "increment": 0.10414
+      },
+      {
+        "name": "8折",
+        "base": 6.2312,
+        "increment": 0.1016
+      },
+      {
+        "name": "7.8折",
+        "base": 6.07542,
+        "increment": 0.09906
+      },
+      {
+        "name": "7.5折",
+        "base": 5.84175,
+        "increment": 0.09525
+      },
+      {
+        "name": "7.2折",
+        "base": 5.60808,
+        "increment": 0.09144
+      }
+    ]
+  },
+  {
+    "category": "金属产品Metal Zipper",
+    "subcategory": "3#金属方牙",
+    "type": "勿尾",
+    "slider": "自动头",
+    "baseLength": 10,
+    "basePrice": 2.011,
+    "increment": 0.071,
+    "notes": "亮白金、亮黑镍",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 1.8099,
+        "increment": 0.0639
+      },
+      {
+        "name": "8.8折",
+        "base": 1.76968,
+        "increment": 0.06248
+      },
+      {
+        "name": "8.5折",
+        "base": 1.70935,
+        "increment": 0.06035
+      },
+      {
+        "name": "8.2折",
+        "base": 1.64902,
+        "increment": 0.05822
+      },
+      {
+        "name": "8折",
+        "base": 1.6088,
+        "increment": 0.0568
+      },
+      {
+        "name": "7.8折",
+        "base": 1.56858,
+        "increment": 0.05538
+      },
+      {
+        "name": "7.5折",
+        "base": 1.50825,
+        "increment": 0.05325
+      },
+      {
+        "name": "7.2折",
+        "base": 1.44792,
+        "increment": 0.05112
+      }
+    ]
+  },
+  {
+    "category": "金属产品Metal Zipper",
+    "subcategory": "3#金属方牙",
+    "type": "开尾",
+    "slider": "自动头",
+    "baseLength": 20,
+    "basePrice": 3.568,
+    "increment": 0.077,
+    "notes": "亮白金、亮黑镍",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 3.2112,
+        "increment": 0.0693
+      },
+      {
+        "name": "8.8折",
+        "base": 3.13984,
+        "increment": 0.06776
+      },
+      {
+        "name": "8.5折",
+        "base": 3.0328,
+        "increment": 0.06545
+      },
+      {
+        "name": "8.2折",
+        "base": 2.92576,
+        "increment": 0.06314
+      },
+      {
+        "name": "8折",
+        "base": 2.8544,
+        "increment": 0.0616
+      },
+      {
+        "name": "7.8折",
+        "base": 2.78304,
+        "increment": 0.06006
+      },
+      {
+        "name": "7.5折",
+        "base": 2.676,
+        "increment": 0.05775
+      },
+      {
+        "name": "7.2折",
+        "base": 2.56896,
+        "increment": 0.05544
+      }
+    ]
+  },
+  {
+    "category": "金属产品Metal Zipper",
+    "subcategory": "3#金属方牙",
+    "type": "双开尾",
+    "slider": "双自动头",
+    "baseLength": 20,
+    "basePrice": 5.227,
+    "increment": 0.075,
+    "notes": "亮白金、亮黑镍",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 4.7043,
+        "increment": 0.0675
+      },
+      {
+        "name": "8.8折",
+        "base": 4.59976,
+        "increment": 0.066
+      },
+      {
+        "name": "8.5折",
+        "base": 4.44295,
+        "increment": 0.06375
+      },
+      {
+        "name": "8.2折",
+        "base": 4.28614,
+        "increment": 0.0615
+      },
+      {
+        "name": "8折",
+        "base": 4.1816,
+        "increment": 0.06
+      },
+      {
+        "name": "7.8折",
+        "base": 4.07706,
+        "increment": 0.0585
+      },
+      {
+        "name": "7.5折",
+        "base": 3.92025,
+        "increment": 0.05625
+      },
+      {
+        "name": "7.2折",
+        "base": 3.76344,
+        "increment": 0.054
+      }
+    ]
+  },
+  {
+    "category": "金属产品Metal Zipper",
+    "subcategory": "5#金属方牙",
+    "type": "勿尾",
+    "slider": "自动头",
+    "baseLength": 10,
+    "basePrice": 2.794,
+    "increment": 0.088,
+    "notes": "亮白金、亮黑镍",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 2.5146,
+        "increment": 0.0792
+      },
+      {
+        "name": "8.8折",
+        "base": 2.45872,
+        "increment": 0.07744
+      },
+      {
+        "name": "8.5折",
+        "base": 2.3749,
+        "increment": 0.0748
+      },
+      {
+        "name": "8.2折",
+        "base": 2.29108,
+        "increment": 0.07216
+      },
+      {
+        "name": "8折",
+        "base": 2.2352,
+        "increment": 0.0704
+      },
+      {
+        "name": "7.8折",
+        "base": 2.17932,
+        "increment": 0.06864
+      },
+      {
+        "name": "7.5折",
+        "base": 2.0955,
+        "increment": 0.066
+      },
+      {
+        "name": "7.2折",
+        "base": 2.01168,
+        "increment": 0.06336
+      }
+    ]
+  },
+  {
+    "category": "金属产品Metal Zipper",
+    "subcategory": "5#金属方牙",
+    "type": "开尾",
+    "slider": "自动头",
+    "baseLength": 20,
+    "basePrice": 4.497,
+    "increment": 0.095,
+    "notes": "亮白金、亮黑镍",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 4.0473,
+        "increment": 0.0855
+      },
+      {
+        "name": "8.8折",
+        "base": 3.95736,
+        "increment": 0.0836
+      },
+      {
+        "name": "8.5折",
+        "base": 3.82245,
+        "increment": 0.08075
+      },
+      {
+        "name": "8.2折",
+        "base": 3.68754,
+        "increment": 0.0779
+      },
+      {
+        "name": "8折",
+        "base": 3.5976,
+        "increment": 0.076
+      },
+      {
+        "name": "7.8折",
+        "base": 3.50766,
+        "increment": 0.0741
+      },
+      {
+        "name": "7.5折",
+        "base": 3.37275,
+        "increment": 0.07125
+      },
+      {
+        "name": "7.2折",
+        "base": 3.23784,
+        "increment": 0.0684
+      }
+    ]
+  },
+  {
+    "category": "金属产品Metal Zipper",
+    "subcategory": "5#金属方牙",
+    "type": "双开尾",
+    "slider": "双自动头",
+    "baseLength": 20,
+    "basePrice": 5.699,
+    "increment": 0.091,
+    "notes": "亮白金、亮黑镍",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 5.1291,
+        "increment": 0.0819
+      },
+      {
+        "name": "8.8折",
+        "base": 5.01512,
+        "increment": 0.08008
+      },
+      {
+        "name": "8.5折",
+        "base": 4.84415,
+        "increment": 0.07735
+      },
+      {
+        "name": "8.2折",
+        "base": 4.67318,
+        "increment": 0.07462
+      },
+      {
+        "name": "8折",
+        "base": 4.5592,
+        "increment": 0.0728
+      },
+      {
+        "name": "7.8折",
+        "base": 4.44522,
+        "increment": 0.07098
+      },
+      {
+        "name": "7.5折",
+        "base": 4.27425,
+        "increment": 0.06825
+      },
+      {
+        "name": "7.2折",
+        "base": 4.10328,
+        "increment": 0.06552
+      }
+    ]
+  },
+  {
+    "category": "金属产品Metal Zipper",
+    "subcategory": "8#金属方牙",
+    "type": "勿尾",
+    "slider": "自动头",
+    "baseLength": 10,
+    "basePrice": 3.991,
+    "increment": 0.108,
+    "notes": "亮白金、亮黑镍",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 3.5919,
+        "increment": 0.0972
+      },
+      {
+        "name": "8.8折",
+        "base": 3.51208,
+        "increment": 0.09504
+      },
+      {
+        "name": "8.5折",
+        "base": 3.39235,
+        "increment": 0.0918
+      },
+      {
+        "name": "8.2折",
+        "base": 3.27262,
+        "increment": 0.08856
+      },
+      {
+        "name": "8折",
+        "base": 3.1928,
+        "increment": 0.0864
+      },
+      {
+        "name": "7.8折",
+        "base": 3.11298,
+        "increment": 0.08424
+      },
+      {
+        "name": "7.5折",
+        "base": 2.99325,
+        "increment": 0.081
+      },
+      {
+        "name": "7.2折",
+        "base": 2.87352,
+        "increment": 0.07776
+      }
+    ]
+  },
+  {
+    "category": "金属产品Metal Zipper",
+    "subcategory": "8#金属方牙",
+    "type": "开尾",
+    "slider": "自动头",
+    "baseLength": 20,
+    "basePrice": 6.295,
+    "increment": 0.118,
+    "notes": "亮白金、亮黑镍",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 5.6655,
+        "increment": 0.1062
+      },
+      {
+        "name": "8.8折",
+        "base": 5.5396,
+        "increment": 0.10384
+      },
+      {
+        "name": "8.5折",
+        "base": 5.35075,
+        "increment": 0.1003
+      },
+      {
+        "name": "8.2折",
+        "base": 5.1619,
+        "increment": 0.09676
+      },
+      {
+        "name": "8折",
+        "base": 5.036,
+        "increment": 0.0944
+      },
+      {
+        "name": "7.8折",
+        "base": 4.9101,
+        "increment": 0.09204
+      },
+      {
+        "name": "7.5折",
+        "base": 4.72125,
+        "increment": 0.0885
+      },
+      {
+        "name": "7.2折",
+        "base": 4.5324,
+        "increment": 0.08496
+      }
+    ]
+  },
+  {
+    "category": "金属产品Metal Zipper",
+    "subcategory": "8#金属方牙",
+    "type": "双开尾",
+    "slider": "双自动头",
+    "baseLength": 20,
+    "basePrice": 7.952,
+    "increment": 0.122,
+    "notes": "亮白金、亮黑镍",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 7.1568,
+        "increment": 0.1098
+      },
+      {
+        "name": "8.8折",
+        "base": 6.99776,
+        "increment": 0.10736
+      },
+      {
+        "name": "8.5折",
+        "base": 6.7592,
+        "increment": 0.1037
+      },
+      {
+        "name": "8.2折",
+        "base": 6.52064,
+        "increment": 0.10004
+      },
+      {
+        "name": "8折",
+        "base": 6.3616,
+        "increment": 0.0976
+      },
+      {
+        "name": "7.8折",
+        "base": 6.20256,
+        "increment": 0.09516
+      },
+      {
+        "name": "7.5折",
+        "base": 5.964,
+        "increment": 0.0915
+      },
+      {
+        "name": "7.2折",
+        "base": 5.72544,
+        "increment": 0.08784
+      }
+    ]
+  },
+  {
+    "category": "金属产品Metal Zipper",
+    "subcategory": "3#金属方牙",
+    "type": "勿尾",
+    "slider": "自动头",
+    "baseLength": 10,
+    "basePrice": 3.181,
+    "increment": 0.072,
+    "notes": "浅金、亮黄金",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 2.8629,
+        "increment": 0.0648
+      },
+      {
+        "name": "8.8折",
+        "base": 2.79928,
+        "increment": 0.06336
+      },
+      {
+        "name": "8.5折",
+        "base": 2.70385,
+        "increment": 0.0612
+      },
+      {
+        "name": "8.2折",
+        "base": 2.60842,
+        "increment": 0.05904
+      },
+      {
+        "name": "8折",
+        "base": 2.5448,
+        "increment": 0.0576
+      },
+      {
+        "name": "7.8折",
+        "base": 2.48118,
+        "increment": 0.05616
+      },
+      {
+        "name": "7.5折",
+        "base": 2.38575,
+        "increment": 0.054
+      },
+      {
+        "name": "7.2折",
+        "base": 2.29032,
+        "increment": 0.05184
+      }
+    ]
+  },
+  {
+    "category": "金属产品Metal Zipper",
+    "subcategory": "3#金属方牙",
+    "type": "开尾",
+    "slider": "自动头",
+    "baseLength": 20,
+    "basePrice": 4.51,
+    "increment": 0.077,
+    "notes": "浅金、亮黄金",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 4.059,
+        "increment": 0.0693
+      },
+      {
+        "name": "8.8折",
+        "base": 3.9688,
+        "increment": 0.06776
+      },
+      {
+        "name": "8.5折",
+        "base": 3.8335,
+        "increment": 0.06545
+      },
+      {
+        "name": "8.2折",
+        "base": 3.6982,
+        "increment": 0.06314
+      },
+      {
+        "name": "8折",
+        "base": 3.608,
+        "increment": 0.0616
+      },
+      {
+        "name": "7.8折",
+        "base": 3.5178,
+        "increment": 0.06006
+      },
+      {
+        "name": "7.5折",
+        "base": 3.3825,
+        "increment": 0.05775
+      },
+      {
+        "name": "7.2折",
+        "base": 3.2472,
+        "increment": 0.05544
+      }
+    ]
+  },
+  {
+    "category": "金属产品Metal Zipper",
+    "subcategory": "3#金属方牙",
+    "type": "双开尾",
+    "slider": "双自动头",
+    "baseLength": 20,
+    "basePrice": 6.163,
+    "increment": 0.064,
+    "notes": "浅金、亮黄金",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 5.5467,
+        "increment": 0.0576
+      },
+      {
+        "name": "8.8折",
+        "base": 5.42344,
+        "increment": 0.05632
+      },
+      {
+        "name": "8.5折",
+        "base": 5.23855,
+        "increment": 0.0544
+      },
+      {
+        "name": "8.2折",
+        "base": 5.05366,
+        "increment": 0.05248
+      },
+      {
+        "name": "8折",
+        "base": 4.9304,
+        "increment": 0.0512
+      },
+      {
+        "name": "7.8折",
+        "base": 4.80714,
+        "increment": 0.04992
+      },
+      {
+        "name": "7.5折",
+        "base": 4.62225,
+        "increment": 0.048
+      },
+      {
+        "name": "7.2折",
+        "base": 4.43736,
+        "increment": 0.04608
+      }
+    ]
+  },
+  {
+    "category": "金属产品Metal Zipper",
+    "subcategory": "5#金属方牙",
+    "type": "勿尾",
+    "slider": "自动头",
+    "baseLength": 10,
+    "basePrice": 4.403,
+    "increment": 0.088,
+    "notes": "浅金、亮黄金",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 3.9627,
+        "increment": 0.0792
+      },
+      {
+        "name": "8.8折",
+        "base": 3.87464,
+        "increment": 0.07744
+      },
+      {
+        "name": "8.5折",
+        "base": 3.74255,
+        "increment": 0.0748
+      },
+      {
+        "name": "8.2折",
+        "base": 3.61046,
+        "increment": 0.07216
+      },
+      {
+        "name": "8折",
+        "base": 3.5224,
+        "increment": 0.0704
+      },
+      {
+        "name": "7.8折",
+        "base": 3.43434,
+        "increment": 0.06864
+      },
+      {
+        "name": "7.5折",
+        "base": 3.30225,
+        "increment": 0.066
+      },
+      {
+        "name": "7.2折",
+        "base": 3.17016,
+        "increment": 0.06336
+      }
+    ]
+  },
+  {
+    "category": "金属产品Metal Zipper",
+    "subcategory": "5#金属方牙",
+    "type": "开尾",
+    "slider": "自动头",
+    "baseLength": 20,
+    "basePrice": 5.454,
+    "increment": 0.095,
+    "notes": "浅金、亮黄金",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 4.9086,
+        "increment": 0.0855
+      },
+      {
+        "name": "8.8折",
+        "base": 4.79952,
+        "increment": 0.0836
+      },
+      {
+        "name": "8.5折",
+        "base": 4.6359,
+        "increment": 0.08075
+      },
+      {
+        "name": "8.2折",
+        "base": 4.47228,
+        "increment": 0.0779
+      },
+      {
+        "name": "8折",
+        "base": 4.3632,
+        "increment": 0.076
+      },
+      {
+        "name": "7.8折",
+        "base": 4.25412,
+        "increment": 0.0741
+      },
+      {
+        "name": "7.5折",
+        "base": 4.0905,
+        "increment": 0.07125
+      },
+      {
+        "name": "7.2折",
+        "base": 3.92688,
+        "increment": 0.0684
+      }
+    ]
+  },
+  {
+    "category": "金属产品Metal Zipper",
+    "subcategory": "5#金属方牙",
+    "type": "双开尾",
+    "slider": "双自动头",
+    "baseLength": 20,
+    "basePrice": 8.399,
+    "increment": 0.091,
+    "notes": "浅金、亮黄金",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 7.5591,
+        "increment": 0.0819
+      },
+      {
+        "name": "8.8折",
+        "base": 7.39112,
+        "increment": 0.08008
+      },
+      {
+        "name": "8.5折",
+        "base": 7.13915,
+        "increment": 0.07735
+      },
+      {
+        "name": "8.2折",
+        "base": 6.88718,
+        "increment": 0.07462
+      },
+      {
+        "name": "8折",
+        "base": 6.7192,
+        "increment": 0.0728
+      },
+      {
+        "name": "7.8折",
+        "base": 6.55122,
+        "increment": 0.07098
+      },
+      {
+        "name": "7.5折",
+        "base": 6.29925,
+        "increment": 0.06825
+      },
+      {
+        "name": "7.2折",
+        "base": 6.04728,
+        "increment": 0.06552
+      }
+    ]
+  },
+  {
+    "category": "金属产品Metal Zipper",
+    "subcategory": "8#金属方牙",
+    "type": "勿尾",
+    "slider": "自动头",
+    "baseLength": 10,
+    "basePrice": 6.237,
+    "increment": 0.108,
+    "notes": "浅金、亮黄金",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 5.6133,
+        "increment": 0.0972
+      },
+      {
+        "name": "8.8折",
+        "base": 5.48856,
+        "increment": 0.09504
+      },
+      {
+        "name": "8.5折",
+        "base": 5.30145,
+        "increment": 0.0918
+      },
+      {
+        "name": "8.2折",
+        "base": 5.11434,
+        "increment": 0.08856
+      },
+      {
+        "name": "8折",
+        "base": 4.9896,
+        "increment": 0.0864
+      },
+      {
+        "name": "7.8折",
+        "base": 4.86486,
+        "increment": 0.08424
+      },
+      {
+        "name": "7.5折",
+        "base": 4.67775,
+        "increment": 0.081
+      },
+      {
+        "name": "7.2折",
+        "base": 4.49064,
+        "increment": 0.07776
+      }
+    ]
+  },
+  {
+    "category": "金属产品Metal Zipper",
+    "subcategory": "8#金属方牙",
+    "type": "开尾",
+    "slider": "自动头",
+    "baseLength": 20,
+    "basePrice": 7.694,
+    "increment": 0.118,
+    "notes": "浅金、亮黄金",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 6.9246,
+        "increment": 0.1062
+      },
+      {
+        "name": "8.8折",
+        "base": 6.77072,
+        "increment": 0.10384
+      },
+      {
+        "name": "8.5折",
+        "base": 6.5399,
+        "increment": 0.1003
+      },
+      {
+        "name": "8.2折",
+        "base": 6.30908,
+        "increment": 0.09676
+      },
+      {
+        "name": "8折",
+        "base": 6.1552,
+        "increment": 0.0944
+      },
+      {
+        "name": "7.8折",
+        "base": 6.00132,
+        "increment": 0.09204
+      },
+      {
+        "name": "7.5折",
+        "base": 5.7705,
+        "increment": 0.0885
+      },
+      {
+        "name": "7.2折",
+        "base": 5.53968,
+        "increment": 0.08496
+      }
+    ]
+  },
+  {
+    "category": "金属产品Metal Zipper",
+    "subcategory": "8#金属方牙",
+    "type": "双开尾",
+    "slider": "双自动头",
+    "baseLength": 20,
+    "basePrice": 11.525,
+    "increment": 0.122,
+    "notes": "浅金、亮黄金",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 10.3725,
+        "increment": 0.1098
+      },
+      {
+        "name": "8.8折",
+        "base": 10.142,
+        "increment": 0.10736
+      },
+      {
+        "name": "8.5折",
+        "base": 9.79625,
+        "increment": 0.1037
+      },
+      {
+        "name": "8.2折",
+        "base": 9.4505,
+        "increment": 0.10004
+      },
+      {
+        "name": "8折",
+        "base": 9.22,
+        "increment": 0.0976
+      },
+      {
+        "name": "7.8折",
+        "base": 8.9895,
+        "increment": 0.09516
+      },
+      {
+        "name": "7.5折",
+        "base": 8.64375,
+        "increment": 0.0915
+      },
+      {
+        "name": "7.2折",
+        "base": 8.298,
+        "increment": 0.08784
+      }
+    ]
+  },
+  {
+    "category": "金属产品Metal Zipper",
+    "subcategory": "3#金属方牙",
+    "type": "勿尾",
+    "slider": "自动头",
+    "baseLength": 10,
+    "basePrice": 3.376,
+    "increment": 0.073,
+    "notes": "玫瑰金、香槟金",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 3.0384,
+        "increment": 0.0657
+      },
+      {
+        "name": "8.8折",
+        "base": 2.97088,
+        "increment": 0.06424
+      },
+      {
+        "name": "8.5折",
+        "base": 2.8696,
+        "increment": 0.06205
+      },
+      {
+        "name": "8.2折",
+        "base": 2.76832,
+        "increment": 0.05986
+      },
+      {
+        "name": "8折",
+        "base": 2.7008,
+        "increment": 0.0584
+      },
+      {
+        "name": "7.8折",
+        "base": 2.63328,
+        "increment": 0.05694
+      },
+      {
+        "name": "7.5折",
+        "base": 2.532,
+        "increment": 0.05475
+      },
+      {
+        "name": "7.2折",
+        "base": 2.43072,
+        "increment": 0.05256
+      }
+    ]
+  },
+  {
+    "category": "金属产品Metal Zipper",
+    "subcategory": "3#金属方牙",
+    "type": "开尾",
+    "slider": "自动头",
+    "baseLength": 20,
+    "basePrice": 4.859,
+    "increment": 0.079,
+    "notes": "玫瑰金、香槟金",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 4.3731,
+        "increment": 0.0711
+      },
+      {
+        "name": "8.8折",
+        "base": 4.27592,
+        "increment": 0.06952
+      },
+      {
+        "name": "8.5折",
+        "base": 4.13015,
+        "increment": 0.06715
+      },
+      {
+        "name": "8.2折",
+        "base": 3.98438,
+        "increment": 0.06478
+      },
+      {
+        "name": "8折",
+        "base": 3.8872,
+        "increment": 0.0632
+      },
+      {
+        "name": "7.8折",
+        "base": 3.79002,
+        "increment": 0.06162
+      },
+      {
+        "name": "7.5折",
+        "base": 3.64425,
+        "increment": 0.05925
+      },
+      {
+        "name": "7.2折",
+        "base": 3.49848,
+        "increment": 0.05688
+      }
+    ]
+  },
+  {
+    "category": "金属产品Metal Zipper",
+    "subcategory": "3#金属方牙",
+    "type": "双开尾",
+    "slider": "双自动头",
+    "baseLength": 20,
+    "basePrice": 6.886,
+    "increment": 0.086,
+    "notes": "玫瑰金、香槟金",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 6.1974,
+        "increment": 0.0774
+      },
+      {
+        "name": "8.8折",
+        "base": 6.05968,
+        "increment": 0.07568
+      },
+      {
+        "name": "8.5折",
+        "base": 5.8531,
+        "increment": 0.0731
+      },
+      {
+        "name": "8.2折",
+        "base": 5.64652,
+        "increment": 0.07052
+      },
+      {
+        "name": "8折",
+        "base": 5.5088,
+        "increment": 0.0688
+      },
+      {
+        "name": "7.8折",
+        "base": 5.37108,
+        "increment": 0.06708
+      },
+      {
+        "name": "7.5折",
+        "base": 5.1645,
+        "increment": 0.0645
+      },
+      {
+        "name": "7.2折",
+        "base": 4.95792,
+        "increment": 0.06192
+      }
+    ]
+  },
+  {
+    "category": "金属产品Metal Zipper",
+    "subcategory": "5#金属方牙",
+    "type": "勿尾",
+    "slider": "自动头",
+    "baseLength": 10,
+    "basePrice": 4.928,
+    "increment": 0.093,
+    "notes": "玫瑰金、香槟金",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 4.4352,
+        "increment": 0.0837
+      },
+      {
+        "name": "8.8折",
+        "base": 4.33664,
+        "increment": 0.08184
+      },
+      {
+        "name": "8.5折",
+        "base": 4.1888,
+        "increment": 0.07905
+      },
+      {
+        "name": "8.2折",
+        "base": 4.04096,
+        "increment": 0.07626
+      },
+      {
+        "name": "8折",
+        "base": 3.9424,
+        "increment": 0.0744
+      },
+      {
+        "name": "7.8折",
+        "base": 3.84384,
+        "increment": 0.07254
+      },
+      {
+        "name": "7.5折",
+        "base": 3.696,
+        "increment": 0.06975
+      },
+      {
+        "name": "7.2折",
+        "base": 3.54816,
+        "increment": 0.06696
+      }
+    ]
+  },
+  {
+    "category": "金属产品Metal Zipper",
+    "subcategory": "5#金属方牙",
+    "type": "开尾",
+    "slider": "自动头",
+    "baseLength": 20,
+    "basePrice": 5.713,
+    "increment": 0.097,
+    "notes": "玫瑰金、香槟金",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 5.1417,
+        "increment": 0.0873
+      },
+      {
+        "name": "8.8折",
+        "base": 5.02744,
+        "increment": 0.08536
+      },
+      {
+        "name": "8.5折",
+        "base": 4.85605,
+        "increment": 0.08245
+      },
+      {
+        "name": "8.2折",
+        "base": 4.68466,
+        "increment": 0.07954
+      },
+      {
+        "name": "8折",
+        "base": 4.5704,
+        "increment": 0.0776
+      },
+      {
+        "name": "7.8折",
+        "base": 4.45614,
+        "increment": 0.07566
+      },
+      {
+        "name": "7.5折",
+        "base": 4.28475,
+        "increment": 0.07275
+      },
+      {
+        "name": "7.2折",
+        "base": 4.11336,
+        "increment": 0.06984
+      }
+    ]
+  },
+  {
+    "category": "金属产品Metal Zipper",
+    "subcategory": "5#金属方牙",
+    "type": "双开尾",
+    "slider": "双自动头",
+    "baseLength": 20,
+    "basePrice": 9.383,
+    "increment": 0.093,
+    "notes": "玫瑰金、香槟金",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 8.4447,
+        "increment": 0.0837
+      },
+      {
+        "name": "8.8折",
+        "base": 8.25704,
+        "increment": 0.08184
+      },
+      {
+        "name": "8.5折",
+        "base": 7.97555,
+        "increment": 0.07905
+      },
+      {
+        "name": "8.2折",
+        "base": 7.69406,
+        "increment": 0.07626
+      },
+      {
+        "name": "8折",
+        "base": 7.5064,
+        "increment": 0.0744
+      },
+      {
+        "name": "7.8折",
+        "base": 7.31874,
+        "increment": 0.07254
+      },
+      {
+        "name": "7.5折",
+        "base": 7.03725,
+        "increment": 0.06975
+      },
+      {
+        "name": "7.2折",
+        "base": 6.75576,
+        "increment": 0.06696
+      }
+    ]
+  },
+  {
+    "category": "金属产品Metal Zipper",
+    "subcategory": "8#金属方牙",
+    "type": "勿尾",
+    "slider": "自动头",
+    "baseLength": 10,
+    "basePrice": 6.565,
+    "increment": 0.132,
+    "notes": "玫瑰金、香槟金",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 5.9085,
+        "increment": 0.1188
+      },
+      {
+        "name": "8.8折",
+        "base": 5.7772,
+        "increment": 0.11616
+      },
+      {
+        "name": "8.5折",
+        "base": 5.58025,
+        "increment": 0.1122
+      },
+      {
+        "name": "8.2折",
+        "base": 5.3833,
+        "increment": 0.10824
+      },
+      {
+        "name": "8折",
+        "base": 5.252,
+        "increment": 0.1056
+      },
+      {
+        "name": "7.8折",
+        "base": 5.1207,
+        "increment": 0.10296
+      },
+      {
+        "name": "7.5折",
+        "base": 4.92375,
+        "increment": 0.099
+      },
+      {
+        "name": "7.2折",
+        "base": 4.7268,
+        "increment": 0.09504
+      }
+    ]
+  },
+  {
+    "category": "金属产品Metal Zipper",
+    "subcategory": "8#金属方牙",
+    "type": "开尾",
+    "slider": "自动头",
+    "baseLength": 20,
+    "basePrice": 8.665,
+    "increment": 0.132,
+    "notes": "玫瑰金、香槟金",
+    "discounts": [
+      {
+        "name": "9折",
+        "base": 7.7985,
+        "increment": 0.1188
+      },
+      {
+        "name": "8.8折",
+        "base": 7.6252,
+        "increment": 0.11616
+      },
+      {
+        "name": "8.5折",
+        "base": 7.36525,
+        "increment": 0.1122
+      },
+      {
+        "name": "8.2折",
+        "base": 7.1053,
+        "increment": 0.10824
+      },
+      {
+        "name": "8折",
+        "base": 6.932,
+        "increment": 0.1056
+      },
+      {
+        "name": "7.8折",
+        "base": 6.7587,
+        "increment": 0.10296
+      },
+      {
+        "name": "7.5折",
+        "base": 6.49875,
+        "increment": 0.099
+      },
+      {
+        "name": "7.2折",
+        "base": 6.2388,
+        "increment": 0.09504
+      }
+    ]
+  }
+];
+
+var selCat = "", selProd = "", selType = "", selSld = "", selDisc = "原价", discBase = null, discInc = null, varIdx = 0, prodNames = [];
+
+function $(id) { return document.getElementById(id); }
+function fm(c, s, t, sl) { return D.filter(function(p) { return (!c||p.category===c) && (!s||p.subcategory===s) && (!t||p.type===t) && (!sl||p.slider===sl); }); }
+function gp() { var m = fm(selCat, selProd, selType, $("selSlider").value); return m.length ? m[varIdx >= m.length ? (varIdx=0) : varIdx] : null; }
+function sv(k, v) { try { localStorage.setItem("sbs_"+k, v); } catch(e) {} }
+function rs(k) { try { return localStorage.getItem("sbs_"+k); } catch(e) { return null; } }
+
+var tt;
+function toast(m) { var t=$("toast"); t.textContent=m; t.classList.add("show"); clearTimeout(tt); tt=setTimeout(function(){t.classList.remove("show");},2000); }
+
+function doCopy() {
+  var txt = $("finPrice").textContent + "\n" + ($("prcDetail").innerText||"");
+  navigator.clipboard.writeText(txt).then(function() {
+    var b = document.querySelector(".copy-btn"); b.textContent="✓ 已复制"; b.classList.add("done");
+    setTimeout(function(){ b.textContent="📋 复制"; b.classList.remove("done"); }, 2000);
+  }).catch(function(){ toast("复制失败"); });
+}
+
+function init() {
+  var cats = [...new Set(D.map(function(p){return p.category;}))];
+  var f = document.createDocumentFragment(), o = document.createElement("option"); o.value=""; o.textContent="-- 请选择产品类别 --"; f.appendChild(o);
+  cats.forEach(function(c){ var x=document.createElement("option"); x.value=c; x.textContent=c; f.appendChild(x); });
+  $("selCat").appendChild(f);
+  $("selCat").onchange = onCat;
+  $("selProd").onchange = onProd;
+  $("selType").onchange = onType;
+  $("selSlider").onchange = onSld;
+  $("srchProd").oninput = onSrch;
+
+  selCat = rs("cat")||""; selProd = rs("prod")||""; selType = rs("typ")||""; selSld = rs("sld")||"";
+  selDisc = rs("disc")||"原价"; varIdx = parseInt(rs("vidx")||"0");
+  if (selCat) { $("selCat").value=selCat; onCat(1); if (selProd) setTimeout(function(){$("selProd").value=selProd; onProd(1); if(selType) setTimeout(function(){$("selType").value=selType; onType(1); if(selSld) setTimeout(function(){$("selSlider").value=selSld; onSld();},40);},40);},40); }
+}
+
+function onCat(r) {
+  selCat=$("selCat").value; sv("cat",selCat); selProd=""; selType=""; selSld=""; varIdx=0;
+  $("selType").innerHTML='<option value="">-- 先选型号 --</option>'; $("selSlider").innerHTML='<option value="">-- 先选型号 --</option>';
+  $("matchTbl").style.display="none"; $("srchProd").value="";
+  prodNames = selCat ? [...new Set(D.filter(function(p){return p.category===selCat;}).map(function(p){return p.subcategory;}))] : [];
+  rdrProd(prodNames); calc();
+}
+function onSrch() { rdrProd(prodNames.filter(function(n){return n.toLowerCase().indexOf($("srchProd").value.toLowerCase())>=0;})); }
+function rdrProd(ns) { var s=$("selProd"); s.innerHTML=""; var f=document.createDocumentFragment(); ns.forEach(function(n){var o=document.createElement("option");o.value=n;o.textContent=n;f.appendChild(o);}); s.appendChild(f); }
+
+function onProd(r) {
+  varIdx=0; selProd=$("selProd").value; sv("prod",selProd); selType=""; selSld="";
+  $("selSlider").innerHTML='<option value="">-- 先选链型 --</option>'; $("matchTbl").style.display="none";
+  var st=$("selType"); st.innerHTML='<option value="">-- 请选择链型 --</option>';
+  if(selProd&&selCat) [...new Set(D.filter(function(p){return p.category===selCat&&p.subcategory===selProd;}).map(function(p){return p.type;}))].forEach(function(t){var o=document.createElement("option");o.value=t;o.textContent=t;st.appendChild(o);});
+  calc();
+}
+
+function onType(r) {
+  varIdx=0; selType=$("selType").value; sv("typ",selType); selSld="";
+  var ss=$("selSlider"); ss.innerHTML="";
+  if(selType&&selProd&&selCat) {
+    var sls=[...new Set(D.filter(function(p){return p.category===selCat&&p.subcategory===selProd&&p.type===selType;}).map(function(p){return p.slider;}))];
+    if(sls.length===1) { $("sldGrp").classList.add("hide"); selSld=sls[0]; }
+    else { $("sldGrp").classList.remove("hide"); var o=document.createElement("option");o.value="";o.textContent="-- 全部 --";ss.appendChild(o); sls.forEach(function(s){var x=document.createElement("option");x.value=s;x.textContent=s;ss.appendChild(x);}); }
+  } else { $("sldGrp").classList.remove("hide"); ss.innerHTML='<option value="">-- 先选型号 --</option>'; }
+  updMatch(); rdrDisc(); calc();
+}
+function onSld() { selSld=$("selSlider").value; sv("sld",selSld); updMatch(); rdrDisc(); calc(); }
+
+function updMatch() {
+  var m=fm(selCat,selProd,selType,selSld), tb=$("matchBody"); tb.innerHTML="";
+  if(m.length<=1){$("matchTbl").style.display="none";return;}
+  $("matchTbl").style.display="block"; if(varIdx>=m.length)varIdx=0;
+  m.forEach(function(p,i){
+    var n=p.notes?'<span class="tag tag-note">'+p.notes+'</span>':'', c=i===varIdx?' sel':'';
+    tb.innerHTML+='<tr class="cr'+c+'" onclick="pick('+i+')"><td>'+p.subcategory+'</td><td>'+p.type+'</td><td>'+p.slider+'</td><td>'+p.baseLength+'cm</td><td class="hl">¥'+p.basePrice.toFixed(4)+'</td><td>¥'+p.increment.toFixed(4)+'</td><td>'+n+'</td></tr>';
+  });
+}
+function pick(i) { varIdx=i; sv("vidx",String(i)); updMatch(); rdrDisc(); calc(); }
+
+function rdrDisc() {
+  var p=gp(), l=$("discList"); l.innerHTML=""; if(!p)return;
+  if(selDisc!=="原价"&&p.discounts){var d=p.discounts.find(function(dd){return dd.name===selDisc;}); if(d){discBase=d.base;discInc=d.increment;}else{selDisc="原价";discBase=null;discInc=null;}}
+  var f=document.createDocumentFragment(), b=document.createElement("button");
+  b.className="dbtn"+(selDisc==="原价"?" on":""); b.textContent="原价"; b.onclick=function(){sd("原价",b);}; f.appendChild(b);
+  if(p.discounts) p.discounts.forEach(function(d){var x=document.createElement("button");x.className="dbtn"+(selDisc===d.name?" on":"");x.textContent=d.name;x.onclick=function(){sd(d.name,x);};f.appendChild(x);});
+  l.appendChild(f);
+}
+function sd(nm,btn) {
+  selDisc=nm; sv("disc",nm); document.querySelectorAll(".dbtn").forEach(function(b){b.classList.remove("on");}); btn.classList.add("on");
+  var p=gp(); if(nm==="原价"){discBase=null;discInc=null;}else if(p&&p.discounts){var d=p.discounts.find(function(dd){return dd.name===nm;}); if(d){discBase=d.base;discInc=d.increment;}}
+  calc();
+}
+
+function onLenInp() { $("lenSld").value=$("inpLen").value; calc(); }
+function onLenSld(v) { $("inpLen").value=v; calc(); }
+
+function calc() {
+  var p=gp();
+  if(!p){$("finPrice").textContent="¥ --";$("prcDetail").innerHTML="";$("warnMsg").innerHTML="";$("specRules").innerHTML="";$("prodNotes").innerHTML="";return;}
+  $("prodNotes").innerHTML=p.notes?'<span class="tag tag-note">备注: '+p.notes+'</span>':'';
+
+  var L=parseFloat($("inpLen").value)||0, bL=p.baseLength, eL=L, mW="";
+  if(p.type==="勿尾"&&L<10){eL=10;mW="闭口链不足10CM，按10CM计价；";}
+  else if((p.type==="开尾"||p.type==="双开尾")&&L<20){eL=20;mW="开口链不足20CM，按20CM计价；";}
+
+  var bP=discBase!==null?discBase:p.basePrice, inc=discInc!==null?discInc:p.increment;
+  var price=bP+inc*(eL-bL);
+
+  var rt=0, rL="";
+  if(eL>=500){rt=.30;rL="长度≥500cm，加价30%";}else if(eL>=250){rt=.20;rL="长度≥250cm，加价20%";}else if(eL>=100){rt=.10;rL="长度≥100cm，加价10%";}
+  var sc=price*rt;
+
+  var isNy=p.category.indexOf("尼龙")>=0, xf=0, xL=[];
+  if(isNy){if($("chkBP").checked){xf+=.10;xL.push("背拉+0.10");}if($("chkDC").checked){xf+=.10;xL.push("两端闭合+0.10");}if($("chkUS").checked){xf+=.10;xL.push("U型上止+0.10");}}
+
+  var xo=1; if($("chkXO").checked&&p.type==="勿尾")xo=1.5;
+  var bc=price; price=Math.round((price*xo+sc+xf)*10000)/10000;
+
+  $("finPrice").textContent="¥"+price.toFixed(4);
+  var dt='<span>基准长度: '+bL+'cm | 计算长度: '+eL+'cm</span><br>';
+  dt+='<span>基准价: ¥'+bP.toFixed(4)+' | ±1cm: ¥'+inc.toFixed(4)+(selDisc!=="原价"?' ('+selDisc+')':'')+'</span><br>';
+  var d=eL-bL;
+  dt+='<span>计算: ¥'+bP.toFixed(4)+(d>=0?' + ':' - ')+'¥'+inc.toFixed(4)+' × '+Math.abs(d)+' = ¥'+bc.toFixed(4)+'</span><br>';
+  if(xo>1)dt+='<span>X/O双闭口+50%: ¥'+bc.toFixed(4)+'×1.5=¥'+(bc*1.5).toFixed(4)+'</span><br>';
+  if(rt>0)dt+='<span>'+rL+': +¥'+sc.toFixed(4)+'</span><br>';
+  if(xf>0)dt+='<span>附加: '+xL.join(", ")+' = ¥'+xf.toFixed(2)+'</span><br>';
+  $("prcDetail").innerHTML=dt;
+
+  var ws=[]; if(mW)ws.push(mW); if(rt>0)ws.push(rL);
+  $("warnMsg").innerHTML=ws.length?'<div class="warn">'+ws.map(function(w){return"⚠ "+w;}).join("<br>")+'</div>':"";
+
+  var tg=[]; if(rt>0)tg.push('<span class="rule-tag">'+rL+'</span>'); if(xo>1)tg.push('<span class="rule-tag">X/O双闭口+50%</span>');
+  xL.forEach(function(l){tg.push('<span class="rule-tag">'+l+'</span>');});
+  $("specRules").innerHTML=tg.join(" ");
+}
+
+window.addEventListener("DOMContentLoaded", init);
+</script>
+</body>
+</html>

@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>拉头电镀产品价格表</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .table-wrap{overflow-x:auto;}
+        .gold-row{background-color:#ffef48 !important;}
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+    <div class="max-w-7xl mx-auto p-4 md:p-6">
+        <header class="mb-6">
+            <h1 class="text-[clamp(1.4rem,3vw,2rem)] font-bold">拉头电镀产品价格表 The Price List of Plating Products</h1>
+            <div class="text-gray-600 mt-1">单位：RMB 含税 | 更新日期：2026-03-20</div>
+            <div class="mt-2 text-amber-600 text-sm">备注：黄色底色标注镀种，采用工业真金材料</div>
+        </header>
+
+        <!-- 搜索 -->
+        <div class="mb-4">
+            <input id="searchInput" type="text" placeholder="输入色卡编码 / 镀种名称搜索..."
+                class="w-full border px-4 py-2 rounded-lg">
+        </div>
+
+        <!-- Tab切换 -->
+        <div class="flex gap-2 mb-4">
+            <button onclick="switchTab('rack')" id="tabRack" class="px-4 py-2 bg-blue-600 text-white rounded">挂镀 Rack（按件）</button>
+            <button onclick="switchTab('barrel')" id="tabBarrel" class="px-4 py-2 bg-gray-200 rounded">滚镀 Barrel（元/KG）</button>
+        </div>
+
+        <!-- 挂镀表格 -->
+        <div id="panelRack">
+            <h2 class="text-lg font-semibold mb-2">挂镀产品 Rack Plating（单头/片、头带片）</h2>
+            <div class="table-wrap">
+                <table class="min-w-full border border-gray-300 text-sm">
+                    <thead class="bg-gray-100">
+                        <tr>
+                            <th class="border px-2 py-1">色卡编码</th>
+                            <th class="border px-2 py-1">镀种名称</th>
+                            <th class="border px-2 py-1">3#单头</th>
+                            <th class="border px-2 py-1">3#头带片</th>
+                            <th class="border px-2 py-1">5#单头</th>
+                            <th class="border px-2 py-1">5#头带片</th>
+                            <th class="border px-2 py-1">8#单头</th>
+                            <th class="border px-2 py-1">8#头带片</th>
+                            <th class="border px-2 py-1">10#单头</th>
+                            <th class="border px-2 py-1">10#头带片</th>
+                        </tr>
+                    </thead>
+                    <tbody id="rackTbody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 滚镀表格 -->
+        <div id="panelBarrel" class="hidden">
+            <h2 class="text-lg font-semibold mb-2">滚镀产品 Barrel Plating（元/KG）</h2>
+            <div class="table-wrap">
+                <table class="min-w-full border border-gray-300 text-sm">
+                    <thead class="bg-gray-100">
+                        <tr>
+                            <th class="border px-2 py-1">序号</th>
+                            <th class="border px-2 py-1">色卡编码</th>
+                            <th class="border px-2 py-1">镀种名称</th>
+                            <th class="border px-2 py-1">单价 RMB / KG</th>
+                        </tr>
+                    </thead>
+                    <tbody id="barrelTbody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+<script>
+// ========== 挂镀数据 ==========
+const rackData = [
+    {code:"F.RP001",name:"挂无镍高级哑银",r3:0.43,t3:0.60,r5:0.48,t5:0.72,r8:0.56,t8:0.78,r10:0.62,t10:0.83,isGold:false},
+    {code:"F.RP002",name:"挂无镍高级银拉丝",r3:0.62,t3:0.73,r5:0.66,t5:0.79,r8:0.70,t8:0.88,r10:0.73,t10:0.92,isGold:false},
+    {code:"F.RP003",name:"挂高级无镍亮银",r3:0.50,t3:0.58,r5:0.54,t5:0.64,r8:0.58,t8:0.72,r10:0.62,t10:0.78,isGold:false},
+    {code:"G.RP001",name:"挂无镍白拉丝",r3:0.47,t3:0.60,r5:0.50,t5:0.66,r8:0.56,t8:0.76,r10:0.60,t10:0.82,isGold:false},
+    {code:"G.RP002",name:"挂无镍白",r3:0.40,t3:0.50,r5:0.46,t5:0.60,r8:0.50,t8:0.71,r10:0.54,t10:0.75,isGold:false},
+    {code:"G.RP003",name:"挂无镍白激光",r3:0.47,t3:0.60,r5:0.50,t5:0.66,r8:0.56,t8:0.76,r10:0.60,t10:0.82,isGold:false},
+    {code:"F.RP004",name:"挂无镍代铬",r3:0.48,t3:0.56,r5:0.50,t5:0.70,r8:0.56,t8:0.77,r10:0.62,t10:0.84,isGold:false},
+    {code:"S.RP001",name:"挂无镍珍珠镍",r3:0.40,t3:0.49,r5:0.47,t5:0.59,r8:0.53,t8:0.73,r10:0.58,t10:0.79,isGold:false},
+    {code:"F.RP005",name:"挂无镍珍珠镍",r3:0.40,t3:0.49,r5:0.47,t5:0.59,r8:0.53,t8:0.73,r10:0.58,t10:0.79,isGold:false},
+    {code:"G.RP004",name:"挂无镍珍珠浅金",r3:0.72,t3:0.94,r5:0.86,t5:1.23,r8:0.96,t8:1.34,r10:1.07,t10:1.43,isGold:true},
+    {code:"F.RP006",name:"挂无镍高级水晶拉丝",r3:0.90,t3:1.38,r5:0.98,t5:1.47,r8:1.10,t8:1.67,r10:1.19,t10:1.74,isGold:false},
+    {code:"F.RP007",name:"挂无镍高级水晶金",r3:0.76,t3:1.17,r5:1.01,t5:1.61,r8:1.11,t8:2.06,r10:1.24,t10:2.20,isGold:true},
+    {code:"F.RP008",name:"挂无镍水晶金",r3:0.78,t3:1.22,r5:1.05,t5:1.69,r8:1.24,t8:2.17,r10:1.40,t10:2.49,isGold:true},
+    {code:"G.RP005",name:"挂无镍青铜金",r3:0.50,t3:0.59,r5:0.60,t5:0.75,r8:0.82,t8:0.92,r10:0.95,t10:1.28,isGold:false},
+    {code:"S.RP002",name:"挂无镍珍珠金",r3:0.77,t3:1.06,r5:0.91,t5:1.30,r8:1.01,t8:1.42,r10:1.14,t10:1.52,isGold:true},
+    {code:"F.RP009",name:"挂无镍仿金",r3:0.44,t3:0.57,r5:0.52,t5:0.72,r8:0.64,t8:0.91,r10:0.72,t10:1.04,isGold:false},
+    {code:"S.RP003",name:"挂无镍SK金",r3:0.71,t3:0.96,r5:0.85,t5:1.16,r8:1.16,t8:1.51,r10:1.34,t10:2.01,isGold:true},
+    {code:"F.RP010",name:"挂无镍高级K金",r3:0.95,t3:1.33,r5:0.99,t5:1.87,r8:1.37,t8:2.51,r10:1.77,t10:2.58,isGold:true},
+    {code:"F.RP011",name:"挂无镍K金",r3:0.91,t3:1.30,r5:0.96,t5:1.65,r8:1.50,t8:2.35,r10:1.60,t10:2.77,isGold:true},
+    {code:"G.RP006",name:"挂无镍广东金",r3:0.43,t3:0.51,r5:0.47,t5:0.63,r8:0.50,t8:0.74,r10:0.56,t10:0.78,isGold:false},
+    {code:"F.RP012",name:"挂无镍浅玫瑰金",r3:0.66,t3:0.88,r5:0.71,t5:1.21,r8:0.80,t8:1.24,r10:0.94,t10:1.44,isGold:false},
+    {code:"G.RP007",name:"挂无镍玫瑰金",r3:0.81,t3:1.13,r5:0.95,t5:1.43,r8:1.31,t8:2.03,r10:1.55,t10:2.36,isGold:true},
+    {code:"G.RP008",name:"挂无镍玫瑰金拉丝",r3:0.86,t3:1.18,r5:1.00,t5:1.48,r8:1.36,t8:2.08,r10:1.60,t10:2.41,isGold:true},
+    {code:"S.RP004",name:"挂无镍浅珍珠金",r3:0.77,t3:1.06,r5:0.91,t5:1.30,r8:1.01,t8:1.42,r10:1.14,t10:1.52,isGold:true},
+    {code:"F.RP013",name:"挂无镍珍珠K金",r3:0.77,t3:1.06,r5:0.91,t5:1.30,r8:1.01,t8:1.42,r10:1.14,t10:1.52,isGold:true},
+    {code:"F.RP014",name:"挂无镍沙金",r3:1.10,t3:1.48,r5:1.35,t5:2.07,r8:1.98,t8:2.70,r10:2.40,t10:3.04,isGold:true},
+    {code:"F.RP015",name:"挂无镍浅沙金",r3:0.78,t3:1.10,r5:0.92,t5:1.41,r8:1.29,t8:2.04,r10:1.55,t10:2.40,isGold:true},
+    {code:"G.RP009",name:"挂无镍红古铜拉丝",r3:0.54,t3:0.70,r5:0.58,t5:0.78,r8:0.68,t8:0.92,r10:0.73,t10:1.03,isGold:false},
+    {code:"G.RP010",name:"挂无镍青古铜拉丝",r3:0.54,t3:0.70,r5:0.58,t5:0.78,r8:0.68,t8:0.92,r10:0.73,t10:1.03,isGold:false},
+    {code:"S.RP005",name:"挂无镍黑珍珠",r3:0.41,t3:0.51,r5:0.47,t5:0.62,r8:0.51,t8:0.73,r10:0.58,t10:0.79,isGold:false},
+    {code:"G.RP011",name:"挂无镍黑镍拉丝",r3:0.56,t3:0.72,r5:0.61,t5:0.82,r8:0.70,t8:0.98,r10:0.78,t10:1.10,isGold:false},
+    {code:"G.RP012",name:"挂无镍黑镍",r3:0.48,t3:0.55,r5:0.52,t5:0.69,r8:0.61,t8:0.83,r10:0.72,t10:1.14,isGold:false},
+    {code:"G.RP013",name:"挂无镍珍珠枪",r3:0.41,t3:0.56,r5:0.47,t5:0.65,r8:0.53,t8:0.73,r10:0.58,t10:0.79,isGold:false},
+    {code:"G.RP014",name:"挂无镍黑镍激光",r3:0.56,t3:0.72,r5:0.60,t5:0.82,r8:0.70,t8:0.98,r10:0.78,t10:1.10,isGold:false},
+    {code:"F.RP016",name:"挂新无镍黑镍激光",r3:0.58,t3:0.73,r5:0.62,t5:0.83,r8:0.70,t8:1.03,r10:0.82,t10:1.13,isGold:false},
+    {code:"G.RP015",name:"挂白",r3:0.40,t3:0.49,r5:0.45,t5:0.58,r8:0.50,t8:0.68,r10:0.53,t10:0.89,isGold:false},
+    {code:"G.RP016",name:"挂代铬",r3:0.44,t3:0.56,r5:0.48,t5:0.64,r8:0.56,t8:0.79,r10:0.64,t10:0.89,isGold:false},
+    {code:"F.RP017",name:"挂雾铬",r3:0.48,t3:0.64,r5:0.54,t5:0.76,r8:0.68,t8:0.97,r10:0.83,t10:1.10,isGold:false},
+    {code:"G.RP017",name:"挂沙面珍珠镍",r3:0.41,t3:0.51,r5:0.47,t5:0.62,r8:0.52,t8:0.74,r10:0.64,t10:0.91,isGold:false},
+    {code:"F.RP018",name:"挂珍珠镍拉丝",r3:0.50,t3:0.62,r5:0.53,t5:0.66,r8:0.58,t8:0.76,r10:0.62,t10:0.82,isGold:false},
+    {code:"F.RP019",name:"挂仿金",r3:0.47,t3:0.57,r5:0.51,t5:0.62,r8:0.59,t8:0.78,r10:0.65,t10:0.92,isGold:false},
+    {code:"F.RP020",name:"挂浅金拉丝",r3:0.95,t3:1.41,r5:1.14,t5:1.85,r8:1.62,t8:2.64,r10:1.97,t10:3.08,isGold:true},
+    {code:"F.RP021",name:"挂K金拉丝",r3:0.92,t3:1.31,r5:1.07,t5:1.65,r8:1.46,t8:2.30,r10:1.55,t10:2.40,isGold:true},
+    {code:"F.RP022",name:"挂K金",r3:0.91,t3:1.44,r5:1.06,t5:2.06,r8:1.47,t8:2.69,r10:1.57,t10:2.74,isGold:true},
+    {code:"F.RP023",name:"挂广东金",r3:0.47,t3:0.58,r5:0.50,t5:0.68,r8:0.62,t8:0.88,r10:0.70,t10:1.22,isGold:false},
+    {code:"F.RP024",name:"挂水晶金",r3:0.72,t3:1.12,r5:0.97,t5:1.52,r8:1.10,t8:1.65,r10:1.26,t10:1.86,isGold:true},
+    {code:"F.RP025",name:"挂茶金",r3:0.50,t3:0.63,r5:0.55,t5:0.74,r8:0.67,t8:0.97,r10:0.77,t10:1.08,isGold:false},
+    {code:"F.RP026",name:"挂黑镍拉丝",r3:0.53,t3:0.64,r5:0.56,t5:0.70,r8:0.60,t8:0.79,r10:0.64,t10:0.88,isGold:false},
+    {code:"G.RP018",name:"挂黑镍",r3:0.47,t3:0.54,r5:0.50,t5:0.60,r8:0.54,t8:0.70,r10:0.58,t10:0.78,isGold:false},
+    {code:"F.RP027",name:"挂雾枪",r3:0.46,t3:0.59,r5:0.49,t5:0.66,r8:0.63,t8:0.83,r10:0.73,t10:0.91,isGold:false},
+    {code:"G.RP019",name:"挂珍珠枪",r3:0.42,t3:0.53,r5:0.45,t5:0.66,r8:0.54,t8:0.79,r10:0.68,t10:1.07,isGold:false},
+    {code:"G.RP020",name:"挂黑镍激光",r3:0.53,t3:0.64,r5:0.55,t5:0.70,r8:0.60,t8:0.79,r10:0.64,t10:0.88,isGold:false},
+    {code:"F.EP001",name:"无锡哑黑",r3:0.06,t3:0.08,r5:0.07,t5:0.08,r8:0.08,t8:0.13,r10:0.11,t10:0.20,isGold:false},
+    {code:"G.EP001",name:"电泳哑黑",r3:0.05,t3:0.07,r5:0.06,t5:0.09,r8:0.06,t8:0.12,r10:0.10,t10:0.17,isGold:false},
+    {code:"G.EP002",name:"电泳亮黑",r3:0.05,t3:0.06,r5:0.07,t5:0.08,r8:0.10,t8:0.10,r10:0.10,t10:0.14,isGold:false},
+    {code:"F.EP004",name:"高级电泳亮黑",r3:0.1356,t3:0.1695,r5:0.1356,t5:0.2034,r8:0.1695,t8:0.22035,r10:0.2034,t10:0.2373,isGold:false},
+    {code:"Rp86",name:"挂无镍水金(旧)",r3:0.93,t3:1.22,r5:1.06,t5:1.50,r8:1.38,t8:1.98,r10:1.57,t10:2.27,isGold:true},
+    {code:"Rp70",name:"挂无镍浅金(旧)",r3:1.59,t3:1.73,r5:1.66,t5:1.80,r8:1.80,t8:1.94,r10:1.87,t10:2.01,isGold:true},
+];
+
+// ========== 滚镀数据 ==========
+const barrelData = [
+    {idx:1,code:"F.BP001",name:"无镍白加亮",price:20,isGold:false},
+    {idx:2,code:"G.BP001",name:"无镍白",price:15,isGold:false},
+    {idx:3,code:"F.BP002",name:"无镍白喷哑油",price:17,isGold:false},
+    {idx:4,code:"G.BP002",name:"无镍哑镍",price:16,isGold:false},
+    {idx:5,code:"F.BP003",name:"无镍沙镍",price:20,isGold:false},
+    {idx:6,code:"F.BP004",name:"无镍沙青铜",price:36,isGold:false},
+    {idx:7,code:"G.BP003",name:"无镍金",price:33,isGold:true},
+    {idx:8,code:"F.BP005",name:"无镍银仿金",price:27,isGold:false},
+    {idx:9,code:"G.BP004",name:"无镍红铜",price:10,isGold:false},
+    {idx:10,code:"F.BP006",name:"无镍玫瑰金喷油",price:30,isGold:false},
+    {idx:11,code:"S.BP001",name:"无镍玫瑰金",price:29,isGold:false},
+    {idx:12,code:"F.BP007",name:"无镍青铜银",price:24,isGold:false},
+    {idx:13,code:"F.BP008",name:"无镍红古仿金",price:23,isGold:false},
+    {idx:14,code:"G.BP005",name:"无镍红铜锡",price:13,isGold:false},
+    {idx:15,code:"F.BP009",name:"无镍古铜",price:15,isGold:false},
+    {idx:16,code:"G.BP006",name:"无镍红古铜",price:12,isGold:false},
+    {idx:17,code:"F.BP010",name:"无镍黑古铜",price:12,isGold:false},
+    {idx:18,code:"G.BP007",name:"无镍绿青",price:23,isGold:false},
+    {idx:19,code:"G.BP008",name:"无镍浅沥青",price:19,isGold:false},
+    {idx:20,code:"G.BP009",name:"无镍古锡色",price:15,isGold:false},
+    {idx:21,code:"G.BP010",name:"无镍鸳鸯锡喷油",price:12,isGold:false},
+    {idx:22,code:"G.BP011",name:"无镍浅黑镍",price:32,isGold:false},
+    {idx:23,code:"F.BP011",name:"无镍沙黑镍",price:25,isGold:false},
+    {idx:24,code:"F.BP012",name:"无镍黑镍喷哑油",price:24,isGold:false},
+    {idx:25,code:"G.BP012",name:"无镍哑黑镍",price:20,isGold:false},
+    {idx:26,code:"G.BP013",name:"无镍黑镍",price:20,isGold:false},
+    {idx:27,code:"F.BP013",name:"无镍黑镍加亮",price:24,isGold:false},
+    {idx:28,code:"F.BP014",name:"加白",price:12,isGold:false},
+    {idx:29,code:"F.BP015",name:"哑镍",price:13,isGold:false},
+    {idx:30,code:"F.BP016",name:"加金",price:25,isGold:false},
+    {idx:31,code:"G.BP014",name:"浅金喷油",price:557,isGold:true},
+    {idx:32,code:"G.BP015",name:"广东金喷油",price:24,isGold:false},
+    {idx:33,code:"F.BP017",name:"浅中青",price:21,isGold:false},
+    {idx:34,code:"F.BP018",name:"黑中青",price:21,isGold:false},
+    {idx:35,code:"F.BP019",name:"浅黑镍",price:18,isGold:false},
+    {idx:36,code:"F.BP020",name:"黑镍",price:15,isGold:false},
+];
+
+let currentTab = "rack";
+
+// 渲染表格
+function render(){
+    const kw = document.getElementById("searchInput").value.toLowerCase();
+    // 挂镀渲染
+    const rackTbody = document.getElementById("rackTbody");
+    rackTbody.innerHTML = "";
+    rackData.forEach(item=>{
+        const s = `${item.code} ${item.name}`.toLowerCase();
+        if(!s.includes(kw)) return;
+        const tr = document.createElement("tr");
+        if(item.isGold) tr.className = "gold-row";
+        tr.innerHTML = `
+            <td class="border px-2 py-1">${item.code}</td>
+            <td class="border px-2 py-1">${item.name}</td>
+            <td class="border px-2 py-1">${item.r3}</td>
+            <td class="border px-2 py-1">${item.t3}</td>
+            <td class="border px-2 py-1">${item.r5}</td>
+            <td class="border px-2 py-1">${item.t5}</td>
+            <td class="border px-2 py-1">${item.r8}</td>
+            <td class="border px-2 py-1">${item.t8}</td>
+            <td class="border px-2 py-1">${item.r10}</td>
+            <td class="border px-2 py-1">${item.t10}</td>
+        `;
+        rackTbody.appendChild(tr);
+    })
+    //滚镀渲染
+    const barrelTbody = document.getElementById("barrelTbody");
+    barrelTbody.innerHTML = "";
+    barrelData.forEach(item=>{
+        const s = `${item.code} ${item.name}`.toLowerCase();
+        if(!s.includes(kw)) return;
+        const tr = document.createElement("tr");
+        if(item.isGold) tr.className = "gold-row";
+        tr.innerHTML = `
+            <td class="border px-2 py-1">${item.idx}</td>
+            <td class="border px-2 py-1">${item.code}</td>
+            <td class="border px-2 py-1">${item.name}</td>
+            <td class="border px-2 py-1">${item.price}</td>
+        `;
+        barrelTbody.appendChild(tr);
+    })
+}
+
+// Tab切换
+function switchTab(tab){
+    currentTab = tab;
+    if(tab==="rack"){
+        document.getElementById("panelRack").classList.remove("hidden");
+        document.getElementById("panelBarrel").classList.add("hidden");
+        document.getElementById("tabRack").className="px-4 py-2 bg-blue-600 text-white rounded";
+        document.getElementById("tabBarrel").className="px-4 py-2 bg-gray-200 rounded";
+    }else{
+        document.getElementById("panelRack").classList.add("hidden");
+        document.getElementById("panelBarrel").classList.remove("hidden");
+        document.getElementById("tabRack").className="px-4 py-2 bg-gray-200 rounded";
+        document.getElementById("tabBarrel").className="px-4 py-2 bg-blue-600 text-white rounded";
+    }
+    render();
+}
+
+document.getElementById("searchInput").addEventListener("input",render);
+render();
+</script>
+</body>
+</html>
